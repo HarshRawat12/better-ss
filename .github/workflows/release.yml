@@ -1,0 +1,35 @@
+name: Publish Windows installer
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  publish-installer:
+    runs-on: windows-latest
+    steps:
+      - name: Check out the release source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Set up the recording tools
+        shell: pwsh
+        run: ./scripts/setup-ffmpeg.ps1
+
+      - name: Build the Windows installer
+        shell: pwsh
+        run: ./build.ps1 -OutputDirectory release
+
+      - name: Attach the installer to this release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/BetterSS.exe
+          fail_on_unmatched_files: true
+
