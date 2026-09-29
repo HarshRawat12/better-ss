@@ -60,9 +60,9 @@ The packaged application is written to `dist/BetterSS-release/BetterSS.exe`.
 FFmpeg executables are downloaded directly from the Windows build provider and
 verified against its published SHA-256 checksum; they are not committed to Git.
 
-Capture sounds are also excluded because the development audio does not have a
-documented redistribution license. The app still builds without audio, and you
-can choose your own sound in **Preferences → Sound**.
+The supplied capture sounds are packaged with the app as audio assets separate
+from the MIT-licensed source code. Choose a preset or another audio file in
+**Preferences → Sound**.
 
 ## How it works
 

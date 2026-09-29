@@ -9,11 +9,6 @@ test-results/
 # Downloaded third-party executables (run scripts/setup-ffmpeg.ps1)
 BetterSS/Tools/*.exe
 
-# Personal/unlicensed sound files. Contributors can add their own locally.
-Custom Sounds/
-BetterSS/Assets/capture.mp3
-BetterSS/Assets/Custom Sounds/
-
 # Machine-specific launchers and IDE state
 *.lnk
 Launch live app.bat

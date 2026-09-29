@@ -18,9 +18,8 @@ provider-published SHA-256 checksum before installation.
 FFmpeg source code and corresponding-source information are available from the
 [FFmpeg download page](https://ffmpeg.org/download.html) and the build provider.
 
-## User-provided audio
+## Capture audio
 
-Capture sounds are optional. Audio files used during development are excluded
-from the repository because no redistribution license has been established for
-them. Contributors and users are responsible for ensuring that any audio they
-add or distribute is properly licensed.
+The supplied capture sounds are packaged with Better SS as assets separate
+from the MIT-licensed source code. Any further redistribution of these audio
+files must follow their applicable terms.

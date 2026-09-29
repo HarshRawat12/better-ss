@@ -106,3 +106,4 @@
     stage.addEventListener('pointerleave', () => { cancelAnimationFrame(frame); product.style.transform = ''; });
   }
 })();
+

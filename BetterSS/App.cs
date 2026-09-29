@@ -175,6 +175,11 @@ public sealed class App : Application
     internal void PlaySound()
     {
         if (!Settings.SoundEnabled) return;
+        if (SoundCatalog.UsesSystemSound(Settings.SoundPath))
+        {
+            SoundCatalog.PlaySystemSound();
+            return;
+        }
         var path = SoundCatalog.ResolvePath(Settings.SoundPath);
         if (!File.Exists(path)) { Notify("Sound file unavailable", "Choose another sound in Preferences."); return; }
         player.Stop(); player.Open(new Uri(path)); player.Volume = Settings.Volume; player.Play();

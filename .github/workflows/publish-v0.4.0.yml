@@ -1,0 +1,45 @@
+name: Publish Better SS v0.4.0
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/publish-v0.4.0.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - name: Check out the release source
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Set up FFmpeg and ffprobe
+        shell: pwsh
+        run: ./scripts/setup-ffmpeg.ps1
+
+      - name: Build the self-contained Windows installer
+        shell: pwsh
+        run: ./build.ps1 -OutputDirectory release
+
+      - name: Create the release and attach the installer
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v0.4.0
+          target_commitish: ${{ github.sha }}
+          name: Better SS v0.4.0
+          body: |
+            Better SS now includes:
+
+            - A bundled capture sound and the supplied Hee Hee, Meow, Whaad, Shutter Click, Shutter Fast, and Shutter Slow sounds.
+            - FFmpeg and ffprobe bundled into the Windows installer for screen recording and video editing without a separate FFmpeg installation.
+            - Screenshot sound playback and recording/editing packaging fixes.
+          files: release/BetterSS.exe
+          fail_on_unmatched_files: true

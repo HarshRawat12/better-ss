@@ -14,7 +14,7 @@
     <!-- WPF owns startup; WinForms is used only for Screen and NotifyIcon.
          DPI awareness must be established by the manifest before any HWND exists. -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
     <Authors>Harsh Rawat and contributors</Authors>
     <Description>A local-first screenshot, annotation, OCR, and screen-recording utility for Windows.</Description>
     <RepositoryType>git</RepositoryType>
