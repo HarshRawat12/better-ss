@@ -1,5 +1,109 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíëN:N‹Z–‹­¦ëeŠw¬åÕÍ¥¹œMåÍÑ•´ì4)ÕÍ¥¹œMåÍÑ•´¹%<ì4)ÕÍ¥¹œMåÍÑ•´¹1¥¹Äì4)ÕÍ¥¹œMåÍÑ•´¹Q•áĞì4)ÕÍ¥¹œMåÍÑ•´¹Q¡É•…‘¥¹œ¹Q…Í­Ìì4)ÕÍ¥¹œMåÍÑ•´¹]¥¹‘½İÌì4)ÕÍ¥¹œMåÍÑ•´¹]¥¹‘½İÌ¹%¹ÁÕĞì4)ÕÍ¥¹œMåÍÑ•´¹]¥¹‘½İÌ¹5•‘¥„ì4)ÕÍ¥¹œMåÍÑ•´¹]¥¹‘½İÌ¹5•‘¥„¹%µ…¥¹œì4)ÕÍ¥¹œMåÍÑ•´¹]¥¹‘½İÌ¹Q¡É•…‘¥¹œì4(4)¹…µ•ÍÁ…”	•ÑÑ•ÉMLì4(4)¥¹Ñ•É¹…°ÍÑ…Ñ¥Œ±…ÍÌM•±™Q•ÍĞ4)ì4(€€€¥¹Ñ•É¹…°ÍÑ…Ñ¥Œ	¥Ñµ…ÁM½ÕÉ”M…µÁ±•%µ…” ¤4(€€€ì4(€€€€€€€Ù…ÈÙ¥ÍÕ…°€ô¹•ÜÉ…İ¥¹Y¥ÍÕ…° ¤ìÕÍ¥¹œ€¡Ù…È‘Œ€ôÙ¥ÍÕ…°¹I•¹‘•É=Á•¸ ¤¤4(€€€€€€€ì4(€€€€€€€€€€€‘Œ¹É…İI•Ñ…¹±”¡¹•Ü1¥¹•…ÉÉ…‘¥•¹Ñ	ÉÕÍ ¡U$¹	ÉÕÍ  ˆˆ¤¹½±½È°U$¹	ÉÕÍ  ˆŒÜÜÜÜÜÜˆ¤¹½±½È°€äÀ¤°¹Õ±°°¹•ÜI•Ğ À°€À°€äØÀ°€ØÀÀ¤¤ì4(€€€€€€€€€€€‘Œ¹É…İ±±¥ÁÍ”¡	ÉÕÍ¡•Ì¹]¡¥Ñ”°¹Õ±°°¹•ÜA½¥¹Ğ ØäÀ°€ÄàÔ¤°€àÔ°€àÔ¤ì4(€€€€€€€€€€€Ù…È™…È€ô•½µ•ÑÉä¹A…ÉÍ” ‰4€À°ĞÈÀD€ÄĞÀ°ÄĞÀ€ÌÄÀ°ÌÜÀD€ĞÌÀ°ĞÜÀ€ÔĞÀ°ÌÌÀD€ÜÌÀ°ÄØÀ€äØÀ°ÌØÀ0äØÀ°ØÀÀ0À°ØÀÀhˆ¤ì4(€€€€€€€€€€€‘Œ¹É…İ•½µ•ÑÉä¡U$¹	ÉÕÍ  ˆŒääääääˆ¤°¹Õ±°°™…È¤ì4(€€€€€€€€€€€Ù…È¹•…È€ô•½µ•ÑÉä¹A…ÉÍ” ‰4À°ĞÜÀDÄàÀ°ÌÌÀ€ÌäÀ°ĞäÀDØÀÀ°ØÀÀ€ÜäÀ°ĞÈÀDàäÀ°ÌàÀ€äØÀ°ĞÌÀ0äØÀ°ØÀÀ0À°ØÀÀhˆ¤ì4(€€€€€€€€€€€‘Œ¹É…İ•½µ•ÑÉä¡U$¹	ÉÕÍ  ˆŒÔÔÔÔÔÔˆ¤°¹Õ±°°¹•…È¤ì4(€€€€€€€€€€€Ù…È™É½¹Ğ€ô•½µ•ÑÉä¹A…ÉÍ” ‰4À°ÔÜÀDÈÄÀ°ĞÄÀ€ÌäÀ°ÔÔÀDÔäÀ°ØĞÀ€ÜÔÀ°ÔÌÔDäÀÀ°ĞÜÔ€äØÀ°ÔÄÀ0äØÀ°ØÀÀ0À°ØÀÀhˆ¤ì4(€€€€€€€€€€€‘Œ¹É…İ•½µ•ÑÉä¡U$¹	ÉÕÍ  ˆŒÌÌÌÌÌÌˆ¤°¹Õ±°°™É½¹Ğ¤ì4(€€€€€€€ô4(€€€€€€€Ù…È‰¥Ñµ…À€ô¹•ÜI•¹‘•ÉQ…É•Ñ	¥Ñµ…À äØÀ°€ØÀÀ°€äØ°€äØ°A¥á•±½Éµ…ÑÌ¹A‰É„ÌÈ¤ì‰¥Ñµ…À¹I•¹‘•È¡Ù¥ÍÕ…°¤ì‰¥Ñµ…À¹É••é” ¤ìÉ•ÑÕÉ¸‰¥Ñµ…Àì4(€€€ô4(€€€¥¹Ñ•É¹…°ÍÑ…Ñ¥ŒÙ½¥IÕ¸¡ÁÀ…ÁÀ¤4(€€€ì4(€€€€€€€…ÁÀ¹M¡ÕÑ‘½İ¹5½‘”€ôM¡ÕÑ‘½İ¹5½‘”¹=¹áÁ±¥¥ÑM¡ÕÑ‘½İ¸ì4(€€€€€€€MåÍÑ•´¹Q¡É•…‘¥¹œ¹Må¹¡É½¹¥é…Ñ¥½¹½¹Ñ•áĞ¹M•ÑMå¹¡É½¹¥é…Ñ¥½¹½¹Ñ•áĞ¡¹•Ü¥ÍÁ…Ñ¡•ÉMå¹¡É½¹¥é…Ñ¥½¹½¹Ñ•áĞ¡¥ÍÁ…Ñ¡•È¹ÕÉÉ•¹Ñ¥ÍÁ…Ñ¡•È¤¤ì4(€€€€€€€Ù…È½ÕÑÁÕĞ€ôA…Ñ ¹•ÑÕ±±A…Ñ  ‰Ñ•ÍĞµÉ•ÍÕ±ÑÌˆ¤ì¥É•Ñ½Éä¹É•…Ñ•¥É•Ñ½Éä¡½ÕÑÁÕĞ¤ì4(€€€€€€€Ù…È±½œ€ô¹•ÜMÑÉ¥¹	Õ¥±‘•È ¤ì¥¹Ğ½Õ¹Ğ€ô€Àì4(€€€€€€€Ù½¥¡•¬¡‰½½°Ù…±Õ”°ÍÑÉ¥¹œ‘•ÍÉ¥ÁÑ¥½¸¤ì¥˜€ …Ù…±Õ”¤Ñ¡É½Ü¹•Üá•ÁÑ¥½¸¡‘•ÍÉ¥ÁÑ¥½¸¤ì±½œ¹ÁÁ•¹‘1¥¹” ‰AML€ˆ€¬‘•ÍÉ¥ÁÑ¥½¸¤ì½Õ¹Ğ¬¬ìô4(€€€€€€€ÑÉä4(€€€€€€€ì4(€€€€€€€€€€€Ù…È‘•Í­Ñ½À€ô¹•ÜMåÍÑ•´¹É…İ¥¹œ¹I•Ñ…¹±” ´ÄäÈÀ°€´ÈÀÀ°€ĞĞàÀ°€ÄØĞÀ¤ì4(€€€€€€€€€€€¡•¬¡9…Ñ¥Ù”¹É½Á	½Õ¹‘Ì¡¹•Ü ´ÄàÀÀ°€´ÄÀÀ°€ĞÀÀ°€ÌÀÀ¤°‘•Í­Ñ½À¤€ôô¹•Ü%¹ĞÌÉI•Ğ ÄÈÀ°€ÄÀÀ°€ĞÀÀ°€ÌÀÀ¤°€‰¹•…Ñ¥Ù”µ½¹¥Ñ½È½½É‘¥¹…Ñ•ÌÑÉ…¹Í±…Ñ”Ñ¼¥µ…”Á¥á•±Ìˆ¤ì4(€€€€€€€€€€€¡•¬¡9…Ñ¥Ù”¹É½Á	½Õ¹‘Ì¡¹•Ü ´ÈÄÀÀ°€´ÌÀÀ°€ĞÀÀ°€ÌÀÀ¤°‘•Í­Ñ½À¤€ôô¹•Ü%¹ĞÌÉI•Ğ À°€À°€ÈÈÀ°€ÈÀÀ¤°€‰Í•±•Ñ¥½¸±¥ÁÌÑ¼‘•Í­Ñ½À‰½Õ¹‘Ìˆ¤ì4(€€€€€€€€€€€¡•¬¡9…Ñ¥Ù”¹É½Á	½Õ¹‘Ì¡¹•Ü äÀÀÀ°€äÀÀÀ°€ÄÀÀ°€ÄÀÀ¤°‘•Í­Ñ½À¤¹%ÍµÁÑä°€‰½ÕĞµ½˜µ‰½Õ¹‘ÌÍ•±•Ñ¥½¸É•©•Ñ•ˆ¤ì4(€€€€€€€€€€€Ù…Èµ…±™½Éµ•€ô¹•ÜM•ÑÑ¥¹ÌìÕÉ…Ñ¥½¸€ô‘½Õ‰±”¹9…8°AÉ•Ù¥•İ]¥‘Ñ €ô€À°MÑÉ½­”€ô€àÀôìµ…±™½Éµ•¹9½Éµ…±¥é” ¤ì4(€€€€€€€€€€€¡•¬¡µ…±™½Éµ•¹ÕÉ…Ñ¥½¸€ôô€Ô€˜˜µ…±™½Éµ•¹AÉ•Ù¥•İ]¥‘Ñ €ôô€ÈÈÀ€˜˜µ…±™½Éµ•¹MÑÉ½­”€ôô€Ì°€‰Í•ÑÑ¥¹Ì½¹ÍÑÉ…¥¸¥¹Ù…±¥Ù…±Õ•Ìˆ¤ì4(€€€€€€€€€€€Ù…ÈÍ…µÁ±”€ôM…µÁ±•%µ…” ¤ìÙ…ÈÉ½À€ô9…Ñ¥Ù”¹É½À¡Í…µÁ±”°¹•Ü ÄÀÀ°€ÄÈÀ°€ÈĞÀ°€ÄàÀ¤°¹•Ü À°€À°€äØÀ°€ØÀÀ¤¤ì4(€€€€€€€€€€€¡•¬¡É½À¹A¥á•±]¥‘Ñ €ôô€ÈĞÀ€˜˜É½À¹A¥á•±!•¥¡Ğ€ôô€ÄàÀ°€‰É½ÁÁ¥¹œÁÉ•Í•ÉÙ•ÌÉ•ÅÕ•ÍÑ•Á¥á•°É•Í½±ÕÑ¥½¸ˆ¤ì4(€€€€€€€€€€€¡•¬¡¹•ÜM•ÑÑ¥¹ÌìI…‘¥ÕÌ€ô€ÈÔô¹9½Éµ…±¥é•¹‘I•…‘I…‘¥ÕÌ ¤€ôô€À°€‰½±É½Õ¹‘•µ½É¹•ÈÁÉ•™•É•¹•Ìµ¥É…Ñ”Ñ¼ÍÅÕ…É”•‘•Ìˆ¤ì4(€€€€€€€€€€€ÍÑÉ¥¹œÁ¹œ€ôA…Ñ ¹½µ‰¥¹”¡½ÕÑÁÕĞ°€‰Í…µÁ±”¹Á¹œˆ¤ì9…Ñ¥Ù”¹M…Ù•A¹œ¡Í…µÁ±”°Á¹œ¤ì4(€€€€€€€€€€€Ù…È‘•½‘•È€ô	¥Ñµ…Á•½‘•È¹É•…Ñ”¡¹•ÜUÉ¤¡Á¹œ¤°	¥Ñµ…ÁÉ•…Ñ•=ÁÑ¥½¹Ì¹9½¹”°	¥Ñµ…Á…¡•=ÁÑ¥½¸¹=¹1½…¤ì4(€€€€€€€€€€€¡•¬¡‘•½‘•È¹É…µ•ÍlÁt¹A¥á•±]¥‘Ñ €ôô€äØÀ€˜˜‘•½‘•È¹É…µ•ÍlÁt¹A¥á•±!•¥¡Ğ€ôô€ØÀÀ°€‰…Ñ½µ¥ŒA9Í…Ù”ÁÉ½‘Õ•ÌÉ•…‘…‰±”™Õ±°µÉ•Í½±ÕÑ¥½¸¥µ…”ˆ¤ì4(€€€€€€€€€€€™½É•… €¡Ù…È™½Éµ…Ğ¥¸áÁ½ÉÑM•ÉÙ¥”¹½Éµ…ÑÌ¤4(€€€€€€€€€€€ì4(€€€€€€€€€€€€€€€ÍÑÉ¥¹œ•áÁ½ÉĞ€ôA…Ñ ¹½µ‰¥¹”¡½ÕÑÁÕĞ°€‰•áÁ½ÉĞ¸ˆ€¬áÁ½ÉÑM•ÉÙ¥”¹áÑ•¹Í¥½¸¡™½Éµ…Ğ¤¤ìáÁ½ÉÑM•ÉÙ¥”¹M…Ù”¡Í…µÁ±”°•áÁ½ÉĞ°™½Éµ…Ğ¤ì4(€€€€€€€€€€€€€€€¥˜€¡™½Éµ…Ğ€ôô€‰Aˆ¤¡•¬¡]…¥Ğ¡I•…‘A‘˜¡•áÁ½ÉĞ¤¤°€‰•áÁ½ÉÑ•A½Á•¹Ì¥¸]¥¹‘½İÌAÉ•…‘•Èİ¥Ñ ½¹”Á…”ˆ¤ì4(€€€€€€€€€€€€€€€•±Í”ìÙ…ÈÍ…Ù•€ô	¥Ñµ…Á•½‘•È¹É•…Ñ”¡¹•ÜUÉ¤¡•áÁ½ÉĞ¤°	¥Ñµ…ÁÉ•…Ñ•=ÁÑ¥½¹Ì¹9½¹”°	¥Ñµ…Á…¡•=ÁÑ¥½¸¹=¹1½…¤ì¡•¬¡Í…Ù•¹É…µ•ÍlÁt¹A¥á•±]¥‘Ñ €ôôÍ…µÁ±”¹A¥á•±]¥‘Ñ €˜˜Í…Ù•¹É…µ•ÍlÁt¹A¥á•±!•¥¡Ğ€ôôÍ…µÁ±”¹A¥á•±!•¥¡Ğ°™½Éµ…Ğ€¬€ˆ•áÁ½ÉĞ¥Ì‘•½‘…‰±”…Ğ½É¥¥¹…°‘¥µ•¹Í¥½¹Ìˆ¤ìô4(€€€€€€€€€€€ô4(€€€€€€€€€€€¡•¬¡áÁ½ÉÑM•ÉÙ¥”¹I•Í¥é”¡Í…µÁ±”°€ÔÀ¤¹A¥á•±]¥‘Ñ €ôô€ĞàÀ°€‰•áÁ½ÉĞÉ•Í¥é¥¹œÁÉ½‘Õ•ÌÉ•ÅÕ•ÍÑ•‘¥µ•¹Í¥½¹Ìˆ¤ì4(€€€€€€€€€€€Ù…È™¥áÑÕÉ”€ôQ•áÑ%µ…” ¤ìÙ…ÈÉ•½¹¥é•€ô]…¥Ğ¡=ÉM•ÉÙ¥”¹I•½¹¥é•Íå¹Œ¡™¥áÑÕÉ”¤¤ì4(€€€€€€€€€€€¡•¬¡É•½¹¥é•¹½¹Ñ…¥¹Ì ‰	QQHMLˆ°MÑÉ¥¹½µÁ…É¥Í½¸¹=É‘¥¹…±%¹½É•…Í”¤€˜˜É•½¹¥é•¹½¹Ñ…¥¹Ì ˆÈÀÈØˆ¤°€‰±½…°]¥¹‘½İÌ=HÉ•½¹¥é•Ì­¹½İ¸Ñ•áĞ¥¸…¸…ÑÕ…°¥µ…”ˆ¤ì4(€€€€€€€€€€€9…Ñ¥Ù”¹M…Ù•A¹œ¡™¥áÑÕÉ”°A…Ñ ¹½µ‰¥¹”¡½ÕÑÁÕĞ°€‰½Èµ™¥áÑÕÉ”¹Á¹œˆ¤¤ì4(€€€€€€€€€€€Ù…È‘¥ˆ€ô±¥Á‰½…É‘M•ÉÙ¥”¹¥ˆ¡™¥áÑÕÉ”¤ì4(€€€€€€€€€€€¡•¬¡	¥Ñ½¹Ù•ÉÑ•È¹Q½%¹ĞÌÈ¡‘¥ˆ°€À¤€ôô€ĞÀ€˜˜	¥Ñ½¹Ù•ÉÑ•È¹Q½%¹ĞÌÈ¡‘¥ˆ°€Ğ¤€ôô™¥áÑÕÉ”¹A¥á•±]¥‘Ñ €˜˜	¥Ñ½¹Ù•ÉÑ•È¹Q½%¹ĞÄØ¡‘¥ˆ°€ÄĞ¤€ôô€ÈĞ°€‰±¥Á‰½…ÉÕÍ•ÌÍÑ…¹‘…É€ÈĞµ‰¥Ğ]¥¹‘½İÌ%™½Éµ…Ğˆ¤ì4(€€€€€€€€€€€Ù…È‘É……Ñ„€ô¹•Ü…Ñ…=‰©•Ğ ¤ì‘É……Ñ„¹M•Ñ…Ñ„¡…Ñ…½Éµ…ÑÌ¹¥±•É½À°¹•İmtìÁ¹œô¤ì‘É……Ñ„¹M•Ñ…Ñ„¡…Ñ…½Éµ…ÑÌ¹	¥Ñµ…À°Í…µÁ±”¤ì4(€€€€€€€€€€€¡•¬¡‘É……Ñ„¹•Ñ…Ñ…AÉ•Í•¹Ğ¡…Ñ…½Éµ…ÑÌ¹¥±•É½À¤€˜˜‘É……Ñ„¹•Ñ…Ñ…AÉ•Í•¹Ğ¡…Ñ…½Éµ…ÑÌ¹	¥Ñµ…À¤°€‰‘É…œÁ…å±½…ÍÕÁÁ½ÉÑÌ™¥±”…¹‰¥Ñµ…À‘•ÍÑ¥¹…Ñ¥½¹Ìˆ¤ì4(€€€€€€€€€€€¡•¬¡M½Õ¹‘…Ñ…±½œ¹Ù…¥±…‰±•	Õ¥±Ñ%¹¥±•9…µ•Ì¹1•¹Ñ €ôôM½Õ¹‘…Ñ…±½œ¹	Õ¥±Ñ%¹¥±•9…µ•Ì¹1•¹Ñ °€‰…±°Í•Ù•¸…ÁÑÕÉ”Í½Õ¹‘Ì…É”¥¹±Õ‘•¥¸Ñ¡”‰Õ¥±ˆ¤ì(€€€€€€€€€€€™½É•… €¡Ù…È™¥±•9…µ”¥¸M½Õ¹‘…Ñ…±½œ¹	Õ¥±Ñ%¹¥±•9…µ•Ì¤(€€€€€€€€€€€€€€€¡•¬¡…¹A±…åM½Õ¹¡M½Õ¹‘…Ñ…±½œ¹	Õ¥±Ñ%¹A…Ñ ¡™¥±•9…µ”¤¤°™¥±•9…µ”€¬€ˆÁ±…åÌÑ¡É½Õ ]¥¹‘½İÌµ•‘¥„Á±…å‰…¬ˆ¤ì(€€€€€€€€€€€ÍÑÉ¥¹œµ¥ÍÍ¥¹M½Õ¹€ôM½Õ¹‘…Ñ…±½œ¹M•ÑÑ¥¹Y…±Õ” ‰µ¥ÍÍ¥¹œ¹µÀÌˆ¤ì(€€€€€€€€€€€¡•¬¡M½Õ¹‘…Ñ…±½œ¹UÍ•ÍMåÍÑ•µM½Õ¹¡µ¥ÍÍ¥¹M½Õ¹¤°€‰„µ¥ÍÍ¥¹œ‰Õ¥±Ğµ¥¸Í½Õ¹ÕÍ•ÌÑ¡”]¥¹‘½İÌ™…±±‰…¬ˆ¤ì(€€€€€€€€€€€Ù…ÈÍ•ÑÑ¥¹Í	•™½É•M½Õ¹€ô…ÁÀ¹M•ÑÑ¥¹Ìì(€€€€€€€€€€€…ÁÀ¹M•ÑÑ¥¹Ì€ô¹•ÜM•ÑÑ¥¹ÌìM½Õ¹‘¹…‰±•€ôÑÉÕ”°M½Õ¹‘A…Ñ €ôµ¥ÍÍ¥¹M½Õ¹ôì(€€€€€€€€€€€…ÁÀ¹A±…åM½Õ¹ ¤ì(€€€€€€€€€€€…ÁÀ¹M•ÑÑ¥¹Ì€ôÍ•ÑÑ¥¹Í	•™½É•M½Õ¹ì(€€€€€€€€€€€¡•¬¡ÑÉÕ”°€‰…ÁÑÕÉ”Í½Õ¹Á±…å‰…¬ÕÍ•ÌÑ¡”]¥¹‘½İÌÍåÍÑ•´™…±±‰…¬İ¡•¸„™¥±”¥Ìµ¥ÍÍ¥¹œˆ¤ì(€€€€€€€€€€€ÍÑÉ¥¹œÍ¡ÕÑÑ•ÉM•ÑÑ¥¹œ€ôM½Õ¹‘…Ñ…±½œ¹M•ÑÑ¥¹Y…±Õ” ‰M¡ÕÑÑ•È±¥¬¹µÀÌˆ¤ì(€€€€€€€€€€€¡•¬¡M½Õ¹‘…Ñ…±½œ¹M•±•Ñ•‘¥±•9…µ”¡Í¡ÕÑÑ•ÉM•ÑÑ¥¹œ¤€ôô€‰M¡ÕÑÑ•È±¥¬¹µÀÌˆ°€‰Í¡ÕÑÑ•ÈÍ½Õ¹Í•±•Ñ¥½¸É•Í½±Ù•ÌÑ¼¥ÑÌÁ…­…•ÁÉ•Í•Ğˆ¤ì(€€€€€€€€€€€Ù…ÈÍ•ÑÑ¥¹Í	•™½É”€ô…ÁÀ¹M•ÑÑ¥¹Ìì…ÁÀ¹M•ÑÑ¥¹Ì€ô¹•ÜM•ÑÑ¥¹ÌìQ¡•µ”€ô€‰1¥¡Ğˆôì…ÁÀ¹!½Ñ­•åMÑ…ÑÕÌ€ô€‰I•…‘äƒ
-ÜÑÉ°€¬M¡¥™Ğ€¬Lˆì4(€€€€€€€€€€€Ù…Èİ¥¹‘½Ü€ô¹•ÜAÉ•™•É•¹•Í]¥¹‘½Ü¡…ÁÀ¤ìİ¥¹‘½Ü¹M¡½Ü ¤ìİ¥¹‘½Ü¹UÁ‘…Ñ•1…å½ÕĞ ¤ì4(€€€€€€€€€€€AÕµÀ ¤ìI•¹‘•É]¥¹‘½Ü¡İ¥¹‘½Ü°A…Ñ ¹½µ‰¥¹”¡½ÕÑÁÕĞ°€‰ÁÉ•™•É•¹•Ìµ±¥¡Ğ¹Á¹œˆ¤¤ì4(€€€€€€€€€€€¡•¬¡İ¥¹‘½Ü¹ÑÕ…±]¥‘Ñ €øô€àØÀ°€‰ÁÉ•™•É•¹•Ìİ¥¹‘½Ü‰Õ¥±‘Ì…¹É•¹‘•ÉÌˆ¤ìİ¥¹‘½Ü¹±½Í” ¤ì4(€€€€€€€€€€€…ÁÀ¹M•ÑÑ¥¹Ì¹Q¡•µ”€ô€‰…É¬ˆìÙ…È‘…É¬€ô¹•ÜAÉ•™•É•¹•Í]¥¹‘½Ü¡…ÁÀ¤ì‘…É¬¹M¡½Ü ¤ì‘…É¬¹UÁ‘…Ñ•1…å½ÕĞ ¤ìAÕµÀ ¤ìI•¹‘•É]¥¹‘½Ü¡‘…É¬°A…Ñ ¹½µ‰¥¹”¡½ÕÑÁÕĞ°€‰ÁÉ•™•É•¹•Ìµ‘…É¬¹Á¹œˆ¤¤ì4(€€€€€€€€€€€™½É•… €¡Ù…ÈÁ…”¥¸¹•İmtì€‰±½…Ñ¥¹œÁÉ•Ù¥•Üˆ°€‰ÁÁ•…É…¹”ˆ°€‰M½Õ¹ˆ°€‰MÑ½É…”ˆ°€‰MÑ…ÉÑÕÀ€˜Õ¥‘”ˆô¤ì‘…É¬¹M¡½İA…”¡Á…”¤ì‘…É¬¹UÁ‘…Ñ•1…å½ÕĞ ¤ìAÕµÀ ¤ìI•¹‘•É]¥¹‘½Ü¡‘…É¬°A…Ñ ¹½µ‰¥¹”¡½ÕÑÁÕĞ°Á…”¹I•Á±…” œ€œ°€œ´œ¤€¬€ˆ¹Á¹œˆ¤¤ìô4(€€€€€€€€€€€¡•¬¡‘…É¬¹%ÍY¥Í¥‰±”°€‰•Ù•ÉäÁÉ•™•É•¹•ÌÁ…”‰Õ¥±‘Ì…¹É•¹‘•ÉÌˆ¤ì‘…É¬¹±½Í” ¤ì4(€€€€€€€€€€€Ù…È•‘¥Ñ½È€ô¹•Ü‘¥Ñ½É]¥¹‘½Ü¡…ÁÀ°Í…µÁ±”°Á¹œ¤ì•‘¥Ñ½È¹M¡½Ü ¤ì•‘¥Ñ½È¹UÁ‘…Ñ•1…å½ÕĞ ¤ìAÕµÀ ¤ìÙ…ÈÉ•¹‘•É•€ô•‘¥Ñ½È¹I•¹‘•È ¤ì4(€€€€€€€€€€€¡•¬¡É•¹‘•É•¹A¥á•±]¥‘Ñ €ôô€äØÀ€˜˜É•¹‘•É•¹A¥á•±!•¥¡Ğ€ôô€ØÀÀ°€‰•‘¥Ñ½È•áÁ½ÉĞÉ•Ñ…¥¹ÌµÓ­¢G§²ÚîÆ­y× CaptureSession(CaptureMode.AllMonitors, System.Windows.Forms.Screen.PrimaryScreen!, (shot, _, _) => {
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Threading;
+
+namespace BetterSS;
+
+internal static class SelfTest
+{
+    internal static BitmapSource SampleImage()
+    {
+        var visual = new DrawingVisual(); using (var dc = visual.RenderOpen())
+        {
+            dc.DrawRectangle(new LinearGradientBrush(UI.Brush("#DDDDDD").Color, UI.Brush("#777777").Color, 90), null, new Rect(0, 0, 960, 600));
+            dc.DrawEllipse(Brushes.White, null, new Point(690, 185), 85, 85);
+            var far = Geometry.Parse("M 0,420 Q 140,140 310,370 Q 430,470 540,330 Q 730,160 960,360 L960,600 L0,600 Z");
+            dc.DrawGeometry(UI.Brush("#999999"), null, far);
+            var near = Geometry.Parse("M0,470 Q180,330 390,490 Q600,600 790,420 Q890,380 960,430 L960,600 L0,600 Z");
+            dc.DrawGeometry(UI.Brush("#555555"), null, near);
+            var front = Geometry.Parse("M0,570 Q210,410 390,550 Q590,640 750,535 Q900,475 960,510 L960,600 L0,600 Z");
+            dc.DrawGeometry(UI.Brush("#333333"), null, front);
+        }
+        var bitmap = new RenderTargetBitmap(960, 600, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual); bitmap.Freeze(); return bitmap;
+    }
+    internal static void Run(App app)
+    {
+        app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        System.Threading.SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
+        var output = Path.GetFullPath("test-results"); Directory.CreateDirectory(output);
+        var log = new StringBuilder(); int count = 0;
+        void Check(bool value, string description) { if (!value) throw new Exception(description); log.AppendLine("PASS " + description); count++; }
+        try
+        {
+            var desktop = new System.Drawing.Rectangle(-1920, -200, 4480, 1640);
+            Check(Native.CropBounds(new(-1800, -100, 400, 300), desktop) == new Int32Rect(120, 100, 400, 300), "negative monitor coordinates translate to image pixels");
+            Check(Native.CropBounds(new(-2100, -300, 400, 300), desktop) == new Int32Rect(0, 0, 220, 200), "selection clips to desktop bounds");
+            Check(Native.CropBounds(new(9000, 9000, 100, 100), desktop).IsEmpty, "out-of-bounds selection rejected");
+            var malformed = new Settings { Duration = double.NaN, PreviewWidth = 0, Stroke = 80 }; malformed.Normalize();
+            Check(malformed.Duration == 5 && malformed.PreviewWidth == 220 && malformed.Stroke == 3, "settings constrain invalid values");
+            var sample = SampleImage(); var crop = Native.Crop(sample, new(100, 120, 240, 180), new(0, 0, 960, 600));
+            Check(crop.PixelWidth == 240 && crop.PixelHeight == 180, "cropping preserves requested pixel resolution");
+            Check(new Settings { Radius = 25 }.NormalizeAndReadRadius() == 0, "old rounded-corner preferences migrate to square edges");
+            string png = Path.Combine(output, "sample.png"); Native.SavePng(sample, png);
+            var decoder = BitmapDecoder.Create(new Uri(png), BitmapCreateOptions.None, BitmapCacheOption.OnLoad);
+            Check(decoder.Frames[0].PixelWidth == 960 && decoder.Frames[0].PixelHeight == 600, "atomic PNG save produces readable full-resolution image");
+            foreach (var format in ExportService.Formats)
+            {
+                string export = Path.Combine(output, "export." + ExportService.Extension(format)); ExportService.Save(sample, export, format);
+                if (format == "PDF") Check(Wait(ReadPdf(export)), "exported PDF opens in Windows PDF reader with one page");
+                else { var saved = BitmapDecoder.Create(new Uri(export), BitmapCreateOptions.None, BitmapCacheOption.OnLoad); Check(saved.Frames[0].PixelWidth == sample.PixelWidth && saved.Frames[0].PixelHeight == sample.PixelHeight, format + " export is decodable at original dimensions"); }
+            }
+            Check(ExportService.Resize(sample, 50).PixelWidth == 480, "export resizing produces requested dimensions");
+            var fixture = TextImage(); var recognized = Wait(OcrService.RecognizeAsync(fixture));
+            Check(recognized.Contains("BETTER SS", StringComparison.OrdinalIgnoreCase) && recognized.Contains("2026"), "local Windows OCR recognizes known text in an actual image");
+            Native.SavePng(fixture, Path.Combine(output, "ocr-fixture.png"));
+            var dib = ClipboardService.Dib(fixture);
+            Check(BitConverter.ToInt32(dib, 0) == 40 && BitConverter.ToInt32(dib, 4) == fixture.PixelWidth && BitConverter.ToInt16(dib, 14) == 24, "clipboard uses standard 24-bit Windows DIB format");
+            var dragData = new DataObject(); dragData.SetData(DataFormats.FileDrop, new[] { png }); dragData.SetData(DataFormats.Bitmap, sample);
+            Check(dragData.GetDataPresent(DataFormats.FileDrop) && dragData.GetDataPresent(DataFormats.Bitmap), "drag payload supports file and bitmap destinations");
+            Check(SoundCatalog.AvailableBuiltInFileNames.Length == SoundCatalog.BuiltInFileNames.Length, "all seven capture sounds are included in the build");
+            foreach (var fileName in SoundCatalog.BuiltInFileNames)
+                Check(CanPlaySound(SoundCatalog.BuiltInPath(fileName)), fileName + " plays through Windows media playback");
+            string missingSound = SoundCatalog.SettingValue("missing.mp3");
+            Check(SoundCatalog.UsesSystemSound(missingSound), "a missing built-in sound uses the Windows fallback");
+            var settingsBeforeSound = app.Settings;
+            app.Settings = new Settings { SoundEnabled = true, SoundPath = missingSound };
+            app.PlaySound();
+            app.Settings = settingsBeforeSound;
+            Check(true, "capture sound playback uses the Windows system fallback when a file is missing");
+            string shutterSetting = SoundCatalog.SettingValue("Shutter Click.mp3");
+            Check(SoundCatalog.SelectedFileName(shutterSetting) == "Shutter Click.mp3", "shutter sound selection resolves to its packaged preset");
+            var settingsBefore = app.Settings; app.Settings = new Settings { Theme = "Light" }; app.HotkeyStatus = "Ready Â· Ctrl + Shift + S";
+            var window = new PreferencesWindow(app); window.Show(); window.UpdateLayout();
+            Pump(); RenderWindow(window, Path.Combine(output, "preferences-light.png"));
+            Check(window.ActualWidth >= 860, "preferences window builds and renders"); window.Close();
+            app.Settings.Theme = "Dark"; var dark = new PreferencesWindow(app); dark.Show(); dark.UpdateLayout(); Pump(); RenderWindow(dark, Path.Combine(output, "preferences-dark.png"));
+            foreach (var page in new[] { "Floating preview", "Appearance", "Sound", "Storage", "Startup & guide" }) { dark.ShowPage(page); dark.UpdateLayout(); Pump(); RenderWindow(dark, Path.Combine(output, page.Replace(' ', '-') + ".png")); }
+            Check(dark.IsVisible, "every preferences page builds and renders"); dark.Close();
+            var editor = new EditorWindow(app, sample, png); editor.Show(); editor.UpdateLayout(); Pump(); var rendered = editor.Render();
+            Check(rendered.PixelWidth == 960 && rendered.PixelHeight == 600, "editor export retains original image dimensions");
+            Check(SamePixels(sample, rendered), "unannotated editor export preserves image pixels");
+            editor.SelectTool("Shapes"); editor.Begin(new Point(120, 140)); editor.Move(new Point(360, 280)); Wait(editor.EndAsync());
+            Check(!SamePixels(sample, editor.Render()), "shape tool adds a flattened export annotation"); editor.Undo(); Check(SamePixels(sample, editor.Render()), "shape undo restores the original pixels");
+            editor.Begin(new Point(120, 140)); editor.Move(new Point(360, 280)); Wait(editor.EndAsync()); var keyboardShape = editor.Render();
+            Check(editor.HandleUndoRedoShortcut(Key.Z, ModifierKeys.Control) && SamePixels(sample, editor.Render()), "Ctrl+Z undoes a normal editor annotation");
+            Check(editor.HandleUndoRedoShortcut(Key.Y, ModifierKeys.Control) && SamePixels(keyboardShape, editor.Render()), "Ctrl+Y redoes a normal editor annotation"); editor.Undo();
+            editor.SelectTool("Highlighter"); editor.Begin(new Point(100, 100)); editor.Move(new Point(400, 100)); Wait(editor.EndAsync());
+            Check(!SamePixels(sample, editor.Render()), "highlighter changes exported pixels"); editor.Undo(); Check(SamePixels(sample, editor.Render()), "undo restores exact original pixels"); editor.Redo(); Check(!SamePixels(sample, editor.Render()), "redo reapplies the annotation"); editor.Undo();
+            editor.SelectTool("Gaussian blur"); editor.Begin(new Point(300, 350)); editor.Move(new Point(800, 350)); Wait(editor.EndAsync()); Check(!SamePixels(sample, editor.Render()), "Gaussian brush alters pixels along stroke"); editor.Undo();
+            editor.SelectTool("Mosaic"); editor.Begin(new Point(300, 350)); editor.Move(new Point(800, 350)); Wait(editor.EndAsync()); Check(!SamePixels(sample, editor.Render()), "mosaic brush alters pixels along stroke");
+            Native.SavePng(editor.Render(), Path.Combine(output, "editor-export.png")); RenderWindow(editor, Path.Combine(output, "editor.png")); editor.Close();
+            var exportWindow = new ExportWindow(app, fixture, png); exportWindow.Show(); exportWindow.UpdateLayout(); Pump(); RenderWindow(exportWindow, Path.Combine(output, "export-dialog.png")); exportWindow.Close();
+            var preview = new PreviewWindow(app, sample, png, System.Windows.Forms.Screen.PrimaryScreen!); preview.Show(); preview.UpdateLayout(); Pump(); RenderWindow(preview, Path.Combine(output, "floating-preview.png"));
+            Check(preview.ActualWidth > app.Settings.PreviewWidth, "floating preview renders with action strip and frame"); preview.Close();
+            app.Settings = settingsBefore;
+            // Test the actual capture backend without retaining any desktop pixels.
+            var native = Native.Capture(new System.Drawing.Rectangle(System.Windows.Forms.SystemInformation.VirtualScreen.Location, new System.Drawing.Size(2, 2)));
+            Check(native.PixelWidth == 2 && native.PixelHeight == 2, "native desktop capture backend returns pixels");
+            bool delivered = false, dismissed = false;
+            var capture = new CaptureSession(CaptureMode.AllMonitors, System.Windows.Forms.Screen.PrimaryScreen!, (shot, _, _) => {
                 var bounds = System.Windows.Forms.SystemInformation.VirtualScreen;
                 delivered = shot.PixelWidth == bounds.Width && shot.PixelHeight == bounds.Height;
             }, () => dismissed = true);

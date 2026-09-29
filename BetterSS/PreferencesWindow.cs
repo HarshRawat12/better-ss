@@ -1,4 +1,121 @@
-Y™Áäx-ÆÈ‹j◊ù¢Îi∫⁄+äßj[hëÈ‹¢ÈÌÎ≠9NãZñã≠¶Îeäw¨Â’Õ•πúÅMÂÕ—ï¥Ï)’Õ•πúÅMÂÕ—ï¥πΩ±±ïç—•ΩπÃπïπï…•åÏ)’Õ•πúÅMÂÕ—ï¥π%<Ï)’Õ•πúÅMÂÕ—ï¥π1•πƒÏ)’Õ•πúÅMÂÕ—ï¥π]•πëΩ›ÃÏ4)’Õ•πúÅMÂÕ—ï¥π]•πëΩ›ÃπΩπ—…Ω±ÃÏ4)’Õ•πúÅMÂÕ—ï¥π]•πëΩ›Ãπ5ïë•ÑÏ4)’Õ•πúÅ5•ç…ΩÕΩô–π]•∏Ã»Ï4)’Õ•πúÅΩ…µÃÄÙÅMÂÕ—ï¥π]•πëΩ›ÃπΩ…µÃÏ4(4)πÖµïÕ¡ÖçîÅ	ï——ï…MLÏ4(4)•π—ï…πÖ∞ÅÕïÖ±ïêÅç±ÖÕÃÅA…ïôï…ïπçïÕ]•πëΩ‹ÄËÅ]•πëΩ‹4)Ï4(ÄÄÄÅ¡…•ŸÖ—îÅ…ïÖëΩπ±‰Å¡¿ÅÖ¡¿Ï4(ÄÄÄÅ¡…•ŸÖ—îÅ…ïÖëΩπ±‰ÅMï——•πùÃÅëïôÖ’±—ÃÄÙÅπï‹†§Ï4(ÄÄÄÅ¡…•ŸÖ—îÅ…ïÖëΩπ±‰Å•ç—•ΩπÖ…‰ÒÕ—…•πú∞Å	’——Ω∏¯ÅπÖŸ•ùÖ—•Ω∏ÄÙÅπï‹†§Ï4(ÄÄÄÅ¡…•ŸÖ—îÅM—Öç≠AÖπï∞ÅâΩë‰ÄÙÅπï‹†§Ï4(ÄÄÄÅ¡…•ŸÖ—îÅâΩΩ∞ÅëÖ…¨Ï4(ÄÄÄÅ¡…•ŸÖ—îÅÕ—…•πúÅ¡ÖùîÄÙÄâÖ¡—’…îàÏ4(ÄÄÄÅ•π—ï…πÖ∞ÅA…ïôï…ïπçïÕ]•πëΩ‹°¡¿ÅÖ¡¿§4(ÄÄÄÅÏ4(ÄÄÄÄÄÄÄÅ—°•ÃπÖ¡¿ÄÙÅÖ¡¿ÏÅU$πMï—’¡]•πëΩ‹°—°•Ã∞ÄâA…ïôï…ïπçïÃà∞Ä‰‡¿∞Ä‹ÿ¿∞ÅU$πÖ…¨°Ö¡¿πMï——•πùÃ§§ÏÅ5•π]•ë—†ÄÙÄ‡»¿ÏÅ5•π!ï•ù°–ÄÙÄÿ¿¿ÏÅ	’•±ê†§Ï4(ÄÄÄÅÙ4(ÄÄÄÅ¡…•ŸÖ—îÅŸΩ•êÅ	’•±ê†§4(ÄÄÄÅÏ4(ÄÄÄÄÄÄÄÅëÖ…¨ÄÙÅU$πÖ…¨°Ö¡¿πMï——•πùÃ§ÏÅ	Öç≠ù…Ω’πêÄÙÅU$π	Öç≠ù…Ω’πê°ëÖ…¨§ÏÅΩ…ïù…Ω’πêÄÙÅU$π%π¨°ëÖ…¨§Ï4(ÄÄÄÄÄÄÄÅ•òÄ°%Õ1ΩÖëïê§Å9Ö—•ŸîπM≈’Ö…ïΩ…πï…Ã°—°•Ã∞ÅëÖ…¨§Ï4(ÄÄÄÄÄÄÄÅŸÖ»Å…ΩΩ–ÄÙÅπï‹Å…•êÅÏÅ	Öç≠ù…Ω’πêÄÙÅU$π	Öç≠ù…Ω’πê°ëÖ…¨§ÅÙÏÅ…ΩΩ–πΩ±’µπïô•π•—•ΩπÃπëê°πï‹ÅΩ±’µπïô•π•—•Ω∏ÅÏÅ]•ë—†ÄÙÅπï‹Å…•ë1ïπù—††»ƒ¿§ÅÙ§ÏÅ…ΩΩ–πΩ±’µπïô•π•—•ΩπÃπëê°πï‹ÅΩ±’µπïô•π•—•Ω∏†§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅÕ•ëîÄÙÅπï‹ÅΩç≠AÖπï∞ÅÏÅ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†»–∞ÄÃ»∞Ä»–∞Ä»–§ÅÙÏ4(ÄÄÄÄÄÄÄÅŸÖ»Åâ…ÖπêÄÙÅπï‹ÅM—Öç≠AÖπï∞ÅÏÅ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä¿∞Ä¿∞Ä–»§ÅÙÏÅâ…Öπêπ°•±ë…ï∏πëê°U$πQï·–†â	QQHÅMLà∞Äƒ‹∞ÅU$π%π¨°ëÖ…¨§∞ÅΩπ—]ï•ù°—ÃπMïµ•	Ω±ê§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»Å—Öù±•πîÄÙÅU$πQï·–†âMç…ïïπÕ°Ω–Å’—•±•—‰à∞Äƒƒ∞ÅU$π5’—ïê°ëÖ…¨§§ÏÅ—Öù±•πîπ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä‹∞Ä¿∞Ä¿§ÏÅâ…Öπêπ°•±ë…ï∏πëê°—Öù±•πî§ÏÅΩç≠AÖπï∞πMï—Ωç¨°â…Öπê∞ÅΩç¨πQΩ¿§ÏÅÕ•ëîπ°•±ë…ï∏πëê°â…Öπê§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅôΩΩ—ï»ÄÙÅπï‹ÅM—Öç≠AÖπï∞†§ÏÅôΩΩ—ï»π°•±ë…ï∏πëê°U$πQï·–†âIdÅ%8Åe=UHÅQIdà∞Ä‰∞ÅU$π%π¨°ëÖ…¨§∞ÅΩπ—]ï•ù°—ÃπMïµ•	Ω±ê§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅπΩ—îÄÙÅU$πQï·–†â±ΩÕîÅ¡…ïôï…ïπçïÃÅ—ºÅ≠ïï¿ÅçÖ¡—’…•πú∏ÅE’•–Åô…Ω¥Å—°îÅ—…Ö‰∏à∞Äƒƒ∞ÅU$π5’—ïê°ëÖ…¨§§ÏÅπΩ—îπ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Äƒ¿∞Ä¿∞Ä»–§ÏÅôΩΩ—ï»π°•±ë…ï∏πëê°πΩ—î§ÏÅôΩΩ—ï»π°•±ë…ï∏πëê°U$πQï·–†âYIM%=8Ä¿∏–∏¿à∞Ä‰∞ÅU$π5’—ïê°ëÖ…¨§§§ÏÅŸÖ»Åç…ïë•–ÄÙÅU$πQï·–†â	dÅ!IM ÅI]Pà∞Ä‰∞ÅU$π5’—ïê°ëÖ…¨§§ÏÅç…ïë•–π5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä–∞Ä¿∞Ä¿§ÏÅôΩΩ—ï»π°•±ë…ï∏πëê°ç…ïë•–§ÏÅΩç≠AÖπï∞πMï—Ωç¨°ôΩΩ—ï»∞ÅΩç¨π	Ω——Ω¥§ÏÅÕ•ëîπ°•±ë…ï∏πëê°ôΩΩ—ï»§Ï(ÄÄÄÄÄÄÄÅŸÖ»ÅπÖÿÄÙÅπï‹ÅM—Öç≠AÖπï∞†§ÏÅπÖŸ•ùÖ—•Ω∏π±ïÖ»†§Ï4(ÄÄÄÄÄÄÄÅôΩ…ïÖç†Ä°ŸÖ»ÅπÖµîÅ•∏Åπï›mtÅÏÄâÖ¡—’…îà∞Äâ±ΩÖ—•πúÅ¡…ïŸ•ï‹à∞Äâ¡¡ïÖ…Öπçîà∞ÄâMΩ’πêà∞ÄâM—Ω…Öùîà∞ÄâM—Ö…—’¿ÄòÅù’•ëîàÅÙ§ÅÏÅÕ—…•πúÅÕï±ïç—ïêÄÙÅπÖµîÏÅŸÖ»Åâ’——Ω∏ÄÙÅU$π	’——Ω∏°πÖµî∞Ä†§ÄÙ¯ÅM°Ω›AÖùî°Õï±ïç—ïê§∞ÅôÖ±Õî∞ÅëÖ…¨§ÏÅâ’——Ω∏π!Ω…•ÈΩπ—Ö±Ωπ—ïπ—±•ùπµïπ–ÄÙÅ!Ω…•ÈΩπ—Ö±±•ùπµïπ–π1ïô–ÏÅâ’——Ω∏π5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä¿∞Ä¿∞Ä‡§ÏÅπÖŸ•ùÖ—•Ω∏πëê°πÖµî∞Åâ’——Ω∏§ÏÅπÖÿπ°•±ë…ï∏πëê°â’——Ω∏§ÏÅÙ4(ÄÄÄÄÄÄÄÅÕ•ëîπ°•±ë…ï∏πëê°πÖÿ§ÏÅ…ΩΩ–π°•±ë…ï∏πëê°πï‹Å	Ω…ëï»ÅÏÅ	Öç≠ù…Ω’πêÄÙÅU$πM’…ôÖçî°ëÖ…¨§∞Å	Ω…ëï…	…’Õ†ÄÙÅU$π1•πî°ëÖ…¨§∞Å	Ω…ëï…Q°•ç≠πïÕÃÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä¿∞Äƒ∞Ä¿§∞Å°•±êÄÙÅÕ•ëîÅÙ§Ï4(ÄÄÄÄÄÄÄÅâΩë‰ÄÙÅπï‹ÅM—Öç≠AÖπï∞ÅÏÅ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†Ãÿ∞ÄÃ»∞ÄÃÿ∞ÄÃ»§ÅÙÏÅŸÖ»ÅÕç…Ω±∞ÄÙÅπï‹ÅMç…Ω±±Y•ï›ï»ÅÏÅΩπ—ïπ–ÄÙÅâΩë‰∞ÅYï…—•çÖ±Mç…Ω±±	Ö…Y•Õ•â•±•—‰ÄÙÅMç…Ω±±	Ö…Y•Õ•â•±•—‰π’—º∞Å!Ω…•ÈΩπ—Ö±Mç…Ω±±	Ö…Y•Õ•â•±•—‰ÄÙÅMç…Ω±±	Ö…Y•Õ•â•±•—‰π•ÕÖâ±ïêÅÙÏÅ…•êπMï—Ω±’µ∏°Õç…Ω±∞∞Äƒ§ÏÅ…ΩΩ–π°•±ë…ï∏πëê°Õç…Ω±∞§ÏÅΩπ—ïπ–ÄÙÅ…ΩΩ–ÏÅM°Ω›AÖùî°¡Öùî§Ï4(ÄÄÄÅÙ4(ÄÄÄÅ•π—ï…πÖ∞ÅŸΩ•êÅM°Ω›AÖùî°Õ—…•πúÅπÖµî§4(ÄÄÄÅÏ4(ÄÄÄÄÄÄÄÅ¡ÖùîÄÙÅπÖµîÏÅâΩë‰π°•±ë…ï∏π±ïÖ»†§ÏÅôΩ…ïÖç†Ä°ŸÖ»Åïπ—…‰Å•∏ÅπÖŸ•ùÖ—•Ω∏§ÅU$πMï±ïç–°ïπ—…‰πYÖ±’î∞Åïπ—…‰π-ï‰ÄÙÙÅπÖµî∞ÅëÖ…¨§Ï4(ÄÄÄÄÄÄÄÅâΩë‰π°•±ë…ï∏πëê°U$πQï·–°¡Öùî∞Ä»‡∞ÅU$π%π¨°ëÖ…¨§∞ÅΩπ—]ï•ù°—ÃπMïµ•	Ω±ê§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅëïÕç…•¡—•ΩπÃÄÙÅπï‹Å•ç—•ΩπÖ…‰ÒÕ—…•πú∞ÅÕ—…•πú¯ÅÏÅlâÖ¡—’…îâtÄÙÄâÖ¡—’…îÅÑÅµΩµïπ–∏Å-ïï¿ÅµΩŸ•πú∏à∞Ålâ±ΩÖ—•πúÅ¡…ïŸ•ï‹âtÄÙÄâÅ—ïµ¡Ω…Ö…‰Å°ΩµîÅôΩ»ÅÂΩ’»ÅÕç…ïïπÕ°Ω–∏à∞Ålâ¡¡ïÖ…ÖπçîâtÄÙÄâ5ΩπΩç°…Ωµî∏ÅA…ïç•ÕîÅïëùïÃ∏Å9Ω—°•πúÅï·—…Ñ∏à∞ÅlâMΩ’πêâtÄÙÄâeΩ’»ÅçÖ¡—’…îÅÕΩ’πê∞ÅÖ–Å—°îÅ…•ù°–Å±ïŸï∞∏à∞ÅlâM—Ω…ÖùîâtÄÙÄâ1ΩçÖ∞Åô•±ïÃ∏Å±ï·•â±îÅï·¡Ω…—Ã∏à∞ÅlâM—Ö…—’¿ÄòÅù’•ëîâtÄÙÄâIïÖë‰Å›°ï∏ÅÂΩ‘ÅπïïêÅ•–∏Å±›ÖÂÃÅÂΩ’»Åç°Ω•çî∏àÅÙÏ4(ÄÄÄÄÄÄÄÅŸÖ»Å•π—…ºÄÙÅU$πQï·–°ëïÕç…•¡—•ΩπÕmπÖµït∞ÄƒÃ∞ÅU$π5’—ïê°ëÖ…¨§§ÏÅ•π—…ºπ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä‰∞Ä¿∞ÄÃ¿§ÏÅâΩë‰π°•±ë…ï∏πëê°•π—…º§Ï4(ÄÄÄÄÄÄÄÅÕ›•—ç†Ä°πÖµî§ÅÏÅçÖÕîÄâÖ¡—’…îàËÅÖ¡—’…ïAÖùî†§ÏÅâ…ïÖ¨ÏÅçÖÕîÄâ±ΩÖ—•πúÅ¡…ïŸ•ï‹àËÅA…ïŸ•ï›AÖùî†§ÏÅâ…ïÖ¨ÏÅçÖÕîÄâ¡¡ïÖ…ÖπçîàËÅ¡¡ïÖ…ÖπçïAÖùî†§ÏÅâ…ïÖ¨ÏÅçÖÕîÄâMΩ’πêàËÅMΩ’πëAÖùî†§ÏÅâ…ïÖ¨ÏÅçÖÕîÄâM—Ö…—’¿ÄòÅù’•ëîàËÅM—Ö…—’¡AÖùî†§ÏÅâ…ïÖ¨ÏÅëïôÖ’±–ËÅM—Ω…ÖùïAÖùî†§ÏÅâ…ïÖ¨ÏÅÙ4(ÄÄÄÅÙ4(ÄÄÄÅ¡…•ŸÖ—îÅŸΩ•êÅÖ¡—’…ïAÖùî†§4(ÄÄÄÅÏ4(ÄÄÄÄÄÄÄÅŸÖ»Å¡Öπï∞ÄÙÅπï‹ÅM—Öç≠AÖπï∞†§ÏÅ!ïÖë•πú°¡Öπï∞∞Äâ°ΩΩÕîÅ›°Ö–Å—ºÅçÖ¡—’…îà∞ÄâŸï…‰ÅçÖ¡—’…îÅ•ÃÅÖ’—ΩµÖ—•çÖ±±‰ÅçΩ¡•ïê∏ÅÅ≈’•ï–ÅçΩπô•…µÖ—•Ω∏ÅÖ¡¡ïÖ…ÃÅΩπ±‰ÅÖô—ï»Å—°îÅç±•¡âΩÖ…êÅ•ÃÅ…ïÖë‰∏à§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅµΩëïÃÄÙÅπï‹Å]…Ö¡AÖπï∞†§Ï4(ÄÄÄÄÄÄÄÅôΩ…ïÖç†Ä°ŸÖ»ÅµΩëîÅ•∏Åπ’¥πï—YÖ±’ïÃÒÖ¡—’…ï5Ωëî¯†§§ÅÏÅŸÖ»Åç°Ω•çîÄÙÅµΩëîÏÅŸÖ»Åâ’——Ω∏ÄÙÅU$π	’——Ω∏°Ö¡—’…ïMïÕÕ•Ω∏π1Öâï∞°µΩëî§∞Ä†§ÄÙ¯ÅÖ¡¿π	ïù•πÖ¡—’…î°ç°Ω•çî§∞ÅµΩëîÄÙÙÅÖ¡—’…ï5ΩëîπIïù•Ω∏∞ÅëÖ…¨§ÏÅâ’——Ω∏π5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä¿∞Ä‡∞Ä‡§ÏÅµΩëïÃπ°•±ë…ï∏πëê°â’——Ω∏§ÏÅÙ4(ÄÄÄÄÄÄÄÅ¡Öπï∞π°•±ë…ï∏πëê°µΩëïÃ§ÏÅŸÖ»Åëï—Ö•∞ÄÙÅU$πQï·–†â]•πëΩ‹ÅΩ¡ïπÃÅÑÅÕïÖ…ç°Öâ±îÅ±•Õ–∞Å•πç±’ë•πúÅµ•π•µ•ÈïêÅ›•πëΩ›Ã∏à∞Äƒ»∞ÅU$π5’—ïê°ëÖ…¨§§ÏÅëï—Ö•∞π5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Äƒ–∞Ä¿∞Ä¿§ÏÅ¡Öπï∞π°•±ë…ï∏πëê°ëï—Ö•∞§ÏÅâΩë‰π°•±ë…ï∏πëê°U$πÖ…ê°¡Öπï∞∞ÅëÖ…¨§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅŸ•ëïºÄÙÅπï‹ÅM—Öç≠AÖπï∞†§ÏÅ!ïÖë•πú°Ÿ•ëïº∞ÄâY•ëïºÅ…ïçΩ…ë•πúà∞ÄâIïçΩ…êÅÑÅë•Õ¡±Ö‰ÅΩ»ÅÖ¡¡±•çÖ—•Ω∏∞Å—°ï∏Å¡…ïŸ•ï‹∞Åç’–ÅÖπêÅï·¡Ω…–ÅÂΩ’»ÅŸ•ëïº∏ÅQ°îÅŸ•ëïºÅç’——ï»Å°ÖÃÅΩπîÅ—…Öç¨Å›•—†ÅÕ¡±•–∞Å—…•¥∞Åëï±ï—îÅÖπêÅµ’—îÅçΩπ—…Ω±Ã∏à§ÏÅŸÖ»ÅŸ•ëïΩç—•ΩπÃÄÙÅπï‹Å]…Ö¡AÖπï∞†§ÏÅŸ•ëïΩç—•ΩπÃπ°•±ë…ï∏πëê°U$π	’——Ω∏†âIïçΩ…êÅŸ•ëïøäòà∞ÅÖ¡¿πM°Ω›Y•ëïΩIïçΩ…ë•πú∞Å—…’î∞ÅëÖ…¨§§ÏÅŸ•ëïΩç—•ΩπÃπ°•±ë…ï∏πëê°U$π	’——Ω∏†â’–ÅŸ•ëïøäòà∞ÅÖ¡¿πM°Ω›Y•ëïΩë•—Ω»∞ÅôÖ±Õî∞ÅëÖ…¨§§ÏÅŸ•ëïºπ°•±ë…ï∏πëê°Ÿ•ëïΩç—•ΩπÃ§ÏÅâΩë‰π°•±ë…ï∏πëê°U$πÖ…ê°Ÿ•ëïº∞ÅëÖ…¨§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅΩ¡—•ΩπÃÄÙÅπï‹ÅM—Öç≠AÖπï∞†§ÏÅ!ïÖë•πú°Ω¡—•ΩπÃ∞Äâ1Ö’πç†ÅçΩπ—…Ω±Ãà∞ÄâUÕîÅÑÅ°Ω—≠ï‰ÅΩ»ÅëΩ’â±îµç±•ç¨Å—°îÅ—…Ö‰Å•çΩ∏∏ÅÖ¡—’…îÅçΩπ—…Ω±ÃÅ›Ω…¨Åïπ—•…ï±‰Å›•—†Å—°îÅµΩ’Õî∏à§Ï4(ÄÄÄÄÄÄÄÅ°Ω•çî°Ω¡—•ΩπÃ∞Äâ1Ö’πç†ÅÕ°Ω…—ç’–à∞Åπï›mtÅÏÄâ—…∞Ä¨ÅM°•ô–Ä¨ÅLà∞Äâ±–Ä¨Å—…∞Ä¨ÅLà∞Äâ—…∞Ä¨ÅM°•ô–Ä¨Å‡à∞Äâ•ÕÖâ±ïêàÅÙ∞ÅÖ¡¿πMï——•πùÃπ!Ω—≠ï‰∞ÅëïôÖ’±—Ãπ!Ω—≠ï‰∞ÅÿÄÙ¯ÅÏÅ•òÄ†ÖÖ¡¿πQ…ÂMï—!Ω—≠ï‰°ÿ∞ÅΩ’–ÅŸÖ»Åï……Ω»§§ÅÖ¡¿π!Ω—≠ïÂM—Ö—’ÃÄÙÅï……Ω»ÏÅÙ§Ï4(ÄÄÄÄÄÄÄÅŸÖ»Åç’Õ—Ω¥ÄÙÅU$π	’——Ω∏†âIïçΩ…êÅç’Õ—Ω¥ÅÕ°Ω…—ç’”äòà∞Ä†§ÄÙ¯ÅÏÅπï‹Å!Ω—≠ïÂ]•πëΩ‹°Ö¡¿§ÅÏÅ=›πï»ÄÙÅ—°•ÃÅÙπM°Ω›•Ö±Ωú†§ÏÅM°Ω›AÖùî°¡Öùî§ÏÅÙ∞ÅôÖ±Õî∞ÅëÖ…¨§Ï4(ÄÄÄÄÄÄÄÅç’Õ—Ω¥π!Ω…•ÈΩπ—Ö±±•ùπµïπ–ÄÙÅ!Ω…•ÈΩπ—Ö±±•ùπµïπ–π1ïô–ÏÅç’Õ—Ω¥π5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä¿∞Ä¿∞Äƒ–§ÏÅΩ¡—•ΩπÃπ°•±ë…ï∏πëê°ç’Õ—Ω¥§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅÕ—Ö—’ÃÄÙÅU$πQï·–°Ö¡¿π!Ω—≠ïÂM—Ö—’Ã∞Äƒƒ∞ÅU$π5’—ïê°ëÖ…¨§§ÏÅÕ—Ö—’Ãπ5Ö…ù•∏ÄÙÅπï‹ÅQ°•ç≠πïÕÃ†¿∞Ä¿∞Ä¿∞Äƒÿ§ÏÅΩ¡—•ΩπÃπ°•±ë…ï∏πëê°Õ—Ö—’Ã§Ï4(ÄÄÄÄÄÄÄÅ°Ω•çî°Ω¡—•ΩπÃ∞ÄâÖ¡—’…îÅëï±Ö‰à∞Åπï›mtÅÏÄâ=ôòà∞ÄàÃÅÕïçΩπëÃà∞Äà‘ÅÕïçΩπëÃà∞Äàƒ¿ÅÕïçΩπëÃàÅÙ∞ÅÖ¡¿πMï——•πùÃπï±Ö‰ÄÙÙÄ¿Ä¸Äâ=ôòàÄËÅÖ¡¿πMï——•πùÃπï±Ö‰Ä¨ÄàÅÕïçΩπëÃà∞Äâ=ôòà∞ÅÿÄÙ¯ÅÖ¡¿πMï——•πùÃπï±Ö‰ÄÙÅÿÄÙÙÄâ=ôòàÄ¸Ä¿ÄËÅ•π–πAÖ…Õî°ÿπM¡±•–†úÄú•l¡t§§ÏÅâΩë‰π°•±ë…ï∏πëê°U$πÖ…ê°Ω¡—•ΩπÃ∞ÅëÖ…¨§§Ï4(ÄÄÄÄÄÄÄÅâΩë‰π°•±ë…ï∏πëê°U$πQï·–†â%∏Å—°îÅïë•—Ω»ËÅΩ¡‰Å•µÖùî∞Å·—…Öç–Å—ï·–∞Å°•ù°±•ù°—ï»∞Åâ±’»Åâ…’Õ†∞ÅµΩÕÖ•å∞ÅÖπêÅÕ•‡Åï·¡Ω…–ÅôΩ…µÖ—Ã∏à∞Äƒ»∞ÅU$π5’—ïê°ëÖ…¨§§§Ï4(ÄÄÄÅÙ4(ÄÄÄÅ¡…•ŸÖ—îÅŸΩ•êÅA…ïŸ•ï›AÖùî†§4(ÄÄÄÅÏ4(ÄÄÄÄÄÄÄÅŸÖ»Å¡Öπï∞ÄÙÅπï‹ÅM—Öç≠AÖπï∞†§ÏÅ!ïÖë•πú°¡Öπï∞∞ÄâIïÖë‰Å—ºÅë…Öúà∞Äâ…ÖúÅ•π—ºÅÖπΩ—°ï»ÅÖ¡¿ÅΩ»ÅôΩ±ëï»∏Å±•ç¨Å—ºÅïë•–∏ÅQ°îÅÖç—•Ω∏ÅÕ—…•¿ÅΩôôï…ÃÅë•–∞ÅQï·–∞Å·¡Ω…–∞ÅA•∏∞ÅÖπêÅ•Õµ•ÕÃ∏à§Ï4(ÄÄÄÄÄÄÄÅM±•ëï»°¡Öπï∞∞ÄâQ•µîÅΩ∏ÅÕç…ïï∏à∞Ä»∞ÄÃ¿∞ÅÖ¡¿πMï——•πùÃπ’…Ö—•Ω∏∞ÅëïôÖ’±—Ãπ’…Ö—•Ω∏∞ÄâÃà∞ÅÿÄÙ¯ÅÖ¡¿πMï——•πùÃπ’…Ö—•Ω∏ÄÙÅÿ§Ï4(ÄÄÄÄÄÄÄÅM±•ëï»°¡Öπï∞∞ÄâA…ïŸ•ï‹Å›•ë—†à∞Ä»»¿∞Ä––¿∞ÅÖ¡¿πMï——•πùÃπA…ïŸ•ï›]•ë—†∞ÅëïôÖ’±—ÃπA…ïŸ•ï›]•ë—†∞Äâ¡‡à∞ÅÿÄÙ¯ÅÖ¡¿πMï——•πùÃπA…ïŸ•ï›]•ë—†ÄÙÅÿ§Ï4(ÄÄÄÄÄÄÄÅâΩë‰π°•±ë…ï∏πëê°U$πÖ…ê°¡Öπï∞∞ÅëÖ…¨§§ÏÅâΩë‰π°•±ë…ï∏πëê°U$π	’——Ω∏†âQïÕ–Åô±ΩÖ—•πúÅ¡…ïŸ•ï‹à∞ÅÖ¡¿πïµΩA…ïŸ•ï‹∞Å—…’î∞ÅëÖ…¨§§Ï4(ÄÄÄÄÄÄÄÅŸÖ»ÅÖπ•µÖ—•Ω∏ÄÙÅπï‹ÅM—Öç≠AÖπï∞ÅÏÅ5Ö…ù•∏ÄÙÅπï‹ÅQ°•µÎNm¢Gß≤⁄Óù∆≠y–=> app.Settings.AutoSave = v);
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Microsoft.Win32;
+using Forms = System.Windows.Forms;
+
+namespace BetterSS;
+
+internal sealed class PreferencesWindow : Window
+{
+    private readonly App app;
+    private readonly Settings defaults = new();
+    private readonly Dictionary<string, Button> navigation = new();
+    private StackPanel body = new();
+    private bool dark;
+    private string page = "Capture";
+    internal PreferencesWindow(App app)
+    {
+        this.app = app; UI.SetupWindow(this, "Preferences", 980, 760, UI.Dark(app.Settings)); MinWidth = 820; MinHeight = 600; Build();
+    }
+    private void Build()
+    {
+        dark = UI.Dark(app.Settings); Background = UI.Background(dark); Foreground = UI.Ink(dark);
+        if (IsLoaded) Native.SquareCorners(this, dark);
+        var root = new Grid { Background = UI.Background(dark) }; root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(210) }); root.ColumnDefinitions.Add(new ColumnDefinition());
+        var side = new DockPanel { Margin = new Thickness(24, 32, 24, 24) };
+        var brand = new StackPanel { Margin = new Thickness(0, 0, 0, 42) }; brand.Children.Add(UI.Text("BETTER SS", 17, UI.Ink(dark), FontWeights.SemiBold));
+        var tagline = UI.Text("Screenshot utility", 11, UI.Muted(dark)); tagline.Margin = new Thickness(0, 7, 0, 0); brand.Children.Add(tagline); DockPanel.SetDock(brand, Dock.Top); side.Children.Add(brand);
+        var footer = new StackPanel(); footer.Children.Add(UI.Text("READY IN YOUR TRAY", 9, UI.Ink(dark), FontWeights.SemiBold));
+        var note = UI.Text("Close preferences to keep capturing. Quit from the tray.", 11, UI.Muted(dark)); note.Margin = new Thickness(0, 10, 0, 24); footer.Children.Add(note); footer.Children.Add(UI.Text("VERSION 0.4.0", 9, UI.Muted(dark))); var credit = UI.Text("BY HARSH RAWAT", 9, UI.Muted(dark)); credit.Margin = new Thickness(0, 4, 0, 0); footer.Children.Add(credit); DockPanel.SetDock(footer, Dock.Bottom); side.Children.Add(footer);
+        var nav = new StackPanel(); navigation.Clear();
+        foreach (var name in new[] { "Capture", "Floating preview", "Appearance", "Sound", "Storage", "Startup & guide" }) { string selected = name; var button = UI.Button(name, () => ShowPage(selected), false, dark); button.HorizontalContentAlignment = HorizontalAlignment.Left; button.Margin = new Thickness(0, 0, 0, 8); navigation.Add(name, button); nav.Children.Add(button); }
+        side.Children.Add(nav); root.Children.Add(new Border { Background = UI.Surface(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(0, 0, 1, 0), Child = side });
+        body = new StackPanel { Margin = new Thickness(36, 32, 36, 32) }; var scroll = new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetColumn(scroll, 1); root.Children.Add(scroll); Content = root; ShowPage(page);
+    }
+    internal void ShowPage(string name)
+    {
+        page = name; body.Children.Clear(); foreach (var entry in navigation) UI.Select(entry.Value, entry.Key == name, dark);
+        body.Children.Add(UI.Text(page, 28, UI.Ink(dark), FontWeights.SemiBold));
+        var descriptions = new Dictionary<string, string> { ["Capture"] = "Capture a moment. Keep moving.", ["Floating preview"] = "A temporary home for your screenshot.", ["Appearance"] = "Monochrome. Precise edges. Nothing extra.", ["Sound"] = "Your capture sound, at the right level.", ["Storage"] = "Local files. Flexible exports.", ["Startup & guide"] = "Ready when you need it. Always your choice." };
+        var intro = UI.Text(descriptions[name], 13, UI.Muted(dark)); intro.Margin = new Thickness(0, 9, 0, 30); body.Children.Add(intro);
+        switch (name) { case "Capture": CapturePage(); break; case "Floating preview": PreviewPage(); break; case "Appearance": AppearancePage(); break; case "Sound": SoundPage(); break; case "Startup & guide": StartupPage(); break; default: StoragePage(); break; }
+    }
+    private void CapturePage()
+    {
+        var panel = new StackPanel(); Heading(panel, "Choose what to capture", "Every capture is automatically copied. A quiet confirmation appears only after the clipboard is ready.");
+        var modes = new WrapPanel();
+        foreach (var mode in Enum.GetValues<CaptureMode>()) { var choice = mode; var button = UI.Button(CaptureSession.Label(mode), () => app.BeginCapture(choice), mode == CaptureMode.Region, dark); button.Margin = new Thickness(0, 0, 8, 8); modes.Children.Add(button); }
+        panel.Children.Add(modes); var detail = UI.Text("Window opens a searchable list, including minimized windows.", 12, UI.Muted(dark)); detail.Margin = new Thickness(0, 14, 0, 0); panel.Children.Add(detail); body.Children.Add(UI.Card(panel, dark));
+        var video = new StackPanel(); Heading(video, "Video recording", "Record a display or application, then preview, cut and export your video. The video cutter has one track with split, trim, delete and mute controls."); var videoActions = new WrapPanel(); videoActions.Children.Add(UI.Button("Record video‚Ä¶", app.ShowVideoRecording, true, dark)); videoActions.Children.Add(UI.Button("Cut video‚Ä¶", app.ShowVideoEditor, false, dark)); video.Children.Add(videoActions); body.Children.Add(UI.Card(video, dark));
+        var options = new StackPanel(); Heading(options, "Launch controls", "Use a hotkey or double-click the tray icon. Capture controls work entirely with the mouse.");
+        Choice(options, "Launch shortcut", new[] { "Ctrl + Shift + S", "Alt + Ctrl + S", "Ctrl + Shift + F8", "Disabled" }, app.Settings.Hotkey, defaults.Hotkey, v => { if (!app.TrySetHotkey(v, out var error)) app.HotkeyStatus = error; });
+        var custom = UI.Button("Record custom shortcut‚Ä¶", () => { new HotkeyWindow(app) { Owner = this }.ShowDialog(); ShowPage(page); }, false, dark);
+        custom.HorizontalAlignment = HorizontalAlignment.Left; custom.Margin = new Thickness(0, 0, 0, 14); options.Children.Add(custom);
+        var status = UI.Text(app.HotkeyStatus, 11, UI.Muted(dark)); status.Margin = new Thickness(0, 0, 0, 16); options.Children.Add(status);
+        Choice(options, "Capture delay", new[] { "Off", "3 seconds", "5 seconds", "10 seconds" }, app.Settings.Delay == 0 ? "Off" : app.Settings.Delay + " seconds", "Off", v => app.Settings.Delay = v == "Off" ? 0 : int.Parse(v.Split(' ')[0])); body.Children.Add(UI.Card(options, dark));
+        body.Children.Add(UI.Text("In the editor: Copy image, Extract text, highlighter, blur brush, mosaic, and six export formats.", 12, UI.Muted(dark)));
+    }
+    private void PreviewPage()
+    {
+        var panel = new StackPanel(); Heading(panel, "Ready to drag", "Drag into another app or folder. Click to edit. The action strip offers Edit, Text, Export, Pin, and Dismiss.");
+        Slider(panel, "Time on screen", 2, 30, app.Settings.Duration, defaults.Duration, "s", v => app.Settings.Duration = v);
+        Slider(panel, "Preview width", 220, 440, app.Settings.PreviewWidth, defaults.PreviewWidth, "px", v => app.Settings.PreviewWidth = v);
+        body.Children.Add(UI.Card(panel, dark)); body.Children.Add(UI.Button("Test floating preview", app.DemoPreview, true, dark));
+        var animation = new StackPanel { Margin = new Thickness(0, 20, 0, 0) };
+        Heading(animation, "Capture animation", "The captured display or selected area flashes, then shrinks into its preview. Starts immediately after capture.");
+        Toggle(animation, "Animate screenshots", app.Settings.CaptureAnimation, defaults.CaptureAnimation, v => app.Settings.CaptureAnimation = v);
+        Slider(animation, "Animation duration", 160, 700, app.Settings.AnimationDuration, defaults.AnimationDuration, "ms", v => app.Settings.AnimationDuration = v);
+        Slider(animation, "Flash strength", 0, 100, app.Settings.FlashOpacity, defaults.FlashOpacity, "%", v => app.Settings.FlashOpacity = v);
+        body.Children.Add(UI.Card(animation, dark));
+        var note = UI.Text("Hovering pauses dismissal. Up to three previews stack on their capture display. The image is already copied, so the preview has no copy button.", 12, UI.Muted(dark)); note.Margin = new Thickness(0, 22, 0, 0); body.Children.Add(note);
+    }
+    private void AppearancePage()
+    {
+        var panel = new StackPanel(); Heading(panel, "Interface", "Black, white, and neutral gray throughout. All panels, controls, and floating previews use square edges.");
+        Choice(panel, "Theme", new[] { "System", "Light", "Dark" }, app.Settings.Theme, defaults.Theme, v => app.Settings.Theme = v);
+        Slider(panel, "Preview shadow", 0, 48, app.Settings.Shadow, defaults.Shadow, "px", v => app.Settings.Shadow = v);
+        Slider(panel, "Preview border", 0, 3, app.Settings.Stroke, defaults.Stroke, "px", v => app.Settings.Stroke = v);
+        body.Children.Add(UI.Card(panel, dark)); body.Children.Add(UI.Button("Preview appearance", app.DemoPreview, true, dark));
+    }
+    private void SoundPage()
+    {
+        var panel = new StackPanel(); Heading(panel, "Capture sound", "A Windows system sound plays by default. Choose an audio file to customize it.");
+        Toggle(panel, "Play sound after capture", app.Settings.SoundEnabled, defaults.SoundEnabled, v => app.Settings.SoundEnabled = v);
+        Slider(panel, "Volume", 0, 100, app.Settings.Volume * 100, defaults.Volume * 100, "%", v => app.Settings.Volume = v / 100);
+        SoundChoice(panel);
+        var actions = new WrapPanel(); actions.Children.Add(UI.Button("Play sound", app.PlaySound, true, dark)); actions.Children.Add(UI.Button("Choose file‚Ä¶", () => { var dialog = new OpenFileDialog { Filter = "Audio files|*.mp3;*.wav;*.wma;*.m4a" }; if (dialog.ShowDialog(this) == true) { app.Settings.SoundPath = dialog.FileName; app.Persist(); ShowPage(page); } }, false, dark)); panel.Children.Add(actions); body.Children.Add(UI.Card(panel, dark));
+    }
+    private void SoundChoice(StackPanel panel)
+    {
+        var row = new Grid { Margin = new Thickness(0, 12, 0, 16) };
+        row.ColumnDefinitions.Add(new ColumnDefinition());
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(190) });
+        row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        row.Children.Add(UI.Text("Sound file", 13, UI.Ink(dark)));
+        var current = SoundCatalog.SelectedFileName(app.Settings.SoundPath);
+        var menu = new ContextMenu { Background = UI.Surface(dark), Foreground = UI.Ink(dark), BorderBrush = UI.Line(dark), FontSize = 13 };
+        var button = UI.Button(current + "    ‚ñæ", () => menu.IsOpen = true, false, dark); button.Margin = new Thickness(0); menu.PlacementTarget = button; menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        foreach (var fileName in new[] { SoundCatalog.SystemSoundName }.Concat(SoundCatalog.AvailableBuiltInFileNames))
+        {
+            var selected = fileName;
+            var item = new MenuItem { Header = selected, IsCheckable = true, IsChecked = selected.Equals(current, StringComparison.OrdinalIgnoreCase), Padding = new Thickness(10, 8, 10, 8) };
+            item.Click += (_, _) => { menu.IsOpen = false; app.Settings.SoundPath = SoundCatalog.SettingValue(selected); app.Persist(); ShowPage(page); };
+            menu.Items.Add(item);
+        }
+        Grid.SetColumn(button, 1); row.Children.Add(button);
+        var reset = ResetButton("Sound file", () => app.Settings.SoundPath = defaults.SoundPath); Grid.SetColumn(reset, 2); row.Children.Add(reset);
+        panel.Children.Add(row);
+        var selectedName = UI.Text(current, 12, UI.Muted(dark)); selectedName.Margin = new Thickness(0, -8, 0, 14); panel.Children.Add(selectedName);
+    }
+    private void StoragePage()
+    {
+        var panel = new StackPanel(); Heading(panel, "Original captures", "Originals are stored as lossless PNGs. Use Export to choose another format or size.");
+        Toggle(panel, "Automatically save screenshots", app.Settings.AutoSave, defaults.AutoSave, v => app.Settings.AutoSave = v);
         var location = UI.Text(app.Settings.SaveFolder, 12, UI.Muted(dark)); location.Margin = new Thickness(0, 12, 0, 20); panel.Children.Add(location);
         var actions = new WrapPanel(); actions.Children.Add(UI.Button("Choose folder‚Ä¶", () => { using var dialog = new Forms.FolderBrowserDialog { SelectedPath = app.Settings.SaveFolder }; if (dialog.ShowDialog() == Forms.DialogResult.OK) { app.Settings.SaveFolder = dialog.SelectedPath; app.Persist(); ShowPage(page); } }, false, dark)); actions.Children.Add(UI.Button("Open folder", () => Native.OpenFolder(app.Settings.SaveFolder), false, dark)); actions.Children.Add(ResetButton("Save folder", () => app.Settings.SaveFolder = defaults.SaveFolder)); panel.Children.Add(actions); body.Children.Add(UI.Card(panel, dark));
         var export = new StackPanel(); Heading(export, "Export defaults", "PNG, JPEG, PDF, TIFF, BMP, and GIF. Export also offers resizing and RGB/CMYK output."); Choice(export, "Preferred format", ExportService.Formats, app.Settings.ExportFormat, defaults.ExportFormat, v => app.Settings.ExportFormat = v); Choice(export, "Color space", new[] { "RGB", "CMYK" }, app.Settings.ExportColorSpace, defaults.ExportColorSpace, v => app.Settings.ExportColorSpace = v);

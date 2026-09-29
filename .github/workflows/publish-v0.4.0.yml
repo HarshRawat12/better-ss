@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/publish-v0.4.0.yml
+      - BetterSS/**
 
 permissions:
   contents: write
