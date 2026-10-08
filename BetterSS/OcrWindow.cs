@@ -10,8 +10,8 @@ internal sealed class OcrWindow : Window
     internal OcrWindow(App app, BitmapSource image)
     {
         bool dark = UI.Dark(app.Settings); UI.SetupWindow(this, "Extract text", 650, 600, dark); MinWidth = 420; MinHeight = 360;
-        var root = new DockPanel { Margin = new Thickness(28) };
-        var title = UI.Text("Extract text", 25, UI.Ink(dark), FontWeights.SemiBold); title.Margin = new Thickness(0, 0, 0, 12); DockPanel.SetDock(title, Dock.Top); root.Children.Add(title);
+        var root = new DockPanel { Margin = new Thickness(24) };
+        var title = UI.PageHeader("Extract text", "Recognize words on your PC. Review, edit and copy below.", dark, "\uE8D2"); DockPanel.SetDock(title, Dock.Top); root.Children.Add(title);
         var status = UI.Text("Reading text on this PC…", 12, UI.Muted(dark)); status.Margin = new Thickness(0, 0, 0, 18); DockPanel.SetDock(status, Dock.Top); root.Children.Add(status);
         var text = UI.TextBox(dark); text.AcceptsReturn = true; text.TextWrapping = TextWrapping.Wrap; text.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
         var actions = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 18, 0, 0), HorizontalAlignment = HorizontalAlignment.Right };

@@ -34,14 +34,15 @@ internal sealed class VideoRecordingWindow : Window
     internal VideoRecordingWindow(App app)
     {
         this.app = app; dark = UI.Dark(app.Settings); UI.SetupWindow(this, "Record video", 640, 700, dark); ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.Height;
-        var body = new StackPanel { Margin = new Thickness(30) }; body.Children.Add(UI.Text("Record video", 25, UI.Ink(dark), FontWeights.SemiBold));
-        var intro = UI.Text("Choose what to record, then set output quality. Starting hides this window and leaves only a small recording control on the desktop.", 12, UI.Muted(dark)); intro.Margin = new Thickness(0, 8, 0, 24); body.Children.Add(intro);
-        source = new ChoiceField<string>(new[] { "Entire display", "Application window…" }, dark); source.Changed += SelectSource; Configure("RECORD", source.Button, body);
-        sourceDetail = UI.Text("Choose a display below.", 11, UI.Muted(dark)); sourceDetail.Margin = new Thickness(0, -10, 0, 16); body.Children.Add(sourceDetail);
+        var body = new StackPanel { Margin = new Thickness(28) }; body.Children.Add(UI.PageHeader("Record video", "Choose a source and output quality. Compact controls stay on your desktop while recording.", dark, "\uE714"));
+        var capture = new StackPanel(); body.Children.Add(UI.Card(capture, dark, new Thickness(18)));
+        source = new ChoiceField<string>(new[] { "Entire display", "Application window…" }, dark); source.Changed += SelectSource; Configure("Record", source.Button, capture);
+        sourceDetail = UI.Text("Choose a display below.", 11, UI.Muted(dark)); sourceDetail.Margin = new Thickness(0, 0, 0, 10); capture.Children.Add(sourceDetail);
         var displays = new List<(string, DisplayChoice)>(); foreach (var screen in Forms.Screen.AllScreens) { var choice = new DisplayChoice(screen); displays.Add((choice.ToString(), choice)); }
-        display = new ChoiceField<DisplayChoice>(displays, dark); Configure("DISPLAY", display.Button, body);
+        display = new ChoiceField<DisplayChoice>(displays, dark); Configure("Display", display.Button, capture);
         resolution = new ChoiceField<string>(new[] { "Native", "1920 × 1080", "1280 × 720" }, dark); fps = new ChoiceField<string>(new[] { "24 FPS", "30 FPS", "60 FPS" }, dark, 1); bitrate = new ChoiceField<string>(new[] { "Optimized", "4 Mbps", "8 Mbps", "16 Mbps", "32 Mbps" }, dark); format = new ChoiceField<string>(new[] { "MP4 · H.264", "MP4 · H.265", "MOV · H.264", "MOV · H.265" }, dark);
-        Configure("RESOLUTION", resolution.Button, body); Configure("FRAME RATE", fps.Button, body); Configure("BITRATE", bitrate.Button, body); Configure("EXPORT FORMAT", format.Button, body);
+        var quality = new StackPanel(); body.Children.Add(UI.Card(quality, dark, new Thickness(18)));
+        Configure("Resolution", resolution.Button, quality); Configure("Frame rate", fps.Button, quality); Configure("Bitrate", bitrate.Button, quality); Configure("Format", format.Button, quality);
         status = UI.Text(ScreenRecorder.IsAvailable ? "Ready to record. The recording engine is included with Better SS." : "The bundled recording engine is missing. Rebuild Better SS to restore it.", 12, UI.Muted(dark)); status.Margin = new Thickness(0, 10, 0, 20); body.Children.Add(status);
         var actions = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right }; start = UI.Button("Start recording…", Start, true, dark); start.IsEnabled = ScreenRecorder.IsAvailable; actions.Children.Add(UI.Button("Cancel", Close, false, dark)); actions.Children.Add(start); body.Children.Add(actions); Content = body;
         captureHealth.Tick += async (_, _) =>
@@ -52,7 +53,7 @@ internal sealed class VideoRecordingWindow : Window
         Closed += async (_, _) => { captureHealth.Stop(); if (recorder != null) { try { await recorder.StopAsync(); } catch (Exception ex) { app.Notify("Couldn't finish recording", ex.Message); } } };
     }
 
-    private void Configure(string label, Button field, Panel parent) { parent.Children.Add(UI.Text(label, 10, UI.Muted(dark), FontWeights.SemiBold)); field.Margin = new Thickness(0, 7, 0, 16); field.Height = 38; field.HorizontalContentAlignment = HorizontalAlignment.Left; parent.Children.Add(field); }
+    private void Configure(string label, Button field, Panel parent) { var row = new Grid { Margin = new Thickness(0, 5, 0, 5) }; row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) }); row.ColumnDefinitions.Add(new ColumnDefinition()); row.Children.Add(UI.Text(label, 12, UI.Ink(dark))); field.Margin = new Thickness(0); field.MinHeight = 36; field.HorizontalContentAlignment = HorizontalAlignment.Left; Grid.SetColumn(field, 1); row.Children.Add(field); parent.Children.Add(row); }
     private void SelectSource(string value)
     {
         if (value == "Entire display") { selectedWindow = null; display.Button.IsEnabled = true; sourceDetail.Text = "Choose a display below."; return; }
@@ -100,15 +101,14 @@ internal sealed class RecordingOverlay : Window
     internal RecordingOverlay(bool dark)
     {
         UI.SetupWindow(this, "Recording controls", 1, 1, dark); WindowStyle = WindowStyle.None; AllowsTransparency = true; Background = Brushes.Transparent; ShowInTaskbar = false; Topmost = true; ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.WidthAndHeight;
-        var root = new Border { Background = UI.Surface(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), Padding = new Thickness(10, 8, 8, 8), Cursor = Cursors.SizeAll };
         var row = new StackPanel { Orientation = Orientation.Horizontal }; var dot = UI.Text("●", 13, UI.Brush("#EF4444")); dot.Margin = new Thickness(0, 0, 8, 0); row.Children.Add(dot); message = UI.Text("REC", 10, UI.Ink(dark), FontWeights.SemiBold); message.VerticalAlignment = VerticalAlignment.Center; message.Margin = new Thickness(0, 0, 10, 0); row.Children.Add(message);
-        pause = UI.Button("Pause", Pause, false, dark); pause.Padding = new Thickness(10, 6, 10, 6); stop = UI.Button("Stop", Stop, true, dark); stop.Padding = new Thickness(10, 6, 10, 6); row.Children.Add(pause); row.Children.Add(stop); root.Child = row; Content = root;
-        root.MouseLeftButtonDown += (_, e) => { if (!InButton(e.OriginalSource as DependencyObject)) DragMove(); }; MouseEnter += (_, _) => { idle.Stop(); Opacity = 1; }; MouseLeave += (_, _) => { idle.Stop(); idle.Start(); }; idle.Tick += (_, _) => { idle.Stop(); Opacity = .5; };
-        SourceInitialized += (_, _) => SetWindowDisplayAffinity(new WindowInteropHelper(this).Handle, WdaExcludeFromCapture); Loaded += (_, _) => { var area = Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle).WorkingArea; Left = area.Right - ActualWidth - 18; Top = area.Bottom - ActualHeight - 18; Opacity = .5; };
+        pause = UI.Button("Pause", Pause, false, dark); pause.Padding = new Thickness(10, 6, 10, 6); stop = UI.Button("Stop", Stop, true, dark); stop.Padding = new Thickness(10, 6, 10, 6); row.Children.Add(pause); row.Children.Add(stop); var root = UI.Floating(row, dark, new Thickness(10, 8, 8, 8), 10); root.Cursor = Cursors.SizeAll; root.Margin = new Thickness(8); Content = root;
+        root.MouseLeftButtonDown += (_, e) => { if (!InButton(e.OriginalSource as DependencyObject)) DragMove(); }; MouseEnter += (_, _) => { idle.Stop(); Motion.Snap(this, OpacityProperty, 1); }; MouseLeave += (_, _) => { idle.Stop(); idle.Start(); }; idle.Tick += (_, _) => { idle.Stop(); Motion.To(this, OpacityProperty, .92, Motion.Fast); };
+        SourceInitialized += (_, _) => SetWindowDisplayAffinity(new WindowInteropHelper(this).Handle, WdaExcludeFromCapture); Loaded += (_, _) => { var area = Forms.Screen.FromHandle(new WindowInteropHelper(this).Handle).WorkingArea; Left = area.Right - ActualWidth - 18; Top = area.Bottom - ActualHeight - 18; Opacity = .92; };
     }
     private static bool InButton(DependencyObject? node) { while (node != null) { if (node is Button) return true; node = VisualTreeHelper.GetParent(node); } return false; }
     private async void Pause() { if (PauseRequested != null) await PauseRequested.Invoke(); } private async void Stop() { if (StopRequested != null) await StopRequested.Invoke(); }
-    internal void SetPaused(bool pausedState) { pause.Content = pausedState ? "Resume" : "Pause"; message.Text = pausedState ? "PAUSED" : "REC"; } internal void SetBusy(bool busy) { pause.IsEnabled = stop.IsEnabled = !busy; Opacity = 1; } internal void ShowError(string error) { message.Text = "ERROR"; ToolTip = error; Opacity = 1; }
+    internal void SetPaused(bool pausedState) { pause.Content = pausedState ? "Resume" : "Pause"; message.Text = pausedState ? "PAUSED" : "REC"; } internal void SetBusy(bool busy) { pause.IsEnabled = stop.IsEnabled = !busy; Motion.Snap(this, OpacityProperty, 1); } internal void ShowError(string error) { message.Text = "ERROR"; ToolTip = error; Motion.Snap(this, OpacityProperty, 1); }
 }
 
 internal sealed class ChoiceField<T>
@@ -120,7 +120,7 @@ internal sealed class ChoiceField<T>
     private static IEnumerable<(string, T)> StringChoices(IEnumerable<string> values) { foreach (string value in values) yield return (value, (T)(object)value); }
     internal void Select(T value, bool notify = true) { int index = choices.FindIndex(choice => EqualityComparer<T>.Default.Equals(choice.Value, value)); if (index < 0) return; selected = index; Refresh(); if (notify) Changed?.Invoke(Value); }
     private void Refresh() => Button.Content = choices[selected].Label + "    ▾";
-    private void Show() { var menu = new ContextMenu { Background = UI.Surface(dark), Foreground = UI.Ink(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), PlacementTarget = Button, Placement = PlacementMode.Bottom, MinWidth = Math.Max(180, Button.ActualWidth), HasDropShadow = true }; Menu = menu; for (int i = 0; i < choices.Count; i++) { int index = i; var item = new MenuItem { Header = choices[i].Label, IsCheckable = true, IsChecked = i == selected, Foreground = UI.Ink(dark), Background = UI.Surface(dark), Padding = new Thickness(12, 9, 12, 9) }; item.Click += (_, _) => { selected = index; Refresh(); menu.IsOpen = false; Changed?.Invoke(Value); }; menu.Items.Add(item); } menu.IsOpen = true; }
+    private void Show() { var menu = UI.Menu(dark); menu.PlacementTarget = Button; menu.Placement = PlacementMode.Bottom; menu.MinWidth = Math.Max(180, Button.ActualWidth); Menu = menu; for (int i = 0; i < choices.Count; i++) { int index = i; var item = new MenuItem { Header = choices[i].Label, IsCheckable = true, IsChecked = i == selected, Foreground = UI.Ink(dark), Background = UI.Surface(dark), Padding = new Thickness(12, 9, 12, 9) }; item.Click += (_, _) => { selected = index; Refresh(); menu.IsOpen = false; Changed?.Invoke(Value); }; menu.Items.Add(item); } menu.IsOpen = true; }
 }
 
 internal sealed class ScreenRecorder

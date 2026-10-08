@@ -21,10 +21,9 @@ internal sealed class ColorPickerWindow : Window
     internal ColorPickerWindow(Color current, bool dark)
     {
         SelectedColor = current; UI.SetupWindow(this, "Annotation color", 480, 620, dark); ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.Height;
-        var body = new StackPanel { Margin = new Thickness(28) };
-        body.Children.Add(UI.Text("Annotation color", 23, UI.Ink(dark), FontWeights.SemiBold));
-        var note = UI.Text("Choose a swatch or adjust the RGB sliders.", 12, UI.Muted(dark)); note.Margin = new Thickness(0, 8, 0, 20); body.Children.Add(note);
-        var sample = new Border { Height = 52, Background = new SolidColorBrush(current), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), Margin = new Thickness(0, 0, 0, 18) }; body.Children.Add(sample);
+        var body = new StackPanel { Margin = new Thickness(24) };
+        body.Children.Add(UI.PageHeader("Annotation color", "Choose a swatch or fine-tune a color with RGB and hex.", dark));
+        var sample = new Border { CornerRadius = new CornerRadius(8), Height = 52, Background = new SolidColorBrush(current), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), Margin = new Thickness(0, 0, 0, 18) }; body.Children.Add(sample);
         var hexInput = UI.TextBox(dark); hexInput.MaxLength = 7; hexInput.Margin = new Thickness(0, 10, 0, 6);
         var validation = UI.Text("", 11, UI.Muted(dark)); validation.Margin = new Thickness(0, 0, 0, 12);
         var sliders = new List<Slider>(); var readouts = new List<TextBlock>();
@@ -35,14 +34,14 @@ internal sealed class ColorPickerWindow : Window
             int[] channels = { value.R, value.G, value.B };
             for (int i = 0; i < sliders.Count; i++) { sliders[i].Value = channels[i]; readouts[i].Text = new[] { "Red", "Green", "Blue" }[i] + " · " + channels[i]; }
             if (updateHex) hexInput.Text = $"#{value.R:X2}{value.G:X2}{value.B:X2}";
-            foreach (var entry in swatches) entry.Value.BorderThickness = new Thickness(entry.Key == value ? 3 : 1);
+            foreach (var entry in swatches) { UI.Select(entry.Value, entry.Key == value, dark); entry.Value.BorderThickness = new Thickness(entry.Key == value ? 2 : 1); }
             validation.Text = ""; updating = false;
         }
         foreach (var value in new[] { "#000000", "#FFFFFF", "#808080", "#F04452", "#F28C28", "#FFD43B", "#36A866", "#21B8AD", "#3478F6", "#7957D5", "#D94B9B", "#885C43" })
         {
             TryParseHex(value, out var color); var selected = color; var button = UI.Button("", () => Update(selected), false, dark);
-            button.Width = 58; button.Height = 36; button.Padding = new Thickness(4); button.Margin = new Thickness(0, 0, 8, 8); button.ToolTip = value;
-            button.Content = new Rectangle { Fill = new SolidColorBrush(selected), Width = 44, Height = 22 }; swatches.Add(selected, button); presets.Children.Add(button);
+            button.Width = 32; button.Height = 32; button.Padding = new Thickness(4); button.Margin = new Thickness(0, 0, 8, 8); button.ToolTip = value;
+            UI.Swatch(button, selected); System.Windows.Automation.AutomationProperties.SetName(button, "Color " + value); swatches.Add(selected, button); presets.Children.Add(button);
         }
         body.Children.Add(presets);
         foreach (var name in new[] { "Red", "Green", "Blue" })

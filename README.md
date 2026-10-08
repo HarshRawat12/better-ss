@@ -32,6 +32,11 @@ accounts, analytics, cloud upload, or network-backed processing.
 - Record a display or application window to MP4/MOV using H.264 or H.265.
 - Trim, split, ripple-delete, and re-export recordings in Better SS Split.
 - Customize hotkeys, capture delay, preview behavior, appearance, storage, and startup.
+- Optionally use Windows + Shift + S while Better SS runs; switching it off restores your saved shortcut and Windows Snipping Tool's shortcut.
+- Learn with a walkthrough that records your shortcut and guides your first real capture.
+
+The capture-mode toolbar hides during area selection and returns when an empty
+selection is released. Cancel capture with Escape or a right-click.
 
 ## Requirements
 
@@ -63,6 +68,30 @@ verified against its published SHA-256 checksum; they are not committed to Git.
 The supplied capture sounds are packaged with the app as audio assets separate
 from the MIT-licensed source code. Choose a preset or another audio file in
 **Preferences → Sound**.
+
+## Live development
+
+```powershell
+./Run-BetterSS-Dev.ps1 -Background
+# Stop the watcher and its development app
+./Run-BetterSS-Dev.ps1 -Stop
+```
+
+Saving C# source rebuilds and restarts the app. No installer is needed. The live
+app uses `dev-settings.json` in the Better SS local-data folder, so its
+preferences stay separate from the installed app. Watcher logs are in
+`.validation/live`. Use `-Walkthrough` to show onboarding again after restarting
+the watcher, or choose Walkthrough from the app's tray menu.
+
+## Windows screenshot shortcut
+
+In Preferences → Capture, enable **Use Windows + Shift + S for Better SS**.
+A dedicated keyboard-hook thread intercepts only that chord while the toggle is
+on and the app is running. It does not change Windows policy or uninstall
+Snipping Tool. The saved custom shortcut is suspended during takeover and
+restored when the option is switched off. Exiting the app removes the hook.
+If another app takes the saved custom shortcut meanwhile, Better SS reports the
+conflict and keeps takeover enabled until you choose an available shortcut.
 
 ## How it works
 

@@ -12,8 +12,8 @@ internal sealed class RecordingSavedWindow : Window
         bool dark = UI.Dark(app.Settings);
         UI.SetupWindow(this, "Recording saved", 520, 290, dark);
         ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.Height;
-        var body = new StackPanel { Margin = new Thickness(26) };
-        body.Children.Add(UI.Text("Recording saved", 24, UI.Ink(dark), FontWeights.SemiBold));
+        var body = new StackPanel { Margin = new Thickness(24) };
+        body.Children.Add(UI.PageHeader("Recording saved", "Your video is ready to use.", dark, "\uE73E"));
         var name = UI.Text(Path.GetFileName(path), 13, UI.Ink(dark), FontWeights.SemiBold);
         name.Margin = new Thickness(0, 16, 0, 6); body.Children.Add(name);
         var location = UI.Text(Path.GetDirectoryName(path) ?? path, 12, UI.Muted(dark));

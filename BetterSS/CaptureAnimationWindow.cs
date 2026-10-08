@@ -20,7 +20,7 @@ internal sealed class CaptureAnimationWindow : Window
     internal static void CancelAll() { foreach (var window in active.ToArray()) window.Close(); }
     internal static Task PlayAsync(BitmapSource image, System.Drawing.Rectangle source, Rect destination, Settings settings)
     {
-        if (!settings.CaptureAnimation) return Task.CompletedTask;
+        if (!settings.CaptureAnimation || BetterSS.Motion.Reduced) return Task.CompletedTask;
         var tasks = new List<Task>();
         foreach (var screen in Forms.Screen.AllScreens)
         {

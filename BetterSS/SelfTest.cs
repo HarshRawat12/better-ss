@@ -37,6 +37,7 @@ internal static class SelfTest
         void Check(bool value, string description) { if (!value) throw new Exception(description); log.AppendLine("PASS " + description); count++; }
         try
         {
+            PresentationTests.Run(app, Check, output);
             var desktop = new System.Drawing.Rectangle(-1920, -200, 4480, 1640);
             Check(Native.CropBounds(new(-1800, -100, 400, 300), desktop) == new Int32Rect(120, 100, 400, 300), "negative monitor coordinates translate to image pixels");
             Check(Native.CropBounds(new(-2100, -300, 400, 300), desktop) == new Int32Rect(0, 0, 220, 200), "selection clips to desktop bounds");

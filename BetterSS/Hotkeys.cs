@@ -46,9 +46,13 @@ internal sealed class HotkeyService : IDisposable
     private int activeId = 1;
     private HotkeyBinding? current;
     private bool suspended;
+    private readonly Action capture;
+    private WindowsCaptureShortcut? windowsShortcut;
+    internal bool WindowsCaptureEnabled => windowsShortcut != null;
     internal string Current => current?.Label ?? "Disabled";
     internal HotkeyService(Action capture)
     {
+        this.capture = capture;
         source = new HwndSource(new HwndSourceParameters("Better SS hotkeys") { ParentWindow = new IntPtr(-3), Width = 0, Height = 0 });
         source.AddHook((IntPtr hwnd, int message, IntPtr wp, IntPtr lp, ref bool handled) =>
         {
@@ -59,6 +63,10 @@ internal sealed class HotkeyService : IDisposable
     internal bool TrySet(string value, out string error)
     {
         if (!HotkeyBinding.TryParse(value, out var next, out error)) return false;
+        if (windowsShortcut != null)
+        {
+            current = next; suspended = false; windowsShortcut.Suspended = false; error = ""; return true;
+        }
         if (!suspended && next == current) return true;
         int nextId = activeId == 1 ? 2 : 1;
         if (next != null && !Native.RegisterHotKey(source.Handle, nextId, next.Modifiers | 0x4000, next.KeyCode))
@@ -67,7 +75,26 @@ internal sealed class HotkeyService : IDisposable
         Native.UnregisterHotKey(source.Handle, activeId);
         activeId = nextId; current = next; suspended = false; error = ""; return true;
     }
-    internal void Suspend() { Native.UnregisterHotKey(source.Handle, activeId); suspended = true; }
+    internal bool TrySetWindowsCapture(bool enabled, out string error)
+    {
+        error = "";
+        if (enabled == WindowsCaptureEnabled) return true;
+        if (enabled)
+        {
+            try { windowsShortcut = new WindowsCaptureShortcut(capture) { Suspended = suspended }; }
+            catch (Exception ex) { error = "Couldn't take over Windows + Shift + S: " + ex.Message; return false; }
+            Native.UnregisterHotKey(source.Handle, activeId);
+        }
+        else
+        {
+            // Restore the saved shortcut first; a conflict leaves takeover enabled.
+            if (!suspended && current != null && !Native.RegisterHotKey(source.Handle, activeId, current.Modifiers | 0x4000, current.KeyCode))
+            { error = "Your saved shortcut is now in use. Record another shortcut, then turn this option off."; return false; }
+            windowsShortcut?.Dispose(); windowsShortcut = null;
+        }
+        return true;
+    }
+    internal void Suspend() { Native.UnregisterHotKey(source.Handle, activeId); suspended = true; if (windowsShortcut != null) windowsShortcut.Suspended = true; }
     internal bool Resume(out string error) => TrySet(Current, out error);
-    public void Dispose() { Native.UnregisterHotKey(source.Handle, activeId); source.Dispose(); }
+    public void Dispose() { windowsShortcut?.Dispose(); windowsShortcut = null; Native.UnregisterHotKey(source.Handle, activeId); source.Dispose(); }
 }

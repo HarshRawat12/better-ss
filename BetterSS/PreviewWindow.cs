@@ -21,12 +21,20 @@ internal sealed class PreviewWindow : Window
     private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromMilliseconds(120) };
     private readonly Border picture;
     private readonly Border actions;
+    private readonly GlassSurface previewMaterial;
+    private readonly TextBlock clipboardStatus;
+    private readonly LiveGlassBackdrop liveBackdrop;
+    internal GlassSurface PreviewMaterial => previewMaterial;
+    internal LiveGlassBackdrop LiveBackdrop => liveBackdrop;
     private readonly Button pinButton;
     private readonly StackPanel interactionSurface;
     private readonly DispatcherTimer hideActions = new() { Interval = TimeSpan.FromMilliseconds(300) };
     private readonly Stopwatch elapsed = Stopwatch.StartNew();
     private double remaining;
     private bool pinned, dragging, closing;
+    private bool tutorialPaused;
+    private bool tutorialActions;
+    internal bool TutorialPaused => tutorialPaused;
     private Point? down;
     private int offset;
     internal Forms.Screen Screen { get; }
@@ -49,12 +57,19 @@ internal sealed class PreviewWindow : Window
         controls.Children.Add(ActionButton("Export", "↥", () => { SetPinned(true); new ExportWindow(app, image, path).Show(); }, dark));
         pinButton = ActionButton("Pin", "pin", () => SetPinned(!pinned), dark); controls.Children.Add(pinButton);
         controls.Children.Add(ActionButton("Dismiss", "×", Dismiss, dark));
-        actions = new Border { Child = controls, Background = Brushes.Transparent, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 10, 0), Opacity = 0, IsHitTestVisible = false };
+        var actionMaterial = UI.Liquid(controls, dark, new Thickness(5), 17);
+        actions = new Border { Child = actionMaterial, Background = Brushes.Transparent, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 12, 0), Opacity = 0, IsHitTestVisible = false };
         row.Children.Add(actions);
         double width = settings.PreviewWidth, height = Math.Clamp(width * image.PixelHeight / image.PixelWidth, 125, 240);
         picture = new Border { Child = new Image { Source = image, Stretch = Stretch.Uniform }, Width = width, Height = height, BorderBrush = UI.Line(dark), BorderThickness = new Thickness(settings.Stroke), Background = UI.Surface(dark), Cursor = Cursors.Hand, ClipToBounds = true };
-        if (settings.Shadow > 0) picture.Effect = new System.Windows.Media.Effects.DropShadowEffect { BlurRadius = settings.Shadow, ShadowDepth = 3, Opacity = .22, RenderingBias = System.Windows.Media.Effects.RenderingBias.Performance };
-        row.Children.Add(picture); Content = row;
+        UI.RoundImage(picture);
+        if (settings.Shadow > 0) picture.Effect = new System.Windows.Media.Effects.DropShadowEffect { BlurRadius = settings.Shadow, ShadowDepth = 2, Opacity = .14, RenderingBias = System.Windows.Media.Effects.RenderingBias.Performance };
+        var previewBody = new StackPanel(); previewBody.Children.Add(picture);
+        var footer = new Grid { Margin = new Thickness(5, 9, 5, 3) }; footer.ColumnDefinitions.Add(new ColumnDefinition()); footer.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        clipboardStatus = UI.Text("Screenshot ready", 11, UI.Ink(dark), FontWeights.SemiBold); clipboardStatus.TextWrapping = TextWrapping.NoWrap; clipboardStatus.TextTrimming = TextTrimming.CharacterEllipsis; clipboardStatus.Margin = new Thickness(0, 0, 8, 0); footer.Children.Add(clipboardStatus);
+        var resolution = UI.Text($"{image.PixelWidth} × {image.PixelHeight}", 10, UI.Ink(dark)); resolution.Opacity = .75; Grid.SetColumn(resolution, 1); footer.Children.Add(resolution);
+        previewBody.Children.Add(footer); previewMaterial = UI.Liquid(previewBody, dark, new Thickness(8), 18); previewMaterial.Width = width + 17.5;
+        row.Children.Add(previewMaterial); Content = row;
         picture.ToolTip = "Drag into an app or folder. Click to edit.";
         picture.MouseLeftButtonDown += (_, e) => { down = e.GetPosition(picture); picture.CaptureMouse(); };
         picture.MouseMove += (_, e) =>
@@ -82,34 +97,36 @@ internal sealed class PreviewWindow : Window
                 ghost?.Close();
                 // A rejected or cancelled drop returns the original preview, ready to retry.
                 if (!closing) row.Opacity = 1;
-                actions.Opacity = 0; actions.IsHitTestVisible = false;
+                Motion.Snap(actions, OpacityProperty, tutorialActions ? 1 : 0); actions.IsHitTestVisible = tutorialActions;
                 dragging = false; remaining = settings.Duration; elapsed.Restart();
             }
         };
         picture.MouseLeftButtonUp += (_, _) => { if (down == null) return; down = null; picture.ReleaseMouseCapture(); new EditorWindow(app, image, path).Show(); Dismiss(); };
         picture.LostMouseCapture += (_, _) => down = null;
-        row.MouseEnter += (_, _) => { hideActions.Stop(); actions.Opacity = 1; actions.IsHitTestVisible = true; };
+        row.MouseEnter += (_, _) => { hideActions.Stop(); Motion.Snap(actions, OpacityProperty, 1); actions.IsHitTestVisible = true; };
         row.MouseLeave += (_, _) => { hideActions.Start(); remaining = settings.Duration; elapsed.Restart(); };
         hideActions.Tick += (_, _) =>
         {
             hideActions.Stop();
-            if (!interactionSurface.IsMouseOver && !dragging && !IsMouseCaptureWithin)
-            { actions.Opacity = 0; actions.IsHitTestVisible = false; }
+            if (!tutorialActions && !interactionSurface.IsMouseOver && !dragging && !IsMouseCaptureWithin)
+            { actions.IsHitTestVisible = false; Motion.To(actions, OpacityProperty, 0, Motion.Exit); }
         };
         SourceInitialized += (_, _) => { Native.Exclude(this); Native.NoActivate(this); };
         Loaded += (_, _) =>
         {
             Native.MoveToMonitor(this, Screen); Position(offset);
-            if (!waitingForCapture) { BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(160))); timer.Start(); }
+            if (!waitingForCapture) { Motion.To(this, OpacityProperty, 1, Motion.Standard); timer.Start(); }
         };
         IsVisibleChanged += (_, _) => { elapsed.Restart(); if (IsVisible) remaining = settings.Duration; };
         timer.Tick += (_, _) =>
         {
             double delta = elapsed.Elapsed.TotalSeconds; elapsed.Restart();
-            if (IsVisible && !IsMouseOver && !pinned && !dragging && down == null && !closing && (remaining -= delta) <= 0) Dismiss();
+            if (IsVisible && !IsMouseOver && !pinned && !tutorialPaused && !dragging && down == null && !closing && (remaining -= delta) <= 0) Dismiss();
         };
         Closed += (_, _) => { closing = true; timer.Stop(); hideActions.Stop(); };
+        liveBackdrop = new LiveGlassBackdrop(this, previewMaterial, actionMaterial);
     }
+    internal void SetClipboardState(bool copied) => clipboardStatus.Text = copied ? "✓  Screenshot copied" : "Screenshot ready";
     internal Rect ImageScreenBounds
     {
         get
@@ -124,38 +141,43 @@ internal sealed class PreviewWindow : Window
     internal void Reveal(string savedPath)
     {
         if (closing) return;
-        path = savedPath; waitingForCapture = false; BeginAnimation(OpacityProperty, null); Opacity = 1;
+        path = savedPath; waitingForCapture = false; Motion.Snap(this, OpacityProperty, 1);
         remaining = app.Settings.Duration; elapsed.Restart(); timer.Start();
+    }
+    internal void PauseForTutorial(bool value)
+    {
+        tutorialPaused = value; remaining = app.Settings.Duration; elapsed.Restart();
+    }
+    internal void ShowTutorialActions(bool value)
+    {
+        tutorialActions = value; hideActions.Stop();
+        Motion.Snap(actions, OpacityProperty, value || IsMouseOver ? 1 : 0); actions.IsHitTestVisible = value || IsMouseOver;
+    }
+    internal void RefreshPreviewSize()
+    {
+        if (closing) return;
+        picture.Width = app.Settings.PreviewWidth;
+        previewMaterial.Width = picture.Width + 17.5;
+        picture.Height = Math.Clamp(picture.Width * image.PixelHeight / image.PixelWidth, 125, 240);
+        UpdateLayout(); Position(offset);
     }
     private static Button ActionButton(string text, string icon, Action click, bool dark)
     {
-        var button = new Button
-        {
-            Content = UI.Text(text, 10, UI.Ink(dark)), Tag = text, ToolTip = text,
-            Width = 108, Height = 30, Padding = new Thickness(8, 0, 8, 0),
-            Margin = new Thickness(0, 2, 0, 2), HorizontalAlignment = HorizontalAlignment.Right,
-            HorizontalContentAlignment = HorizontalAlignment.Center,
-            Background = UI.Surface(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), Cursor = Cursors.Hand
-        };
-        button.Template = (ControlTemplate)XamlReader.Parse("""
-        <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="Button">
-          <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
-            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
-          </Border>
-          <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True"><Setter Property="Opacity" Value="0.9"/></Trigger>
-            <Trigger Property="IsPressed" Value="True"><Setter Property="Opacity" Value="0.68"/></Trigger>
-            <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger>
-          </ControlTemplate.Triggers>
-        </ControlTemplate>
-        """);
-        button.Click += (_, _) => click(); return button;
+        var button = UI.Button(text, click, false, dark);
+        UI.Icon(button, text switch { "Edit" => "\uE70F", "Text" => "\uE8D2", "Export" => "\uE74E", "Pin" => "\uE718", _ => "\uE711" });
+        button.Content = UI.Text(text, 11, UI.Ink(dark)); button.Tag = text; button.ToolTip = text;
+        button.Width = 108; button.Height = 30; button.Padding = new Thickness(8, 0, 8, 0);
+        button.Margin = new Thickness(0, 2, 0, 2); button.HorizontalAlignment = HorizontalAlignment.Right;
+        UI.GlassButton(button, dark);
+        return button;
     }
     private void SetPinned(bool value)
     {
         pinned = value; string label = value ? "Unpin" : "Pin";
         pinButton.Tag = label; pinButton.ToolTip = label;
         ((TextBlock)pinButton.Content).Text = label;
+        UI.GlassButton(pinButton, UI.Dark(app.Settings), value);
+        System.Windows.Automation.AutomationProperties.SetName(pinButton, label);
         remaining = app.Settings.Duration;
     }
     internal void Position(int stackOffset)
@@ -168,6 +190,6 @@ internal sealed class PreviewWindow : Window
     private void Dismiss()
     {
         if (closing) return; closing = true; timer.Stop();
-        var fade = new DoubleAnimation(Opacity, 0, TimeSpan.FromMilliseconds(170)); fade.Completed += (_, _) => Close(); BeginAnimation(OpacityProperty, fade);
+        Motion.To(this, OpacityProperty, 0, Motion.Exit, completed: Close);
     }
 }

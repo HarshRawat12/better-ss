@@ -25,9 +25,14 @@ public sealed class App : Application
     private bool capturing;
     private readonly MediaPlayer player = new();
     private readonly List<PreviewWindow> previews = new();
+    private readonly List<LiveOcrOverlay> liveOcrOverlays = new();
     private Mutex? mutex;
     private ToastWindow? toast;
     internal string HotkeyStatus = "";
+    // The watcher keeps development preferences separate across rebuilds.
+    internal bool DevelopmentMode;
+    private bool forceWalkthrough;
+    internal string EffectiveCaptureShortcut => Settings.UseWindowsCaptureShortcut && (Hotkeys == null || Hotkeys.WindowsCaptureEnabled) ? "Windows + Shift + S" : Settings.Hotkey;
     public App()
     {
         Resources[SystemColors.HighlightBrushKey] = UI.Brush("#666666");
@@ -37,6 +42,15 @@ public sealed class App : Application
     [STAThread] public static void Main(string[] args)
     {
         var app = new App();
+        if (args.Contains("--dev"))
+        {
+            app.DevelopmentMode = true;
+            app.SettingsPathOverride = Path.Combine(Settings.DataFolder, "dev-settings.json");
+            app.Settings = Settings.Load(app.SettingsPathOverride);
+            app.ConfigureStartup = StartupService.SetDevelopmentEnabled;
+        }
+        app.forceWalkthrough = args.Contains("--walkthrough");
+        if (args.Contains("--design-preview")) { DesignPreview.Run(app, args); return; }
         if (args.Contains("--live-capture-test")) { LiveCaptureTests.Run(app); return; }
         if (args.Contains("--editor-test")) { EditorRegressionTests.Run(app); return; }
         if (args.Contains("--recording-test")) { VideoRegressionTests.Run(app); return; }
@@ -51,27 +65,42 @@ public sealed class App : Application
     private void Start(bool background)
     {
         player.MediaFailed += (_, e) => Notify("Couldn't play capture sound", e.ErrorException.Message);
-        tray = new Forms.NotifyIcon { Icon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? System.Drawing.SystemIcons.Application, Text = "Better SS · ready to capture", Visible = true };
+        tray = new Forms.NotifyIcon { Icon = System.Drawing.Icon.ExtractAssociatedIcon(Environment.ProcessPath!) ?? System.Drawing.SystemIcons.Application, Text = DevelopmentMode ? "Better SS · live development" : "Better SS · ready to capture", Visible = true };
         var menu = new Forms.ContextMenuStrip();
         foreach (var mode in Enum.GetValues<CaptureMode>()) { var chosen = mode; menu.Items.Add(CaptureSession.Label(mode), null, (_, _) => Dispatcher.InvokeAsync(() => BeginCapture(chosen))); }
         menu.Items.Add("Record video…", null, (_, _) => Dispatcher.Invoke(ShowVideoRecording));
         menu.Items.Add("Cut video…", null, (_, _) => Dispatcher.Invoke(ShowVideoEditor));
         menu.Items.Add(new Forms.ToolStripSeparator());
         menu.Items.Add("Preferences…", null, (_, _) => Dispatcher.Invoke(ShowPreferences));
-        menu.Items.Add("Quick guide…", null, (_, _) => Dispatcher.Invoke(ShowGuide));
+        menu.Items.Add("Walkthrough…", null, (_, _) => Dispatcher.Invoke(ShowGuide));
         menu.Items.Add("Open screenshot folder", null, (_, _) => Native.OpenFolder(Settings.SaveFolder));
         menu.Items.Add("Quit Better SS", null, (_, _) => Dispatcher.Invoke(Shutdown));
         tray.ContextMenuStrip = menu; tray.DoubleClick += (_, _) => Dispatcher.InvokeAsync(() => BeginCapture());
-        Hotkeys = new HotkeyService(() => BeginCapture()); RegisterHotkey();
-        if (!Settings.IntroductionSeen) ShowGuide();
+        Hotkeys = new HotkeyService(CaptureFromShortcut); RegisterHotkey();
+        if (!Settings.IntroductionSeen || forceWalkthrough) ShowGuide();
         else if (!background) ShowPreferences();
     }
     internal void RegisterHotkey()
     {
         if (Hotkeys == null) return;
+        if (!Hotkeys.TrySetWindowsCapture(Settings.UseWindowsCaptureShortcut, out var takeoverError))
+        {
+            Hotkeys.TrySet(Settings.Hotkey, out _); HotkeyStatus = takeoverError; return;
+        }
         HotkeyStatus = Hotkeys.TrySet(Settings.Hotkey, out var error) ? ShortcutStatus() : error;
     }
-    private string ShortcutStatus() => Settings.Hotkey == "Disabled" ? "Hotkey off · capture from the tray" : "Ready · " + Settings.Hotkey;
+    private string ShortcutStatus() => EffectiveCaptureShortcut == "Disabled" ? "Hotkey off · capture from the tray" : "Ready · " + EffectiveCaptureShortcut;
+    internal void CaptureFromShortcut()
+    {
+        if (capturing) return;
+        welcome?.CaptureShortcutPressed(); BeginCapture();
+    }
+    internal bool TrySetWindowsCaptureShortcut(bool enabled, out string error)
+    {
+        error = "";
+        if (Hotkeys != null && !Hotkeys.TrySetWindowsCapture(enabled, out error)) { HotkeyStatus = error; return false; }
+        Settings.UseWindowsCaptureShortcut = enabled; HotkeyStatus = ShortcutStatus(); Persist(); return true;
+    }
     internal bool TrySetHotkey(string value, out string error)
     {
         if (!HotkeyBinding.TryParse(value, out var binding, out error)) return false;
@@ -89,7 +118,7 @@ public sealed class App : Application
     }
     internal void ShowGuide()
     {
-        if (welcome == null) { welcome = new WelcomeWindow(this); welcome.Closed += (_, _) => welcome = null; }
+        if (welcome == null) { welcome = new WelcomeWindow(this, !Settings.IntroductionSeen || forceWalkthrough); welcome.Closed += (_, _) => welcome = null; }
         welcome.Show(); welcome.Activate();
     }
     internal void ShowPreferences()
@@ -97,7 +126,7 @@ public sealed class App : Application
     internal void ShowVideoRecording()
     { new VideoRecordingWindow(this) { Owner = Preferences?.IsVisible == true ? Preferences : null }.Show(); }
     internal void ShowVideoEditor() => VideoEditorWindow.OpenExisting(this);
-    internal async void BeginCapture(CaptureMode mode = CaptureMode.Region)
+    internal async void BeginCapture(CaptureMode mode = CaptureMode.Region, CaptureIntent intent = CaptureIntent.Screenshot)
     {
         if (capturing) return; capturing = true;
         try
@@ -105,25 +134,43 @@ public sealed class App : Application
             CaptureAnimationWindow.CancelAll(); toast?.Close(); Preferences?.Hide(); foreach (var p in previews.ToArray()) p.Hide();
             if (mode == CaptureMode.Window)
             {
+                bool windowCaptured = false;
                 try
                 {
                     var picker = new WindowPicker(this);
                     if (picker.ShowDialog() == true && picker.Selection != null)
                     {
                         if (Settings.Delay > 0) { var delay = new CountdownWindow(Settings.Delay); delay.Show(); if (!await delay.Completion) return; }
-                        var result = await WindowCatalog.CaptureAsync(picker.Selection); CompleteCapture(result.Image, result.Screen, result.Bounds);
+                        var result = await WindowCatalog.CaptureAsync(picker.Selection); windowCaptured = true; DispatchSelection(result.Image, result.Screen, result.Bounds, intent);
                     }
                 }
-                finally { capturing = false; foreach (var p in previews.ToArray()) p.Show(); }
+                finally { capturing = false; foreach (var p in previews.ToArray()) p.Show(); if (!windowCaptured) welcome?.CaptureCancelled(); }
                 return;
             }
-            if (Settings.Delay > 0) { var countdown = new CountdownWindow(Settings.Delay); countdown.Show(); if (!await countdown.Completion) { capturing = false; foreach (var p in previews.ToArray()) p.Show(); return; } }
+            if (Settings.Delay > 0) { var countdown = new CountdownWindow(Settings.Delay); countdown.Show(); if (!await countdown.Completion) { capturing = false; foreach (var p in previews.ToArray()) p.Show(); welcome?.CaptureCancelled(); return; } }
             await Task.Delay(180);
             var activeScreen = Forms.Screen.FromPoint(Native.CursorPosition);
-            session = new CaptureSession(mode, activeScreen, CompleteCapture, () => { session = null; capturing = false; foreach (var p in previews.ToArray()) p.Show(); }, () => BeginCapture(CaptureMode.Window), ShowVideoRecording);
+            session = new CaptureSession(mode, activeScreen, CompleteCapture, () => { bool completed = session?.Completed == true, transfer = session?.TransferringMode == true; session = null; capturing = false; foreach (var p in previews.ToArray()) p.Show(); if (!completed && !transfer) welcome?.CaptureCancelled(); }, chosenIntent => BeginCapture(CaptureMode.Window, chosenIntent), ShowVideoRecording, StartLiveOcr, CopyScreenColor);
             session.Start();
         }
-        catch (Exception ex) { capturing = false; session?.Cancel(); session = null; foreach (var p in previews.ToArray()) p.Show(); Notify("Capture failed", ex.Message); }
+        catch (Exception ex) { capturing = false; session?.Cancel(); session = null; foreach (var p in previews.ToArray()) p.Show(); welcome?.CaptureCancelled(); Notify("Capture failed", ex.Message); }
+    }
+    private void DispatchSelection(BitmapSource image, Forms.Screen screen, System.Drawing.Rectangle bounds, CaptureIntent intent)
+    {
+        if (intent == CaptureIntent.LiveOcr) StartLiveOcr(image, screen, bounds);
+        else CompleteCapture(image, screen, bounds);
+    }
+    private void StartLiveOcr(BitmapSource image, Forms.Screen screen, System.Drawing.Rectangle bounds)
+    {
+        var overlay = new LiveOcrOverlay(this, screen, bounds, UI.Dark(Settings));
+        liveOcrOverlays.Add(overlay); overlay.Closed += (_, _) => liveOcrOverlays.Remove(overlay);
+        overlay.Show(); overlay.ReadAsync(image);
+    }
+    private async void CopyScreenColor(Color color, Forms.Screen screen)
+    {
+        string hex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        bool copied = await ClipboardService.TextAsync(hex);
+        Toast(copied ? $"Color {hex} copied" : $"Color {hex} · clipboard busy", screen);
     }
     internal async void CompleteCapture(BitmapSource bitmap, Forms.Screen screen, System.Drawing.Rectangle sourceBounds)
     {
@@ -141,9 +188,9 @@ public sealed class App : Application
         {
             Notify("Couldn't save to your chosen folder", ex.Message);
             path = Path.Combine(Settings.DataFolder, "DragCache", "Screenshot " + Guid.NewGuid().ToString("N") + ".png");
-            try { await Task.Run(() => Native.SavePng(bitmap, path)); } catch { preview.Close(); await animation; return; }
+            try { await Task.Run(() => Native.SavePng(bitmap, path)); } catch { preview.Close(); await animation; welcome?.CaptureCancelled(); return; }
         }
-        await animation; preview.Reveal(path); await copy;
+        await animation; preview.Reveal(path); welcome?.CaptureReady(preview); preview.SetClipboardState(await copy);
     }
     internal async void Copy(BitmapSource image) => await CopyImageAsync(image);
     internal async Task<bool> CopyImageAsync(BitmapSource image, Forms.Screen? screen = null)
@@ -188,5 +235,5 @@ public sealed class App : Application
     { if (tray != null) tray.ShowBalloonTip(4000, title, message, Forms.ToolTipIcon.Info); else MessageBox.Show(message, title); }
     internal void Persist() { try { Settings.Save(SettingsPathOverride); } catch (Exception e) { Notify("Couldn't save preferences", e.Message); } }
     private void Cleanup()
-    { Hotkeys?.Dispose(); tray?.Dispose(); player.Close(); mutex?.Dispose(); }
+    { foreach (var overlay in liveOcrOverlays.ToArray()) overlay.Close(); liveOcrOverlays.Clear(); Hotkeys?.Dispose(); tray?.Dispose(); player.Close(); mutex?.Dispose(); }
 }

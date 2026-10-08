@@ -36,8 +36,9 @@ internal sealed class DragPreviewWindow : Window
             RenderTransform = shrink,
             RenderTransformOrigin = new Point(grab.X / source.ActualWidth, grab.Y / source.ActualHeight)
         };
+        UI.RoundImage(picture);
         if (settings.Shadow > 0) picture.Effect = new System.Windows.Media.Effects.DropShadowEffect
-        { BlurRadius = settings.Shadow, ShadowDepth = 3, Opacity = .22, RenderingBias = System.Windows.Media.Effects.RenderingBias.Performance };
+        { BlurRadius = settings.Shadow, ShadowDepth = 2, Opacity = .14, RenderingBias = System.Windows.Media.Effects.RenderingBias.Performance };
         var canvas = new Canvas(); canvas.Children.Add(picture); Content = canvas;
         SourceInitialized += (_, _) =>
         {
@@ -51,10 +52,8 @@ internal sealed class DragPreviewWindow : Window
         Loaded += (_, _) =>
         {
             FollowCursor();
-            var animation = new DoubleAnimation(1, .9, TimeSpan.FromMilliseconds(150))
-            { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
-            shrink.BeginAnimation(ScaleTransform.ScaleXProperty, animation);
-            shrink.BeginAnimation(ScaleTransform.ScaleYProperty, animation);
+            Motion.To(shrink, ScaleTransform.ScaleXProperty, .9, 150);
+            Motion.To(shrink, ScaleTransform.ScaleYProperty, .9, 150);
             follow.Start();
         };
         follow.Tick += (_, _) => FollowCursor();

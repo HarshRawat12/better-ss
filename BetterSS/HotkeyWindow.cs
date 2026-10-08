@@ -18,10 +18,9 @@ internal sealed class HotkeyWindow : Window
     internal HotkeyWindow(App app)
     {
         this.app = app; bool dark = UI.Dark(app.Settings);
-        UI.SetupWindow(this, "Record a shortcut", 580, 420, dark); ResizeMode = ResizeMode.NoResize;
-        var root = new StackPanel { Margin = new Thickness(30) };
-        root.Children.Add(UI.Text("Your capture shortcut", 24, UI.Ink(dark), FontWeights.SemiBold));
-        var note = UI.Text("Press Ctrl or Alt plus any supported key. Add Shift if you like. Release the keys, then confirm. Mouse-only capture stays available in the tray.", 12, UI.Muted(dark)); note.Margin = new Thickness(0, 12, 0, 20); root.Children.Add(note);
+        UI.SetupWindow(this, "Record a shortcut", 580, 480, dark); ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.Height;
+        var root = new StackPanel { Margin = new Thickness(24) };
+        root.Children.Add(UI.PageHeader("Your capture shortcut", "Press Ctrl or Alt with a key. Add Shift if you like, release the keys, then confirm. Capture is also available from the tray.", dark, "\uE765"));
         keys = UI.Text("", 22, UI.Ink(dark), FontWeights.SemiBold); keys.HorizontalAlignment = HorizontalAlignment.Center;
         root.Children.Add(UI.Card(keys, dark, new Thickness(20)));
         message = UI.Text("", 12, UI.Muted(dark)); message.MinHeight = 44; root.Children.Add(message);

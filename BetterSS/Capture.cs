@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -15,6 +16,7 @@ using Forms = System.Windows.Forms;
 namespace BetterSS;
 
 internal enum CaptureMode { Region, Window, Monitor, AllMonitors }
+internal enum CaptureIntent { Screenshot, LiveOcr, ColorPicker }
 
 internal sealed class CaptureSession
 {
@@ -22,19 +24,26 @@ internal sealed class CaptureSession
     private readonly Action dismissed;
     private readonly Forms.Screen active;
     private readonly List<CaptureOverlay> overlays = new();
-    private readonly Action? chooseWindow;
+    private readonly Action<CaptureIntent>? chooseWindow;
     private readonly Action? recordVideo;
+    private readonly Action<BitmapSource, Forms.Screen, Drawing.Rectangle>? readText;
+    private readonly Action<Color, Forms.Screen>? colorPicked;
     private readonly Drawing.Rectangle desktop;
     private readonly BitmapSource frozen;
+    private BitmapSource? colorPixels;
     private CaptureToolbar? toolbar;
     internal CaptureMode Mode;
+    internal CaptureIntent Intent { get; private set; }
     internal Drawing.Rectangle Selection;
     private Drawing.Point? start;
     private bool closed;
-    internal CaptureSession(CaptureMode mode, Forms.Screen active, Action<BitmapSource, Forms.Screen, Drawing.Rectangle> complete, Action dismissed, Action? chooseWindow = null, Action? recordVideo = null)
+    internal bool Completed { get; private set; }
+    internal bool TransferringMode { get; private set; }
+    internal CaptureSession(CaptureMode mode, Forms.Screen active, Action<BitmapSource, Forms.Screen, Drawing.Rectangle> complete, Action dismissed, Action<CaptureIntent>? chooseWindow = null, Action? recordVideo = null, Action<BitmapSource, Forms.Screen, Drawing.Rectangle>? readText = null, Action<Color, Forms.Screen>? colorPicked = null)
     {
         Mode = mode; this.active = active; this.complete = complete; this.dismissed = dismissed;
-        this.chooseWindow = chooseWindow; this.recordVideo = recordVideo; desktop = Forms.SystemInformation.VirtualScreen; frozen = Native.Capture(desktop);
+        this.chooseWindow = chooseWindow; this.recordVideo = recordVideo; this.readText = readText; this.colorPicked = colorPicked;
+        desktop = Forms.SystemInformation.VirtualScreen; frozen = Native.Capture(desktop);
     }
     internal static string Label(CaptureMode mode) => mode switch { CaptureMode.Region => "Select area", CaptureMode.Window => "Window", CaptureMode.Monitor => "Display", _ => "All displays" };
     internal void Start()
@@ -43,13 +52,32 @@ internal sealed class CaptureSession
         {
             var overlay = new CaptureOverlay(this, screen, Native.Crop(frozen, screen.Bounds, desktop)); overlays.Add(overlay); overlay.Show(); Native.Place(overlay, screen.Bounds);
         }
-        toolbar = new CaptureToolbar(this, active, recordVideo); toolbar.Show(); SetMode(Mode);
+        toolbar = new CaptureToolbar(this, active, recordVideo, frozen); toolbar.Show(); SetMode(Mode);
     }
     internal void SetMode(CaptureMode mode)
-    { if (mode == CaptureMode.Window) { Cancel(); chooseWindow?.Invoke(); return; } Mode = mode; start = null; Selection = Drawing.Rectangle.Empty; UpdatePointer(); toolbar?.Refresh(mode); }
+    {
+        if (mode == CaptureMode.Window) { TransferringMode = true; var intent = Intent; Cancel(); chooseWindow?.Invoke(intent); return; }
+        Mode = mode; start = null; Selection = Drawing.Rectangle.Empty; UpdatePointer(); toolbar?.Show(); toolbar?.Refresh(mode, Intent);
+    }
+    internal void SetIntent(CaptureIntent intent)
+    {
+        Intent = intent;
+        if (intent == CaptureIntent.LiveOcr) { Mode = CaptureMode.Region; start = null; Selection = Drawing.Rectangle.Empty; }
+        colorPixels = null;
+        UpdatePointer(); toolbar?.Show(); toolbar?.Refresh(Mode, Intent);
+    }
     internal void UpdatePointer()
     {
         var point = Native.CursorPosition;
+        if (Intent == CaptureIntent.ColorPicker)
+        {
+            if (desktop.Contains(point))
+            {
+                var color = ColorAt(point);
+                foreach (var overlay in overlays) overlay.PaintColor(point, color);
+            }
+            return;
+        }
         if (start is Drawing.Point origin) Selection = Drawing.Rectangle.FromLTRB(Math.Min(origin.X, point.X), Math.Min(origin.Y, point.Y), Math.Max(origin.X, point.X), Math.Max(origin.Y, point.Y));
         else if (Mode == CaptureMode.Monitor) Selection = Forms.Screen.FromPoint(point).Bounds;
         else if (Mode == CaptureMode.AllMonitors) Selection = desktop;
@@ -57,20 +85,39 @@ internal sealed class CaptureSession
     }
     internal void Down(CaptureOverlay overlay)
     {
-        if (Mode == CaptureMode.Region) { start = Native.CursorPosition; overlay.CaptureMouse(); UpdatePointer(); }
+        if (Intent == CaptureIntent.ColorPicker)
+        {
+            var point = Native.CursorPosition;
+            if (!desktop.Contains(point)) return;
+            var color = ColorAt(point); var screen = Forms.Screen.FromPoint(point);
+            Completed = true; Cancel(); colorPicked?.Invoke(color, screen); return;
+        }
+        if (Mode == CaptureMode.Region) { start = Native.CursorPosition; toolbar?.Hide(); overlay.Activate(); overlay.CaptureMouse(); UpdatePointer(); }
     }
     internal void Up(CaptureOverlay overlay)
     {
         if (Mode == CaptureMode.Region && start == null) return;
         UpdatePointer(); start = null; overlay.ReleaseMouseCapture();
         if (Selection.Width >= 3 && Selection.Height >= 3) Finish();
+        else toolbar?.Show();
     }
     internal void Finish()
     {
-        if (Selection.Width < 1 || Selection.Height < 1) return;
+        if (Intent == CaptureIntent.ColorPicker || Selection.Width < 1 || Selection.Height < 1) return;
         var result = Native.Crop(frozen, Selection, desktop);
         var screen = Mode == CaptureMode.AllMonitors ? active : Forms.Screen.FromPoint(new Drawing.Point(Selection.Left + Selection.Width / 2, Selection.Top + Selection.Height / 2));
-        Cancel(); complete(result, screen, Selection);
+        var intent = Intent; Completed = true; Cancel();
+        if (intent == CaptureIntent.LiveOcr) readText?.Invoke(result, screen, Selection);
+        else complete(result, screen, Selection);
+    }
+    private Color ColorAt(Drawing.Point point)
+    {
+        colorPixels ??= new FormatConvertedBitmap(frozen, PixelFormats.Bgra32, null, 0);
+        if (!colorPixels.IsFrozen) colorPixels.Freeze();
+        int x = Math.Clamp((point.X - desktop.Left) * colorPixels.PixelWidth / desktop.Width, 0, colorPixels.PixelWidth - 1);
+        int y = Math.Clamp((point.Y - desktop.Top) * colorPixels.PixelHeight / desktop.Height, 0, colorPixels.PixelHeight - 1);
+        var pixel = new byte[4]; colorPixels.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
+        return Color.FromRgb(pixel[2], pixel[1], pixel[0]);
     }
     internal void Cancel()
     {
@@ -88,7 +135,8 @@ internal sealed class CaptureOverlay : Window
     private readonly Path dim = new() { Fill = new SolidColorBrush(Color.FromArgb(125, 0, 0, 0)), IsHitTestVisible = false };
     private readonly Rectangle outline = new() { Stroke = Brushes.White, StrokeThickness = 1.5, IsHitTestVisible = false };
     private readonly Border badge;
-    private readonly TextBlock dimensions = UI.Text("", 12, Brushes.White);
+    private readonly TextBlock dimensions = UI.Text("", 12, UI.Ink(true));
+    private readonly Brush badgeForeground = UI.Ink(true);
     internal CaptureOverlay(CaptureSession session, Forms.Screen screen, BitmapSource image)
     {
         this.session = session; this.screen = screen;
@@ -96,7 +144,8 @@ internal sealed class CaptureOverlay : Window
         Left = screen.Bounds.Left; Top = screen.Bounds.Top; Width = screen.Bounds.Width; Height = screen.Bounds.Height;
         var grid = new Grid { Background = Brushes.Black }; grid.Children.Add(new Image { Source = image, Stretch = Stretch.Fill });
         canvas.Background = Brushes.Transparent; canvas.Children.Add(dim); canvas.Children.Add(outline);
-        badge = new Border { Background = UI.Brush("#ED202020"), Padding = new Thickness(10, 6, 10, 6), Child = dimensions, IsHitTestVisible = false, Visibility = Visibility.Hidden };
+        badge = UI.Floating(dimensions, true, new Thickness(10, 6, 10, 6), 6); badge.IsHitTestVisible = false; badge.Visibility = Visibility.Hidden;
+        badge.Effect = null; // This surface tracks the pointer; avoid an effect pass per move.
         canvas.Children.Add(badge); grid.Children.Add(canvas); Content = grid;
         SourceInitialized += (_, _) => Native.Exclude(this);
         SizeChanged += (_, _) => Paint(session.Selection);
@@ -106,6 +155,7 @@ internal sealed class CaptureOverlay : Window
     internal void Paint(Drawing.Rectangle selection)
     {
         if (ActualWidth <= 0 || ActualHeight <= 0) return;
+        badge.Background = null; dimensions.Foreground = badgeForeground; dimensions.Inlines.Clear();
         var sx = ActualWidth / screen.Bounds.Width; var sy = ActualHeight / screen.Bounds.Height;
         var local = Drawing.Rectangle.Intersect(selection, screen.Bounds);
         var whole = new RectangleGeometry(new Rect(0, 0, ActualWidth, ActualHeight));
@@ -116,6 +166,24 @@ internal sealed class CaptureOverlay : Window
         dimensions.Text = $"{selection.Width} × {selection.Height}"; badge.Visibility = Visibility.Visible;
         Canvas.SetLeft(badge, Math.Clamp(r.X, 8, Math.Max(8, ActualWidth - 140))); Canvas.SetTop(badge, r.Y >= 38 ? r.Y - 34 : Math.Min(r.Bottom + 8, ActualHeight - 42));
     }
+    internal void PaintColor(Drawing.Point point, Color color)
+    {
+        if (ActualWidth <= 0 || ActualHeight <= 0) return;
+        var local = new Drawing.Point(point.X - screen.Bounds.X, point.Y - screen.Bounds.Y);
+        if (local.X < 0 || local.Y < 0 || local.X >= screen.Bounds.Width || local.Y >= screen.Bounds.Height)
+        { dim.Data = null; outline.Visibility = badge.Visibility = Visibility.Hidden; return; }
+        dim.Data = null; outline.Visibility = Visibility.Hidden;
+        double sx = ActualWidth / screen.Bounds.Width, sy = ActualHeight / screen.Bounds.Height;
+        dimensions.Inlines.Clear();
+        dimensions.Inlines.Add(new InlineUIContainer(new Border { Width = 13, Height = 13, CornerRadius = new CornerRadius(6.5), Background = new SolidColorBrush(color), BorderBrush = Brushes.White, BorderThickness = new Thickness(.75), Margin = new Thickness(0, 0, 7, -2) }));
+        dimensions.Inlines.Add(new Run($"#{color.R:X2}{color.G:X2}{color.B:X2} · click to copy"));
+        double luminance = .2126 * color.R + .7152 * color.G + .0722 * color.B;
+        dimensions.Foreground = luminance > 150 ? Brushes.Black : Brushes.White;
+        badge.Visibility = Visibility.Visible;
+        double x = local.X * sx, y = local.Y * sy;
+        Canvas.SetLeft(badge, Math.Clamp(x + 18, 8, Math.Max(8, ActualWidth - 175)));
+        Canvas.SetTop(badge, Math.Clamp(y + 18, 8, Math.Max(8, ActualHeight - 42)));
+    }
 }
 
 internal sealed class CaptureToolbar : Window
@@ -123,21 +191,43 @@ internal sealed class CaptureToolbar : Window
     private readonly CaptureSession session;
     private readonly Forms.Screen screen;
     private readonly Dictionary<CaptureMode, Button> buttons = new();
-    private readonly TextBlock hint = UI.Text("", 12, UI.Brush("#B0B0B0"));
     private readonly Button capture;
-    internal CaptureToolbar(CaptureSession session, Forms.Screen screen, Action? recordVideo = null)
+    private readonly Button screenshot;
+    private readonly Button liveOcr;
+    private readonly Button colorPicker;
+    internal CaptureToolbar(CaptureSession session, Forms.Screen screen, Action? recordVideo = null, BitmapSource? backdrop = null)
     {
         this.session = session; this.screen = screen;
         WindowStyle = WindowStyle.None; AllowsTransparency = true; Background = Brushes.Transparent; ResizeMode = ResizeMode.NoResize; ShowInTaskbar = false; Topmost = true; SizeToContent = SizeToContent.WidthAndHeight;
         var root = new StackPanel(); var row = new StackPanel { Orientation = Orientation.Horizontal };
-        string[] icons = { "▧", "▣", "▭", "▦" }; int index = 0;
-        foreach (var mode in Enum.GetValues<CaptureMode>()) { var m = mode; var b = UI.Button(icons[index++] + "  " + CaptureSession.Label(mode), () => session.SetMode(m), false, true); buttons.Add(mode, b); row.Children.Add(b); }
-        row.Children.Add(UI.Button("●  Video", () => { session.Cancel(); recordVideo?.Invoke(); }, false, true));
-        row.Children.Add(UI.Button("×  Cancel", session.Cancel, false, true));
+        string[] icons = { "\uE8B3", "\uE737", "\uE7F4", "\uEBC6" }; int index = 0;
+        foreach (var mode in Enum.GetValues<CaptureMode>()) { var m = mode; var b = UI.Button(CaptureSession.Label(mode), () => session.SetMode(m), false, true); UI.Icon(b, icons[index++]); b.Height = 36; b.Padding = new Thickness(12, 6, 12, 6); b.Margin = new Thickness(2); UI.GlassButton(b, true); buttons.Add(mode, b); row.Children.Add(b); }
+        row.Children.Add(new Border { Width = .75, Height = 22, Background = UI.Brush("#40FFFFFF"), Margin = new Thickness(8, 0, 10, 0) });
+        screenshot = Action("Screenshot", "\uE8A5", () => session.SetIntent(CaptureIntent.Screenshot)); row.Children.Add(screenshot);
+        liveOcr = Action("Live OCR", "\uE8D2", () => session.SetIntent(CaptureIntent.LiveOcr)); row.Children.Add(liveOcr);
+        colorPicker = Action("Pick color", "\uE790", () => session.SetIntent(CaptureIntent.ColorPicker)); row.Children.Add(colorPicker);
+        row.Children.Add(new Border { Width = .75, Height = 22, Background = UI.Brush("#40FFFFFF"), Margin = new Thickness(6, 0, 8, 0) });
+        var video = UI.Button("Video", () => { session.Cancel(); recordVideo?.Invoke(); }, false, true); UI.Icon(video, "\uE714"); GlassButton(video); row.Children.Add(video);
+        var cancel = UI.Button("Cancel", session.Cancel, false, true); UI.Icon(cancel, "\uE711"); GlassButton(cancel); row.Children.Add(cancel);
         capture = UI.Button("Capture", session.Finish, true, true); row.Children.Add(capture);
-        root.Children.Add(row); hint.Margin = new Thickness(4, 12, 4, 0); root.Children.Add(hint);
-        Content = new Border { Background = UI.Brush("#FA202020"), BorderBrush = UI.Brush("#505050"), BorderThickness = new Thickness(1), Padding = new Thickness(14), Margin = new Thickness(16), Child = root };
-        Loaded += (_, _) => { Native.MoveToMonitor(this, screen); Position(); };
+        root.Children.Add(row);
+        var material = new GlassSurface(root, true, new Thickness(9), 22, captureMaterial: true);
+        Content = new Border { Child = material, Padding = new Thickness(20), Background = Brushes.Transparent };
+        Loaded += (_, _) =>
+        {
+            Native.MoveToMonitor(this, screen);
+            UpdateLayout(); Position();
+            if (backdrop != null && GlassSurface.Transparency)
+            {
+                // Sample once from the capture session's existing frozen image.
+                // This does not capture any new desktop pixels or change export content.
+                var dpi = VisualTreeHelper.GetDpi(this); var point = material.PointToScreen(new Point(1, 1));
+                var desktop = Forms.SystemInformation.VirtualScreen;
+                var bounds = new Drawing.Rectangle((int)point.X, (int)point.Y, (int)(material.ActualWidth * dpi.DpiScaleX), (int)(material.ActualHeight * dpi.DpiScaleY));
+                var crop = Native.CropBounds(bounds, desktop);
+                if (!crop.IsEmpty) material.SetBackdrop(new CroppedBitmap(backdrop, crop));
+            }
+        };
         SourceInitialized += (_, _) => Native.Exclude(this);
         KeyDown += (_, e) => { if (e.Key == Key.Escape) session.Cancel(); };
     }
@@ -146,11 +236,32 @@ internal sealed class CaptureToolbar : Window
         var dpi = VisualTreeHelper.GetDpi(this);
         Native.Place(this, new Drawing.Rectangle(screen.WorkingArea.Left + (screen.WorkingArea.Width - (int)(ActualWidth * dpi.DpiScaleX)) / 2, screen.WorkingArea.Bottom - (int)(ActualHeight * dpi.DpiScaleY) - 24, (int)(ActualWidth * dpi.DpiScaleX), (int)(ActualHeight * dpi.DpiScaleY)));
     }
-    internal void Refresh(CaptureMode mode)
+    private static void GlassButton(Button button)
+    { UI.GlassButton(button, true); button.Height = 36; button.Padding = new Thickness(12, 6, 12, 6); }
+    private static Button Action(string label, string glyph, Action action)
+    { var button = UI.Button(label, action, false, true); UI.Icon(button, glyph); GlassButton(button); return button; }
+    internal void Refresh(CaptureMode mode) => Refresh(mode, CaptureIntent.Screenshot);
+    internal void Refresh(CaptureMode mode, CaptureIntent intent)
     {
-        foreach (var entry in buttons) UI.Select(entry.Value, entry.Key == mode, true);
-        capture.IsEnabled = mode == CaptureMode.AllMonitors;
-        hint.Text = mode switch { CaptureMode.Region => "Drag an area and release to capture. Right-click to cancel.", CaptureMode.Window => "Choose an open or minimized application window.", CaptureMode.Monitor => "Click anywhere on the display you want to capture.", _ => "Capture all displays together, arranged as on your desktop." };
+        foreach (var entry in buttons)
+        {
+            UI.GlassButton(entry.Value, true, intent != CaptureIntent.ColorPicker && entry.Key == mode);
+            entry.Value.IsEnabled = intent != CaptureIntent.ColorPicker;
+        }
+        UI.GlassButton(screenshot, true, intent == CaptureIntent.Screenshot);
+        UI.GlassButton(liveOcr, true, intent == CaptureIntent.LiveOcr);
+        UI.GlassButton(colorPicker, true, intent == CaptureIntent.ColorPicker);
+        capture.Content = intent switch { CaptureIntent.LiveOcr => "Read text", CaptureIntent.ColorPicker => "Pick color", _ => "Capture" };
+        System.Windows.Automation.AutomationProperties.SetName(capture, capture.Content.ToString()!);
+        capture.IsEnabled = intent != CaptureIntent.ColorPicker && mode is CaptureMode.Monitor or CaptureMode.AllMonitors;
+        capture.ToolTip = intent switch
+        {
+            CaptureIntent.LiveOcr when mode == CaptureMode.Region => "Drag over text to copy it without saving a screenshot.",
+            CaptureIntent.LiveOcr => "Read and copy text from the selected display.",
+            CaptureIntent.ColorPicker => "Move over the screen to preview a color, then click to copy its hex value.",
+            _ => "Capture the selected display."
+        };
+        UpdateLayout(); Position();
     }
 }
 
@@ -162,9 +273,9 @@ internal sealed class CountdownWindow : Window
     internal CountdownWindow(int seconds)
     {
         WindowStyle = WindowStyle.None; AllowsTransparency = true; Background = Brushes.Transparent; Topmost = true; ShowInTaskbar = false; SizeToContent = SizeToContent.WidthAndHeight; WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        var panel = new StackPanel(); var label = UI.Text(seconds.ToString(), 56, Brushes.White, FontWeights.SemiBold); label.HorizontalAlignment = HorizontalAlignment.Center;
+        var panel = new StackPanel(); var label = UI.Text(seconds.ToString(), 56, UI.Ink(true), FontWeights.SemiBold); label.HorizontalAlignment = HorizontalAlignment.Center;
         panel.Children.Add(label); panel.Children.Add(UI.Button("Cancel capture", () => { completion.TrySetResult(false); Close(); }, false, true));
-        Content = new Border { Background = UI.Brush("#FA202020"), Padding = new Thickness(30), Child = panel };
+        Content = UI.Floating(panel, true, new Thickness(24));
         timer.Tick += (_, _) => { if (--seconds <= 0) { completion.TrySetResult(true); Close(); } else label.Text = seconds.ToString(); };
         Closed += (_, _) => { timer.Stop(); completion.TrySetResult(false); }; Loaded += (_, _) => timer.Start();
     }

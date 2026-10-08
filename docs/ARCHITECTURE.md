@@ -55,6 +55,19 @@ present in the resulting image.
 
 ## Native boundary
 
+`WindowsCaptureShortcut` installs an opt-in `WH_KEYBOARD_LL` hook on its own STA
+thread and dispatcher. It suppresses Win+Shift+S key-down/repeat/key-up and posts
+capture work to the UI dispatcher, keeping the hook callback short. All other
+input is passed down the hook chain. `HotkeyService` preserves the user's custom
+binding, suspends it during takeover, and restores it before removing the hook.
+Restoration failures leave the previous mode active and report a conflict.
+
+`WelcomeWindow` coordinates the first-run walkthrough. It hides before a
+shortcut capture, waits for a successful capture, and uses `TutorialCoachWindow`
+beside the real floating preview. A separate tutorial pause holds the preview
+without changing the user's Pin state. Cancellation returns to the capture
+step; closing or finishing the guide releases its preview pause.
+
 `Native.cs` contains P/Invoke declarations and Windows-specific behavior:
 
 - GDI screen capture and physical-pixel bitmap conversion

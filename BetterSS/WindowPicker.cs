@@ -85,7 +85,7 @@ internal sealed class WindowPicker : Window
         bool dark = UI.Dark(app.Settings); UI.SetupWindow(this, "Choose a window", 760, 690, dark); MinWidth = 520; MinHeight = 440;
         windows = WindowCatalog.Enumerate();
         var root = new DockPanel { Margin = new Thickness(28) };
-        var header = new StackPanel(); header.Children.Add(UI.Text("Choose a window", 26, UI.Ink(dark), FontWeights.SemiBold));
+        var header = new StackPanel(); header.Children.Add(UI.PageHeader("Choose a window", "Find an application or search for its window title.", dark));
         var note = UI.Text(recording ? "Record only this window, even when moved between displays or covered by another app. Keep it restored: minimized apps may stop drawing frames." : "Open and minimized windows. Minimized windows are briefly restored for capture, then minimized again.", 12, UI.Muted(dark)); note.Margin = new Thickness(0, 10, 0, 18); header.Children.Add(note);
         var search = UI.TextBox(dark); search.ToolTip = "Search by application or window title"; search.Margin = new Thickness(0, 0, 0, 18); header.Children.Add(search); DockPanel.SetDock(header, Dock.Top); root.Children.Add(header);
         var footer = new DockPanel { Margin = new Thickness(0, 18, 0, 0) }; var count = UI.Text("", 11, UI.Muted(dark)); footer.Children.Add(count);
@@ -100,7 +100,7 @@ internal sealed class WindowPicker : Window
                 var entry = item; var row = UI.Button("", () => { }, false, dark); row.HorizontalContentAlignment = HorizontalAlignment.Stretch; row.Margin = new Thickness(0, 0, 0, 8);
                 var content = new StackPanel(); var title = UI.Text(entry.Title, 13, UI.Ink(dark), FontWeights.SemiBold); title.TextTrimming = TextTrimming.CharacterEllipsis; title.TextWrapping = TextWrapping.NoWrap; content.Children.Add(title);
                 var description = UI.Text(entry.Application + (entry.Minimized ? "  /  MINIMIZED" : "  /  OPEN"), 10, UI.Muted(dark)); description.Margin = new Thickness(0, 6, 0, 0); content.Children.Add(description); row.Content = content;
-                row.Click += (_, _) => { Selection = entry; capture.IsEnabled = true; foreach (var button in rows) button.BorderThickness = new Thickness(button == row ? 2 : 1); };
+                row.Click += (_, _) => { Selection = entry; capture.IsEnabled = true; foreach (var button in rows) { UI.Select(button, button == row, dark); button.BorderThickness = new Thickness(button == row ? 2 : 1); } };
                 row.MouseDoubleClick += (_, _) => { Selection = entry; DialogResult = true; }; list.Children.Add(row); rows.Add(row);
             }
             if (filtered.Length == 0) list.Children.Add(UI.Text("No matching windows. Try another name.", 13, UI.Muted(dark)));

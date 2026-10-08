@@ -37,7 +37,7 @@ internal static class InteractionTests
             var red = Find<Button>(editor).Single(b => b.Content is string text && text == "Red");
             Click(red, editor);
             check(editor.SelectedColor == Color.FromRgb(240, 68, 82), "mouse click selects red annotation color");
-            check(((SolidColorBrush)red.Background).Color == ((SolidColorBrush)UI.Ink(UI.Dark(app.Settings))).Color, "selected color button has visible selection feedback");
+            check(((SolidColorBrush)red.Background).Color == ((SolidColorBrush)UI.Selected(UI.Dark(app.Settings))).Color && ((SolidColorBrush)red.BorderBrush).Color == ((SolidColorBrush)UI.Accent(UI.Dark(app.Settings))).Color, "selected color button has visible selection feedback");
             editor.Begin(new Point(100, 100)); editor.Move(new Point(300, 100)); Await(editor.EndAsync());
             var pixel = new byte[4]; new FormatConvertedBitmap(editor.Render(), PixelFormats.Bgra32, null, 0).CopyPixels(new Int32Rect(180, 100, 1, 1), pixel, 4, 0);
             check(pixel[2] == 240 && pixel[1] == 68 && pixel[0] == 82, "selected red ink appears in exported pixels");
@@ -76,6 +76,7 @@ internal static class InteractionTests
             check(!preview.IsVisible, "hover Dismiss action closes preview");
             TestResets(app, check);
             TestSetup(app, check);
+            TestCaptureToolbar(check);
             Await(TestDragAsync(app, sample, path, check));
         }
         finally
@@ -100,13 +101,13 @@ internal static class InteractionTests
             app.ConfigureStartup = _ => { };
             app.Settings = new Settings
             {
-                Hotkey = "Disabled", Delay = 10, Duration = 25, PreviewWidth = 410, Theme = "Dark",
+                Hotkey = "Disabled", UseWindowsCaptureShortcut = true, Delay = 10, Duration = 25, PreviewWidth = 410, Theme = "Dark",
                 Shadow = 40, Stroke = 3, SoundEnabled = false, Volume = .2, SoundPath = "custom.mp3",
                 AutoSave = false, SaveFolder = System.IO.Path.GetFullPath("test-results"), ExportFormat = "PDF", JpegQuality = 42, StartOnLogin = true
             };
             var cases = new[]
             {
-                ("Capture", "Launch shortcut", "Hotkey"), ("Capture", "Capture delay", "Delay"),
+                ("Capture", "Use Windows + Shift + S for Better SS", "UseWindowsCaptureShortcut"), ("Capture", "Launch shortcut", "Hotkey"), ("Capture", "Capture delay", "Delay"),
                 ("Floating preview", "Time on screen", "Duration"), ("Floating preview", "Preview width", "PreviewWidth"),
                 ("Appearance", "Theme", "Theme"), ("Appearance", "Preview shadow", "Shadow"), ("Appearance", "Preview border", "Stroke"),
                 ("Sound", "Play sound after capture", "SoundEnabled"), ("Sound", "Volume", "Volume"), ("Sound", "Sound file", "SoundPath"),
@@ -137,7 +138,7 @@ internal static class InteractionTests
     private static void TestSetup(App app, Action<bool, string> check)
     {
         var original = app.Settings; var originalPath = app.SettingsPathOverride; var originalStartup = app.ConfigureStartup; var originalHotkeys = app.Hotkeys;
-        WelcomeWindow? guide = null; HotkeyWindow? recorder = null;
+        WelcomeWindow? guide = null; HotkeyWindow? recorder = null; PreviewWindow? tutorialPreview = null;
         using var competitor = new HotkeyService(() => { });
         int fires = 0; using var service = new HotkeyService(() => fires++);
         try
@@ -175,19 +176,52 @@ internal static class InteractionTests
             Click(Find<Button>(recorder).Single(b => b.Content as string == "Use shortcut"), recorder);
             check(recorder.Saved && app.Settings.Hotkey == available && Settings.Load(app.SettingsPathOverride).Hotkey == available, "confirmed recorded hotkey registers and persists");
             var anchor = new Window { Title = "Better SS shortcut test", Width = 300, Height = 200, Topmost = true, Content = new Border { Background = Brushes.White } };
-            try { anchor.Show(); anchor.Activate(); Pump(160); Chord(available!, anchor); check(fires == 1, "custom hotkey triggers capture callback through Windows"); }
+            try
+            {
+                anchor.Show(); anchor.Activate(); Pump(160); Chord(available!, anchor); check(fires == 1, "custom hotkey triggers capture callback through Windows");
+                check(app.TrySetWindowsCaptureShortcut(true, out _) && service.WindowsCaptureEnabled && Settings.Load(app.SettingsPathOverride).UseWindowsCaptureShortcut && app.Settings.Hotkey == available, "Windows screenshot takeover is opt-in, persists, and preserves the custom shortcut");
+                WindowsCaptureChord(anchor, repeat: true);
+                check(fires == 2 && WindowCatalog.GetForegroundWindow() == new WindowInteropHelper(anchor).Handle, "Windows Shift S is intercepted once even with key repeat and keeps Snipping Tool from taking focus");
+                Chord(available!, anchor); check(fires == 2, "takeover suspends the saved custom shortcut while keeping it recorded");
+                check(app.TrySetWindowsCaptureShortcut(false, out _) && !service.WindowsCaptureEnabled && !Settings.Load(app.SettingsPathOverride).UseWindowsCaptureShortcut, "turning takeover off removes its keyboard hook and persists the off state");
+                Chord(available!, anchor); check(fires == 3 && service.Current == available, "turning takeover off restores the saved custom shortcut automatically");
+                check(app.TrySetWindowsCaptureShortcut(true, out _) && competitor.TrySet(available!, out _), "takeover frees the saved chord while enabled");
+                check(!app.TrySetWindowsCaptureShortcut(false, out _) && service.WindowsCaptureEnabled && app.Settings.UseWindowsCaptureShortcut, "a restoration conflict leaves takeover and the saved setting intact");
+                competitor.TrySet(occupied!, out _);
+                check(app.TrySetWindowsCaptureShortcut(false, out _), "takeover can be switched off after the competing chord is released");
+            }
             finally { anchor.Close(); }
             recorder = new HotkeyWindow(app) { Topmost = true }; recorder.Show(); recorder.Activate(); Pump(180);
             Chord(available!, recorder); Click(Find<Button>(recorder).Single(b => b.Content as string == "Cancel"), recorder);
-            check(app.Settings.Hotkey == available && service.Current == available && fires == 1, "cancelling recording restores shortcut without capturing");
+            check(app.Settings.Hotkey == available && service.Current == available && fires == 3, "cancelling recording restores shortcut without capturing");
 
             guide = new WelcomeWindow(app) { Topmost = true }; guide.Show(); guide.Activate(); Pump(150);
-            for (int step = 0; step < 3; step++) { check(guide.Step == step, "guide step " + (step + 1) + " opens"); Render(guide, "guide-" + (step + 1) + ".png"); Click(Find<Button>(guide).Single(b => b.Content as string == "Next"), guide); }
-            Render(guide, "guide-4.png");
-            check(guide.Step == 3 && Find<CheckBox>(guide).Single().IsChecked == false && startupWrites == 0, "first-run startup prompt is unchecked and makes no registry changes");
+            check(guide.Step == 0 && !app.Settings.IntroductionSeen, "walkthrough starts by assigning a shortcut and stays incomplete"); Render(guide, "guide-1.png");
+            Click(Find<Button>(guide).Single(b => b.Content is string label && label.StartsWith("Use saved shortcut:")), guide);
+            check(guide.Step == 1 && !Find<Button>(guide).Single(b => b.Content as string == "Waiting for your shortcut…").IsEnabled, "walkthrough waits for an actual shortcut capture before continuing"); Render(guide, "guide-2.png");
+            guide.CaptureShortcutPressed(); check(guide.AwaitingCapture && !guide.IsVisible, "walkthrough hides before the real screenshot overlay opens");
+            guide.CaptureCancelled(); check(guide.IsVisible && guide.Step == 1 && !guide.AwaitingCapture, "cancelled capture returns to the walkthrough with a retry");
+            guide.CaptureShortcutPressed();
+            app.Settings.Duration = 2;
+            var tutorialImage = SelfTest.SampleImage(); string tutorialPath = System.IO.Path.GetFullPath("test-results/sample.png");
+            tutorialPreview = new PreviewWindow(app, tutorialImage, tutorialPath, System.Windows.Forms.Screen.PrimaryScreen!); tutorialPreview.Show(); Pump(240);
+            guide.CaptureReady(tutorialPreview); Pump(120);
+            var coach = app.Windows.OfType<TutorialCoachWindow>().Single();
+            check(guide.Step == 2 && coach.IsVisible && !guide.IsVisible && tutorialPreview.TutorialPaused, "capture opens a tutorial box beside the preview and pauses its dismissal timer"); Render(coach, "guide-3.png");
+            SetCursorPos(System.Windows.Forms.Screen.PrimaryScreen!.WorkingArea.Left + 10, System.Windows.Forms.Screen.PrimaryScreen!.WorkingArea.Top + 10); Pump(2300);
+            check(tutorialPreview.IsVisible, "tutorial keeps a two-second preview alive beyond its normal timer");
+            Click(Find<Button>(coach).Single(b => b.Content as string == "See screenshot tools"), coach); Pump(100);
+            coach = app.Windows.OfType<TutorialCoachWindow>().Single();
+            check(guide.Step == 3 && ((Border)((StackPanel)tutorialPreview.Content).Children[0]).IsHitTestVisible, "tutorial reveals the actual Edit Text and Pin actions without opening an editor"); Render(coach, "guide-4.png");
+            tutorialPreview.Close(); Pump(80);
+            check(coach.IsVisible && Find<TextBlock>(coach).Any(t => t.Text == "You can continue the walkthrough without this preview."), "using or dismissing the screenshot leaves the tutorial ready to continue");
+            Click(Find<Button>(coach).Single(b => b.Content as string == "Adjust my preview"), coach); Pump(100); Render(guide, "guide-5.png");
+            check(guide.Step == 4 && guide.IsVisible && Find<Slider>(guide).Count() == 2 && Find<CheckBox>(guide).Single().IsChecked == false && startupWrites == 0, "walkthrough ends with editable preview size and duration and unchecked startup");
+            var sliders = Find<Slider>(guide).ToArray(); sliders[0].Value = 8; sliders[1].Value = 350; Pump(80);
+            check(app.Settings.Duration == 8 && app.Settings.PreviewWidth == 350 && Settings.Load(app.SettingsPathOverride).PreviewWidth == 350, "tutorial preview size and duration controls update and persist preferences");
             Click(Find<Button>(guide).Single(b => b.Content as string == "Finish setup"), guide);
-            check(app.Settings.IntroductionSeen && Settings.Load(app.SettingsPathOverride).IntroductionSeen && startupWrites == 0, "finishing guide records completion without enabling startup");
-            guide = new WelcomeWindow(app) { Topmost = true }; guide.Show(); guide.ShowStep(3); guide.Activate(); Pump(150);
+            check(app.Settings.IntroductionSeen && Settings.Load(app.SettingsPathOverride).IntroductionSeen && startupWrites == 0 && !tutorialPreview.TutorialPaused, "finishing guide records completion and resumes the preview without enabling startup"); tutorialPreview.Close(); tutorialPreview = null;
+            guide = new WelcomeWindow(app) { Topmost = true }; guide.Show(); guide.ShowStep(4); guide.Activate(); Pump(150);
             Click(Find<CheckBox>(guide).Single(), guide);
             check(startupWrites == 0, "startup selection waits for explicit Finish setup confirmation");
             Click(Find<Button>(guide).Single(b => b.Content as string == "Finish setup"), guide);
@@ -207,8 +241,37 @@ internal static class InteractionTests
         }
         finally
         {
-            recorder?.Close(); guide?.Close(); app.Hotkeys = originalHotkeys; app.Settings = original; app.SettingsPathOverride = originalPath; app.ConfigureStartup = originalStartup;
+            recorder?.Close(); guide?.Close(); tutorialPreview?.Close(); app.Hotkeys = originalHotkeys; app.Settings = original; app.SettingsPathOverride = originalPath; app.ConfigureStartup = originalStartup;
         }
+    }
+    private static void WindowsCaptureChord(Window target, bool repeat)
+    {
+        if (WindowCatalog.GetForegroundWindow() != new WindowInteropHelper(target).Handle) throw new InvalidOperationException("Windows shortcut test stopped: test window is not foreground.");
+        try
+        {
+            SendKey(0x5B, false); Pump(25); SendKey(0x10, false); Pump(25); SendKey(0x53, false); Pump(40);
+            if (repeat) { SendKey(0x53, false); Pump(40); }
+        }
+        finally { SendKey(0x53, true); SendKey(0x10, true); SendKey(0x5B, true); Pump(120); }
+    }
+    private static void TestCaptureToolbar(Action<bool, string> check)
+    {
+        var screen = System.Windows.Forms.Screen.FromPoint(Native.CursorPosition);
+        var capture = new CaptureSession(CaptureMode.Region, screen, (_, _, _) => { }, () => { });
+        try
+        {
+            capture.Start(); Pump(120);
+            var overlay = Application.Current.Windows.OfType<CaptureOverlay>().Single(w => { Native.GetWindowRect(new WindowInteropHelper(w).Handle, out var r); return r.Bounds == screen.Bounds; });
+            var toolbar = Application.Current.Windows.OfType<CaptureToolbar>().Single();
+            var point = new Point(screen.Bounds.Left + 120, screen.Bounds.Top + 120);
+            Move(point, new WindowInteropHelper(overlay).Handle); SendMouse(2); Pump(80);
+            check(!toolbar.IsVisible, "capture mode toolbar disappears on actual selection mouse-down");
+            SendMouse(4); Pump(80); check(toolbar.IsVisible && !capture.Completed, "an empty selection restores the toolbar without capturing");
+            Move(point, new WindowInteropHelper(overlay).Handle); SendMouse(2); Pump(60);
+            SetCursorPos((int)point.X + 120, (int)point.Y + 80); Pump(60); SendMouse(4); Pump(80);
+            check(capture.Completed && !Application.Current.Windows.OfType<CaptureOverlay>().Any() && !Application.Current.Windows.OfType<CaptureToolbar>().Any(), "a dragged selection completes and removes its hidden toolbar and overlays");
+        }
+        finally { capture.Cancel(); }
     }
     private static void Chord(string shortcut, Window target)
     {
@@ -268,7 +331,7 @@ internal static class InteractionTests
                 Native.GetWindowRect(new WindowInteropHelper(ghost).Handle, out var movedBounds);
                 check(Math.Abs((movedBounds.Left - firstBounds.Left) - (destination.X - (grab.X - 20))) < 3 &&
                       Math.Abs((movedBounds.Top - firstBounds.Top) - (destination.Y - (grab.Y - 20))) < 3,
-                    "drag image tracks physical cursor coordinates across the desktop");
+                    $"drag image tracks physical cursor coordinates across the desktop (start {firstBounds.Bounds}, end {movedBounds.Bounds}, from {grab}, to {destination}, cursor {Native.CursorPosition})");
                 check(WindowFromPoint(new Native.Point { X = (int)destination.X, Y = (int)destination.Y }) == targetHandle,
                     "drag image is click-through so the destination remains reachable");
                 if (attempt == 2) { SendMouse(8); await Task.Delay(80); SendMouse(16); }
@@ -318,8 +381,10 @@ internal static class InteractionTests
         if (SendInput(1, new[] { down }, Marshal.SizeOf<Input>()) != 1) throw new InvalidOperationException("Mouse input could not be sent.");
         Pump(60);
         bool pressed = target is not Button button || button.IsPressed;
+        bool feedback = target is not Button control || control.Template.FindName("PressScale", control) is not ScaleTransform transform || Math.Abs(transform.ScaleX - (Motion.Reduced ? 1 : .98)) < .00001;
         var pointer = Mouse.GetPosition(target); var native = Native.CursorPosition;
         SendInput(1, new[] { up }, Marshal.SizeOf<Input>()); Pump(120);
+        if (pressed && !feedback) throw new InvalidOperationException("Pointer-down did not provide immediate presentation feedback.");
         if (!pressed) throw new InvalidOperationException($"Test mouse-down did not press '{(target as Button)?.Content}'. WPF cursor ({pointer.X:0},{pointer.Y:0}) within target {target.ActualWidth:0}×{target.ActualHeight:0}; native cursor ({native.X},{native.Y}); foreground is target: {WindowCatalog.GetForegroundWindow() == new WindowInteropHelper(window).Handle}.");
     }
     private static void Pump(int milliseconds) => Await(Task.Delay(milliseconds));

@@ -8,6 +8,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace BetterSS;
 
@@ -131,6 +133,24 @@ internal static class VideoCutService
     {
         await RunAsync(ScreenRecorder.ExecutablePath, new[] { "-hide_banner", "-v", "error", "-nostdin", "-y", "-i", input, "-map", "0:v:0", "-map", "0:a:0?",
             "-vf", "scale=960:540:force_original_aspect_ratio=decrease:force_divisible_by=2,setsar=1", "-c:v", "libx264", "-preset", "ultrafast", "-crf", "26", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-movflags", "+faststart", "-progress", "pipe:1", "-nostats", output }, token, progress, duration);
+    }
+
+    internal static async Task<IReadOnlyList<VideoThumbnail>> ThumbnailsAsync(string preview, string cacheFolder, double duration, CancellationToken token)
+    {
+        const int count = 24;
+        await RunAsync(ScreenRecorder.ExecutablePath, new[] { "-hide_banner", "-v", "error", "-nostdin", "-y", "-i", preview, "-an", "-vf", $"fps={Number(count / Math.Max(.04, duration))}:start_time=0,scale=160:90:force_original_aspect_ratio=increase,crop=160:90", "-frames:v", count.ToString(CultureInfo.InvariantCulture), "-q:v", "4", Path.Combine(cacheFolder, "thumbnail-%02d.jpg") }, token);
+        return await Task.Run(() =>
+        {
+            var frames = new List<VideoThumbnail>();
+            foreach (string file in Directory.GetFiles(cacheFolder, "thumbnail-*.jpg").Order(StringComparer.Ordinal))
+            {
+                token.ThrowIfCancellationRequested(); using var stream = File.OpenRead(file); var decoded = BitmapDecoder.Create(stream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames[0];
+                // Detach the pixels from the worker-owned decoder before passing them to WPF drawings.
+                var converted = new FormatConvertedBitmap(decoded, PixelFormats.Pbgra32, null, 0); int stride = converted.PixelWidth * 4; var pixels = new byte[stride * converted.PixelHeight]; converted.CopyPixels(pixels, stride, 0);
+                var image = BitmapSource.Create(converted.PixelWidth, converted.PixelHeight, 96, 96, PixelFormats.Pbgra32, null, pixels, stride); image.Freeze(); frames.Add(new(frames.Count * duration / count, image));
+            }
+            return (IReadOnlyList<VideoThumbnail>)frames;
+        }, token);
     }
 
     internal static async Task ExportAsync(string input, string output, IReadOnlyList<VideoClip> clips, bool muted, VideoInfo info,

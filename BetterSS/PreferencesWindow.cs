@@ -20,39 +20,40 @@ internal sealed class PreferencesWindow : Window
     private string page = "Capture";
     internal PreferencesWindow(App app)
     {
-        this.app = app; UI.SetupWindow(this, "Preferences", 980, 760, UI.Dark(app.Settings)); MinWidth = 820; MinHeight = 600; Build();
+        this.app = app; UI.SetupWindow(this, "Preferences", 940, 740, UI.Dark(app.Settings)); MinWidth = 820; MinHeight = 600; Build();
     }
     private void Build()
     {
-        dark = UI.Dark(app.Settings); Background = UI.Background(dark); Foreground = UI.Ink(dark);
-        if (IsLoaded) Native.SquareCorners(this, dark);
-        var root = new Grid { Background = UI.Background(dark) }; root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(210) }); root.ColumnDefinitions.Add(new ColumnDefinition());
-        var side = new DockPanel { Margin = new Thickness(24, 32, 24, 24) };
-        var brand = new StackPanel { Margin = new Thickness(0, 0, 0, 42) }; brand.Children.Add(UI.Text("BETTER SS", 17, UI.Ink(dark), FontWeights.SemiBold));
-        var tagline = UI.Text("Screenshot utility", 11, UI.Muted(dark)); tagline.Margin = new Thickness(0, 7, 0, 0); brand.Children.Add(tagline); DockPanel.SetDock(brand, Dock.Top); side.Children.Add(brand);
-        var footer = new StackPanel(); footer.Children.Add(UI.Text("READY IN YOUR TRAY", 9, UI.Ink(dark), FontWeights.SemiBold));
-        var note = UI.Text("Close preferences to keep capturing. Quit from the tray.", 11, UI.Muted(dark)); note.Margin = new Thickness(0, 10, 0, 24); footer.Children.Add(note); footer.Children.Add(UI.Text("VERSION 0.4.0", 9, UI.Muted(dark))); var credit = UI.Text("BY HARSH RAWAT", 9, UI.Muted(dark)); credit.Margin = new Thickness(0, 4, 0, 0); footer.Children.Add(credit); DockPanel.SetDock(footer, Dock.Bottom); side.Children.Add(footer);
+        dark = UI.Dark(app.Settings); UI.ApplyTheme(this, dark);
+        var root = new Grid { Background = UI.Background(dark) }; root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(196) }); root.ColumnDefinitions.Add(new ColumnDefinition());
+        var side = new DockPanel { Margin = new Thickness(16, 24, 16, 20) };
+        var brand = new StackPanel { Margin = new Thickness(8, 0, 0, 28) }; var mark = UI.Mark(38); mark.HorizontalAlignment = HorizontalAlignment.Left; mark.Margin = new Thickness(0, 0, 0, 12); brand.Children.Add(mark); brand.Children.Add(UI.Text("Better SS", 18, UI.Ink(dark), FontWeights.SemiBold));
+        var tagline = UI.Text("Preferences", 11, UI.Muted(dark)); tagline.Margin = new Thickness(0, 5, 0, 0); brand.Children.Add(tagline); DockPanel.SetDock(brand, Dock.Top); side.Children.Add(brand);
+        var footer = new StackPanel(); footer.Children.Add(UI.Text(app.DevelopmentMode ? "Live development" : "Ready in your tray", 11, UI.Ink(dark), FontWeights.SemiBold));
+        var note = UI.Text("Close preferences to keep capturing. Quit from the tray.", 11, UI.Muted(dark)); note.LineHeight = 17; note.Margin = new Thickness(0, 10, 0, 24); footer.Children.Add(note); footer.Children.Add(UI.Text("Version " + typeof(App).Assembly.GetName().Version?.ToString(3), 10, UI.Muted(dark))); var credit = UI.Text("By Harsh Rawat", 10, UI.Muted(dark)); credit.Margin = new Thickness(0, 4, 0, 0); footer.Children.Add(credit); DockPanel.SetDock(footer, Dock.Bottom); side.Children.Add(footer);
         var nav = new StackPanel(); navigation.Clear();
-        foreach (var name in new[] { "Capture", "Floating preview", "Appearance", "Sound", "Storage", "Startup & guide" }) { string selected = name; var button = UI.Button(name, () => ShowPage(selected), false, dark); button.HorizontalContentAlignment = HorizontalAlignment.Left; button.Margin = new Thickness(0, 0, 0, 8); navigation.Add(name, button); nav.Children.Add(button); }
-        side.Children.Add(nav); root.Children.Add(new Border { Background = UI.Surface(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(0, 0, 1, 0), Child = side });
-        body = new StackPanel { Margin = new Thickness(36, 32, 36, 32) }; var scroll = new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetColumn(scroll, 1); root.Children.Add(scroll); Content = root; ShowPage(page);
+        foreach (var name in new[] { "Capture", "Floating preview", "Appearance", "Sound", "Storage", "Startup & guide" }) { string selected = name; var button = UI.Button(name, () => ShowPage(selected), false, dark); UI.Navigation(button, dark); button.Margin = new Thickness(0, 0, 0, 5); UI.Icon(button, name switch { "Capture" => "\uE722", "Floating preview" => "\uE8A7", "Appearance" => "\uE790", "Sound" => "\uE767", "Storage" => "\uE8B7", _ => "\uE946" }); navigation.Add(name, button); nav.Children.Add(button); }
+        side.Children.Add(nav); root.Children.Add(new Border { Background = UI.Sidebar(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(0, 0, 1, 0), Child = side });
+        body = new StackPanel { Margin = new Thickness(28, 24, 28, 24) }; var scroll = new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetColumn(scroll, 1); root.Children.Add(scroll); Content = root; ShowPage(page);
     }
     internal void ShowPage(string name)
     {
         page = name; body.Children.Clear(); foreach (var entry in navigation) UI.Select(entry.Value, entry.Key == name, dark);
-        body.Children.Add(UI.Text(page, 28, UI.Ink(dark), FontWeights.SemiBold));
-        var descriptions = new Dictionary<string, string> { ["Capture"] = "Capture a moment. Keep moving.", ["Floating preview"] = "A temporary home for your screenshot.", ["Appearance"] = "Monochrome. Precise edges. Nothing extra.", ["Sound"] = "Your capture sound, at the right level.", ["Storage"] = "Local files. Flexible exports.", ["Startup & guide"] = "Ready when you need it. Always your choice." };
-        var intro = UI.Text(descriptions[name], 13, UI.Muted(dark)); intro.Margin = new Thickness(0, 9, 0, 30); body.Children.Add(intro);
+        var descriptions = new Dictionary<string, string> { ["Capture"] = "Capture a moment. Keep moving.", ["Floating preview"] = "A temporary home for your screenshot.", ["Appearance"] = "Neutral surfaces, clear controls, and a theme that fits your desktop.", ["Sound"] = "Your capture sound, at the right level.", ["Storage"] = "Local files. Flexible exports.", ["Startup & guide"] = "Ready when you need it. Always your choice." };
+        body.Children.Add(UI.PageHeader(page, descriptions[name], dark));
         switch (name) { case "Capture": CapturePage(); break; case "Floating preview": PreviewPage(); break; case "Appearance": AppearancePage(); break; case "Sound": SoundPage(); break; case "Startup & guide": StartupPage(); break; default: StoragePage(); break; }
     }
     private void CapturePage()
     {
         var panel = new StackPanel(); Heading(panel, "Choose what to capture", "Every capture is automatically copied. A quiet confirmation appears only after the clipboard is ready.");
         var modes = new WrapPanel();
-        foreach (var mode in Enum.GetValues<CaptureMode>()) { var choice = mode; var button = UI.Button(CaptureSession.Label(mode), () => app.BeginCapture(choice), mode == CaptureMode.Region, dark); button.Margin = new Thickness(0, 0, 8, 8); modes.Children.Add(button); }
-        panel.Children.Add(modes); var detail = UI.Text("Window opens a searchable list, including minimized windows.", 12, UI.Muted(dark)); detail.Margin = new Thickness(0, 14, 0, 0); panel.Children.Add(detail); body.Children.Add(UI.Card(panel, dark));
+        foreach (var mode in Enum.GetValues<CaptureMode>()) { var choice = mode; var button = UI.Button(CaptureSession.Label(mode), () => app.BeginCapture(choice), false, dark); UI.Segment(button, dark); UI.Select(button, mode == CaptureMode.Region, dark); modes.Children.Add(button); }
+        panel.Children.Add(UI.Segmented(modes, dark)); var detail = UI.Text("Window opens a searchable list, including minimized windows.", 12, UI.Muted(dark)); detail.Margin = new Thickness(0, 14, 0, 0); panel.Children.Add(detail); body.Children.Add(UI.Card(panel, dark));
         var video = new StackPanel(); Heading(video, "Video recording", "Record a display or application, then preview, cut and export your video. The video cutter has one track with split, trim, delete and mute controls."); var videoActions = new WrapPanel(); videoActions.Children.Add(UI.Button("Record video…", app.ShowVideoRecording, true, dark)); videoActions.Children.Add(UI.Button("Cut video…", app.ShowVideoEditor, false, dark)); video.Children.Add(videoActions); body.Children.Add(UI.Card(video, dark));
         var options = new StackPanel(); Heading(options, "Launch controls", "Use a hotkey or double-click the tray icon. Capture controls work entirely with the mouse.");
+        Toggle(options, "Use Windows + Shift + S for Better SS", app.Settings.UseWindowsCaptureShortcut, defaults.UseWindowsCaptureShortcut, v =>
+        { if (!app.TrySetWindowsCaptureShortcut(v, out var problem)) app.Notify("Shortcut unchanged", problem); ShowPage(page); });
+        var takeoverNote = UI.Text("While this is on and Better SS is running, Windows + Shift + S opens Better SS. Turn it off to restore Snipping Tool and use your saved shortcut below. Quitting Better SS also releases the Windows shortcut.", 12, UI.Muted(dark)); takeoverNote.Margin = new Thickness(0, 0, 0, 18); options.Children.Add(takeoverNote);
         Choice(options, "Launch shortcut", new[] { "Ctrl + Shift + S", "Alt + Ctrl + S", "Ctrl + Shift + F8", "Disabled" }, app.Settings.Hotkey, defaults.Hotkey, v => { if (!app.TrySetHotkey(v, out var error)) app.HotkeyStatus = error; });
         var custom = UI.Button("Record custom shortcut…", () => { new HotkeyWindow(app) { Owner = this }.ShowDialog(); ShowPage(page); }, false, dark);
         custom.HorizontalAlignment = HorizontalAlignment.Left; custom.Margin = new Thickness(0, 0, 0, 14); options.Children.Add(custom);
@@ -76,8 +77,9 @@ internal sealed class PreferencesWindow : Window
     }
     private void AppearancePage()
     {
-        var panel = new StackPanel(); Heading(panel, "Interface", "Black, white, and neutral gray throughout. All panels, controls, and floating previews use square edges.");
-        Choice(panel, "Theme", new[] { "System", "Light", "Dark" }, app.Settings.Theme, defaults.Theme, v => app.Settings.Theme = v);
+        var panel = new StackPanel(); Heading(panel, "Interface", "Soft neutral surfaces, rounded controls, and blue accents for actions and selections. Choose a theme and adjust your floating preview.");
+        var themes = new WrapPanel(); foreach (string mode in new[] { "System", "Light", "Dark" }) { string selected = mode; var button = UI.Button(mode, () => { app.Settings.Theme = selected; app.Persist(); Build(); }, false, dark); UI.Segment(button, dark); UI.Select(button, app.Settings.Theme == mode, dark); themes.Children.Add(button); } var themeRow = UI.Segmented(themes, dark); themeRow.Margin = new Thickness(0, 0, 0, 14); panel.Children.Add(themeRow);
+        var glass = UI.Text("Liquid glass adapts to the background. Turn off transparency in Windows settings for solid surfaces.", 12, UI.Muted(dark)); glass.Margin = new Thickness(0, 0, 0, 12); panel.Children.Add(glass);
         Slider(panel, "Preview shadow", 0, 48, app.Settings.Shadow, defaults.Shadow, "px", v => app.Settings.Shadow = v);
         Slider(panel, "Preview border", 0, 3, app.Settings.Stroke, defaults.Stroke, "px", v => app.Settings.Stroke = v);
         body.Children.Add(UI.Card(panel, dark)); body.Children.Add(UI.Button("Preview appearance", app.DemoPreview, true, dark));
@@ -98,7 +100,7 @@ internal sealed class PreferencesWindow : Window
         row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         row.Children.Add(UI.Text("Sound file", 13, UI.Ink(dark)));
         var current = SoundCatalog.SelectedFileName(app.Settings.SoundPath);
-        var menu = new ContextMenu { Background = UI.Surface(dark), Foreground = UI.Ink(dark), BorderBrush = UI.Line(dark), FontSize = 13 };
+        var menu = UI.Menu(dark);
         var button = UI.Button(current + "    ▾", () => menu.IsOpen = true, false, dark); button.Margin = new Thickness(0); menu.PlacementTarget = button; menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
         foreach (var fileName in new[] { SoundCatalog.SystemSoundName }.Concat(SoundCatalog.AvailableBuiltInFileNames))
         {
@@ -123,22 +125,23 @@ internal sealed class PreferencesWindow : Window
         body.Children.Add(UI.Text("With automatic saving off, local drag copies remain in DragCache. OCR runs on this PC. Nothing is uploaded.", 12, UI.Muted(dark))); var cache = UI.Button("Open drag cache", () => Native.OpenFolder(Path.Combine(Settings.DataFolder, "DragCache")), false, dark); cache.Margin = new Thickness(0, 18, 0, 0); body.Children.Add(cache);
     }
     private void Heading(StackPanel panel, string title, string description)
-    { panel.Children.Add(UI.Text(title, 16, UI.Ink(dark), FontWeights.SemiBold)); var note = UI.Text(description, 12, UI.Muted(dark)); note.Margin = new Thickness(0, 9, 0, 22); panel.Children.Add(note); }
+    { panel.Children.Add(UI.Text(title, 16, UI.Ink(dark), FontWeights.SemiBold)); var note = UI.Text(description, 12, UI.Muted(dark)); note.Margin = new Thickness(0, 6, 0, 18); panel.Children.Add(note); }
     private void StartupPage()
     {
         var panel = new StackPanel(); Heading(panel, "Start with Windows", "Optional startup for your Windows account. Better SS opens quietly in the tray when you sign in.");
         Toggle(panel, "Start when I sign in", app.Settings.StartOnLogin, defaults.StartOnLogin, v =>
         { if (!app.SetStartupEnabled(v, out var error)) app.Notify("Startup unchanged", error); ShowPage(page); });
         panel.Children.Add(UI.Text("Keep this executable in its current folder. If you move it, turn startup off and on here to update its location. Windows Task Manager can also disable startup apps.", 12, UI.Muted(dark))); body.Children.Add(UI.Card(panel, dark));
-        var guide = new StackPanel(); Heading(guide, "Make yourself at home", "Replay the four-step guide at any time, including practice screenshots, editing, export, and keeping Better SS visible in the system tray.");
-        guide.Children.Add(UI.Button("Open quick guide", app.ShowGuide, true, dark)); body.Children.Add(UI.Card(guide, dark));
+        var guide = new StackPanel(); Heading(guide, "Make yourself at home", "Replay the walkthrough: assign a shortcut, take a real screenshot, learn to drag it, find Edit, Text and Pin, then adjust preview size and duration.");
+        guide.Children.Add(UI.Button("Open walkthrough", app.ShowGuide, true, dark)); body.Children.Add(UI.Card(guide, dark));
         body.Children.Add(UI.Text("To keep the tray icon visible: open the hidden-icons arrow (^) beside the clock and drag Better SS into the visible tray. You can also use Windows taskbar settings.", 12, UI.Muted(dark)));
         var taskbar = UI.Button("Open Windows taskbar settings", () => { try { StartupService.OpenTaskbarSettings(); } catch (Exception ex) { app.Notify("Taskbar settings unavailable", ex.Message); } }, false, dark); taskbar.Margin = new Thickness(0, 18, 0, 0); body.Children.Add(taskbar);
     }
     private Button ResetButton(string title, Action restore)
     {
         var button = UI.Button("Reset", () => { restore(); app.Persist(); Build(); }, false, dark);
-        button.FontSize = 10; button.Padding = new Thickness(8, 5, 8, 5); button.Margin = new Thickness(10, 0, 0, 0);
+        UI.Quiet(button, dark);
+        button.FontSize = 11; button.Padding = new Thickness(8, 5, 8, 5); button.Margin = new Thickness(10, 0, 0, 0);
         button.VerticalAlignment = VerticalAlignment.Center; button.ToolTip = "Reset " + title.ToLowerInvariant() + " to default";
         System.Windows.Automation.AutomationProperties.SetName(button, "Reset " + title + " to default");
         return button;
@@ -146,7 +149,7 @@ internal sealed class PreferencesWindow : Window
     private void Choice(StackPanel panel, string title, string[] values, string current, string defaultValue, Action<string> changed)
     {
         var row = new Grid { Margin = new Thickness(0, 6, 0, 16) }; row.ColumnDefinitions.Add(new ColumnDefinition()); row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(190) }); row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); row.Children.Add(UI.Text(title, 13, UI.Ink(dark)));
-        var menu = new ContextMenu { Background = UI.Surface(dark), Foreground = UI.Ink(dark), BorderBrush = UI.Line(dark), FontSize = 13 };
+        var menu = UI.Menu(dark);
         var button = UI.Button(current + "    ▾", () => menu.IsOpen = true, false, dark); button.Margin = new Thickness(0); menu.PlacementTarget = button; menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
         foreach (string option in values) { string selected = option; var item = new MenuItem { Header = option, IsCheckable = true, IsChecked = option == current, Padding = new Thickness(10, 8, 10, 8) }; item.Click += (_, _) => { menu.IsOpen = false; changed(selected); app.Persist(); Build(); }; menu.Items.Add(item); }
         Grid.SetColumn(button, 1); row.Children.Add(button);
@@ -156,7 +159,7 @@ internal sealed class PreferencesWindow : Window
     {
         var row = new DockPanel { Margin = new Thickness(0, 8, 0, 12) };
         var reset = ResetButton(title, () => changed(defaultValue)); DockPanel.SetDock(reset, Dock.Right); row.Children.Add(reset);
-        var toggle = new CheckBox { Content = title, IsChecked = value, Foreground = UI.Ink(dark), FontSize = 13, VerticalAlignment = VerticalAlignment.Center };
+        var toggle = UI.Switch(title, value, dark);
         toggle.Click += (_, _) => { changed(toggle.IsChecked == true); app.Persist(); }; row.Children.Add(toggle); panel.Children.Add(row);
     }
     private void Slider(StackPanel panel, string title, double min, double max, double value, double defaultValue, string unit, Action<double> changed)

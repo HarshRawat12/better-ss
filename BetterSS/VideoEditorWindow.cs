@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Windows.Shell;
 using Microsoft.Win32;
 
 namespace BetterSS;
@@ -21,13 +22,12 @@ internal sealed class VideoEditorWindow : Window
     private readonly VideoExportSettings? recordingSettings;
     private readonly MediaElement player = new() { LoadedBehavior = MediaState.Manual, UnloadedBehavior = MediaState.Manual, Stretch = Stretch.Uniform, ScrubbingEnabled = true, Volume = .8 };
     private readonly Slider timeline = new() { Minimum = 0, Maximum = 1, IsMoveToPointEnabled = true };
-    private readonly Grid track = new();
-    private readonly List<Button> clipButtons = new();
+    private readonly VideoTimeline track;
     private readonly StackPanel editControls = new();
     private readonly TextBlock status, time, details, marks;
+    private readonly TextBlock frames, viewerInfo, viewerTime, trimDuration, fileStats;
     private readonly TextBox trimStart, trimEnd;
     private readonly Button play, mute, export, undo, redo, split, delete, applyTrim, keepRange;
-    private readonly Border playheadLine;
     private readonly DispatcherTimer timer = new() { Interval = TimeSpan.FromMilliseconds(35) };
     private readonly CancellationTokenSource lifetime = new();
     private VideoCutDocument? document;
@@ -38,50 +38,61 @@ internal sealed class VideoEditorWindow : Window
     private int selected, playbackIndex;
     private double editPosition;
     private double? markIn, markOut;
+    private double speed = 1;
+    private bool loop;
+    internal int TimelineThumbnailCount => track.ThumbnailCount;
     internal bool PreviewReady => ready;
     internal bool LoadFinished { get; private set; }
 
     internal VideoEditorWindow(App app, string path, VideoExportSettings? settings = null)
     {
         sourcePath = Path.GetFullPath(path); recordingSettings = settings; dark = UI.Dark(app.Settings);
-        UI.SetupWindow(this, "Better SS Split", 1100, 800, dark); MinWidth = 850; MinHeight = 650;
-        var root = new DockPanel { Margin = new Thickness(24) };
-        var header = new DockPanel { Margin = new Thickness(0, 0, 0, 18) };
-        var headerActions = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Right };
-        headerActions.Children.Add(UI.Button("Keyboard", ShowShortcuts, false, dark)); export = UI.Button("Export video…", Export, true, dark); export.IsEnabled = false; export.ToolTip = "Export video · Ctrl+M"; headerActions.Children.Add(export); DockPanel.SetDock(headerActions, Dock.Right); header.Children.Add(headerActions);
-        var heading = new StackPanel(); heading.Children.Add(UI.Text("Better SS Split", 25, UI.Ink(dark), FontWeights.SemiBold));
-        details = UI.Text(Path.GetFileName(sourcePath), 11, UI.Muted(dark)); details.Margin = new Thickness(0, 6, 0, 0); heading.Children.Add(details); header.Children.Add(heading);
-        DockPanel.SetDock(header, Dock.Top); root.Children.Add(header);
-        status = UI.Text("Reading video…", 12, UI.Muted(dark)); status.Margin = new Thickness(0, 14, 0, 0); DockPanel.SetDock(status, Dock.Bottom); root.Children.Add(status);
+        UI.SetupWindow(this, "Better SS Split", 1180, 800, dark); MinWidth = 900; MinHeight = 600;
+        WindowChrome.SetWindowChrome(this, new WindowChrome { CaptionHeight = 44, ResizeBorderThickness = new Thickness(6), GlassFrameThickness = new Thickness(0), CornerRadius = new CornerRadius(0), UseAeroCaptionButtons = false });
+        var root = new DockPanel();
+        var header = new DockPanel { Height = 44, Margin = new Thickness(9, 0, 5, 0) };
+        var caption = new StackPanel { Orientation = Orientation.Horizontal }; DockPanel.SetDock(caption, Dock.Right); header.Children.Add(caption);
+        caption.Children.Add(Command("Minimize", "\uE921", () => WindowState = WindowState.Minimized, iconOnly: true));
+        caption.Children.Add(Command("Maximize or restore", "\uE922", () => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized, iconOnly: true));
+        var close = Command("Close", "\uE8BB", Close, iconOnly: true); close.MouseEnter += (_, _) => { close.Background = UI.Brush("#C42B1C"); close.Foreground = Brushes.White; }; close.MouseLeave += (_, _) => UI.Quiet(close, dark); caption.Children.Add(close);
+        export = Command("Export video…", "\uE74E", Export, primary: true); export.ToolTip = "Export video · Ctrl+M"; export.IsEnabled = false; DockPanel.SetDock(export, Dock.Right); header.Children.Add(export);
+        var history = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(10, 0, 12, 0) };
+        undo = Command("Undo", "\uE7A7", () => Edit(() => document!.Undo()), iconOnly: true); redo = Command("Redo", "\uE7A6", () => Edit(() => document!.Redo()), iconOnly: true); history.Children.Add(undo); history.Children.Add(redo); history.Children.Add(Command("Shortcuts", "\uE765", ShowShortcuts)); DockPanel.SetDock(history, Dock.Right); header.Children.Add(history);
+        var brand = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 12, 0) }; var logo = new Border { Width = 22, Height = 22, CornerRadius = new CornerRadius(5), Background = UI.Brush("#0071E3"), Child = new TextBlock { Text = "B", FontSize = 14, FontWeight = FontWeights.Bold, Foreground = Brushes.White, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center } }; brand.Children.Add(logo); var name = UI.Text("Better SS Split  /", 13, UI.Ink(dark), FontWeights.SemiBold); name.Margin = new Thickness(8, 0, 0, 0); brand.Children.Add(name); DockPanel.SetDock(brand, Dock.Left); header.Children.Add(brand);
+        details = UI.Text(Path.GetFileName(sourcePath), 11, UI.Ink(dark)); details.TextWrapping = TextWrapping.NoWrap; details.TextTrimming = TextTrimming.CharacterEllipsis; details.ToolTip = sourcePath;
+        header.Children.Add(new Border { Background = UI.Background(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(.5), CornerRadius = new CornerRadius(5), Padding = new Thickness(8, 4, 8, 4), VerticalAlignment = VerticalAlignment.Center, Child = details });
+        var headerBorder = Strip(header, UI.Surface(dark)); DockPanel.SetDock(headerBorder, Dock.Top); root.Children.Add(headerBorder);
+        var footer = new DockPanel { Height = 26, Margin = new Thickness(10, 0, 10, 0) };
+        var shortcuts = UI.Text("Space: Play  ·  S: Split  ·  I/O: In/Out", 10, UI.Muted(dark)); DockPanel.SetDock(shortcuts, Dock.Right); footer.Children.Add(shortcuts);
+        fileStats = UI.Text("", 10, UI.Muted(dark)); fileStats.Margin = new Thickness(12, 0, 18, 0); DockPanel.SetDock(fileStats, Dock.Right); footer.Children.Add(fileStats);
+        status = UI.Text("Reading video…", 10, UI.Muted(dark)); status.TextWrapping = TextWrapping.NoWrap; status.TextTrimming = TextTrimming.CharacterEllipsis; footer.Children.Add(status); var footerBorder = Strip(footer, UI.Surface(dark)); DockPanel.SetDock(footerBorder, Dock.Bottom); root.Children.Add(footerBorder);
         var bottom = new StackPanel(); DockPanel.SetDock(bottom, Dock.Bottom); root.Children.Add(bottom);
-        var transport = new WrapPanel { Margin = new Thickness(0, 12, 0, 8) };
-        transport.Children.Add(UI.Button("J  ◀", () => ShuttleBack(), false, dark)); transport.Children.Add(UI.Button("K  ■", Pause, false, dark));
-        play = UI.Button("L  ▶", ShuttleForward, false, dark); play.IsEnabled = false; play.ToolTip = "Play/Pause · Space or L"; transport.Children.Add(play);
-        transport.Children.Add(UI.Button("◀ Frame", () => Step(-1), false, dark)); transport.Children.Add(UI.Button("Frame ▶", () => Step(1), false, dark));
-        mute = UI.Button("Mute audio", ToggleMute, false, dark); mute.IsEnabled = false; transport.Children.Add(mute);
-        time = UI.Text("00:00.000 / 00:00.000", 12, UI.Muted(dark)); time.Margin = new Thickness(10, 0, 0, 0); transport.Children.Add(time); bottom.Children.Add(transport);
-        UI.StyleSlider(timeline, dark); timeline.IsEnabled = false; timeline.ValueChanged += (_, _) => { if (!updating) Seek(timeline.Value); }; bottom.Children.Add(timeline);
-        marks = UI.Text("IN  —   OUT  —", 11, UI.Muted(dark)); marks.Margin = new Thickness(0, 2, 0, 6); bottom.Children.Add(marks);
-        var timelineHeader = new Grid(); timelineHeader.ColumnDefinitions.Add(new ColumnDefinition()); timelineHeader.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); timelineHeader.Children.Add(UI.Text("TIMELINE  ·  V1", 11, UI.Muted(dark), FontWeights.SemiBold)); var timelineHint = UI.Text("Selection follows the playhead", 10, UI.Muted(dark)); Grid.SetColumn(timelineHint, 1); timelineHeader.Children.Add(timelineHint); bottom.Children.Add(timelineHeader);
-        playheadLine = new Border { Width = 2, Background = UI.Brush("#EF4444"), HorizontalAlignment = HorizontalAlignment.Left, IsHitTestVisible = false }; Panel.SetZIndex(playheadLine, 20);
-        var trackScroll = new ScrollViewer { Content = track, HorizontalScrollBarVisibility = ScrollBarVisibility.Auto, VerticalScrollBarVisibility = ScrollBarVisibility.Disabled, Margin = new Thickness(0, 8, 0, 10), Height = 78, Background = UI.Brush(dark ? "#111111" : "#E8E8E8") };
-        var trackShell = new Grid(); trackShell.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(74) }); trackShell.ColumnDefinitions.Add(new ColumnDefinition());
-        var trackName = new Border { Background = UI.Brush(dark ? "#292929" : "#DEDEDE"), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), Padding = new Thickness(10), Child = UI.Text("V1\nVIDEO", 10, UI.Ink(dark), FontWeights.SemiBold) }; trackShell.Children.Add(trackName); Grid.SetColumn(trackScroll, 1); trackShell.Children.Add(trackScroll); bottom.Children.Add(trackShell); bottom.Children.Add(editControls); editControls.IsEnabled = false;
-        var actions = new WrapPanel();
-        split = UI.Button("Add Edit", SplitAtPlayhead, false, dark); split.ToolTip = "Split at playhead · Ctrl+K or C";
-        delete = UI.Button("Ripple Delete", DeleteSelected, false, dark); delete.ToolTip = "Remove the selected clip and close the gap · Delete, Backspace, or Shift+Delete";
-        undo = UI.Button("Undo", () => Edit(() => document!.Undo()), false, dark); redo = UI.Button("Redo", () => Edit(() => document!.Redo()), false, dark);
-        actions.Children.Add(split); actions.Children.Add(delete); actions.Children.Add(undo); actions.Children.Add(redo);
-        actions.Children.Add(UI.Button("Mark In", () => SetMark(true), false, dark)); actions.Children.Add(UI.Button("Mark Out", () => SetMark(false), false, dark));
-        keepRange = UI.Button("Keep In–Out", KeepMarkedRange, false, dark); keepRange.IsEnabled = false; keepRange.ToolTip = "Ripple trim everything outside the marked range"; actions.Children.Add(keepRange); editControls.Children.Add(actions);
-        var trim = new WrapPanel { Margin = new Thickness(0, 10, 0, 0) };
-        trim.Children.Add(UI.Text("Selected clip · source start (s)", 11, UI.Muted(dark)));
-        trimStart = UI.TextBox(dark); trimStart.Width = 100; trimStart.Margin = new Thickness(8, 0, 14, 0); trim.Children.Add(trimStart);
-        trim.Children.Add(UI.Text("End (s)", 11, UI.Muted(dark))); trimEnd = UI.TextBox(dark); trimEnd.Width = 100; trimEnd.Margin = new Thickness(8, 0, 14, 0); trim.Children.Add(trimEnd);
-        applyTrim = UI.Button("Apply trim", ApplyTrim, false, dark); trim.Children.Add(applyTrim); editControls.Children.Add(trim);
-        root.Children.Add(new Border { Background = Brushes.Black, BorderBrush = UI.Line(dark), BorderThickness = new Thickness(1), Child = player, MinHeight = 140 }); Content = root;
+        var transport = new Grid { Height = 42, Margin = new Thickness(10, 0, 10, 0) }; transport.ColumnDefinitions.Add(new ColumnDefinition()); transport.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto }); transport.ColumnDefinitions.Add(new ColumnDefinition());
+        var counters = new StackPanel { Orientation = Orientation.Horizontal }; time = UI.Text("00:00.000 / 00:00.000", 11, UI.Accent(dark), FontWeights.SemiBold); time.FontFamily = new FontFamily("Consolas"); counters.Children.Add(time); frames = UI.Text("Frames: 0", 10, UI.Muted(dark)); frames.Margin = new Thickness(12, 0, 0, 0); counters.Children.Add(frames); transport.Children.Add(counters);
+        var playback = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = VerticalAlignment.Center };
+        playback.Children.Add(Command("Previous edit", "\uE892", () => GoToCut(false), iconOnly: true)); playback.Children.Add(Command("Previous frame", "\uE892", () => Step(-1), iconOnly: true));
+        play = Command("Play", "\uE768", TogglePlay, primary: true, iconOnly: true); play.IsEnabled = false; play.ToolTip = "Play/Pause · Space"; playback.Children.Add(play);
+        playback.Children.Add(Command("Next frame", "\uE893", () => Step(1), iconOnly: true)); playback.Children.Add(Command("Next edit", "\uE893", () => GoToCut(true), iconOnly: true)); Grid.SetColumn(playback, 1); transport.Children.Add(playback);
+        var audio = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, VerticalAlignment = VerticalAlignment.Center };
+        mute = Command("Mute audio", "\uE767", ToggleMute, iconOnly: true); mute.IsEnabled = false; audio.Children.Add(mute);
+        var speedMenu = UI.Menu(dark); Button? speedButton = null; speedButton = Command("1.0× ▾", "", () => speedMenu.IsOpen = true); speedButton.ToolTip = "Preview playback speed"; speedMenu.PlacementTarget = speedButton;
+        foreach (double rate in new[] { .5, 1, 1.5, 2 }) { double value = rate; var item = new MenuItem { Header = rate.ToString("0.0", CultureInfo.InvariantCulture) + "×" }; item.Click += (_, _) => { speed = value; player.SpeedRatio = speed; speedButton.Content = speed.ToString("0.0", CultureInfo.InvariantCulture) + "× ▾"; }; speedMenu.Items.Add(item); } audio.Children.Add(speedButton);
+        Button? loopButton = null; loopButton = Command("Loop playback", "\uE8EE", () => { loop = !loop; UI.Select(loopButton!, loop, dark); }, iconOnly: true); audio.Children.Add(loopButton); Grid.SetColumn(audio, 2); transport.Children.Add(audio); bottom.Children.Add(Strip(transport, UI.Surface(dark)));
+        var edit = new DockPanel { Margin = new Thickness(10, 5, 10, 5) };
+        var trim = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+        trim.Children.Add(UI.Text("In:", 10, UI.Muted(dark))); trimStart = TrimField(); trim.Children.Add(trimStart); trim.Children.Add(UI.Text("Out:", 10, UI.Muted(dark))); trimEnd = TrimField(); trim.Children.Add(trimEnd); trimDuration = UI.Text("Dur: —", 10, UI.Muted(dark)); trimDuration.Width = 102; trimDuration.Margin = new Thickness(8, 0, 3, 0); trim.Children.Add(trimDuration); applyTrim = Command("Apply trim", "", ApplyTrim); trim.Children.Add(applyTrim); DockPanel.SetDock(trim, Dock.Right); edit.Children.Add(trim);
+        var actions = new StackPanel { Orientation = Orientation.Horizontal }; split = Command("Split", "\uE8C6", SplitAtPlayhead); split.ToolTip = "Split at playhead · S / Ctrl+K / C"; delete = Command("Ripple Delete", "\uE74D", DeleteSelected); actions.Children.Add(split); actions.Children.Add(delete); actions.Children.Add(Command("Mark In", "", () => SetMark(true))); actions.Children.Add(Command("Mark Out", "", () => SetMark(false))); keepRange = Command("Keep In–Out", "", KeepMarkedRange); keepRange.IsEnabled = false; keepRange.ToolTip = "Keep the marked range and remove its outside edges"; actions.Children.Add(keepRange); edit.Children.Add(actions); editControls.Children.Add(edit); editControls.IsEnabled = false; bottom.Children.Add(Strip(editControls, UI.Background(dark)));
+        track = new VideoTimeline(dark); track.SeekRequested += value => { Pause(); Seek(value); }; track.ClipSelected += SelectClip; track.TrimStarted += Pause; track.TrimRequested += (index, start, end) => { selected = index; Edit(() => document!.Trim(index, start, end)); }; bottom.Children.Add(track);
+        track.TrimPreviewChanged += (_, start, end) => { trimStart.Text = Timecode(start); trimEnd.Text = Timecode(end); trimDuration.Text = "Dur: " + Timecode(end - start); };
+        marks = UI.Text("", 10, UI.Muted(dark)); marks.Margin = new Thickness(90, 0, 12, 3); bottom.Children.Add(marks);
+        // Retain the programmatic playhead control; the filmstrip owns the visible scrub target.
+        timeline.Visibility = Visibility.Collapsed; timeline.ValueChanged += (_, _) => { if (!updating) Seek(timeline.Value); }; bottom.Children.Add(timeline);
+        var viewer = new Grid { Background = UI.HighContrast ? SystemColors.WindowBrush : UI.Brush("#303334") };
+        var viewport = new Grid { Background = Brushes.Black, MaxWidth = 720, MaxHeight = 406, Margin = new Thickness(24), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }; viewport.Children.Add(player); player.MinHeight = 100;
+        viewerInfo = UI.Text("Reading source…", 10, Brushes.White); viewerTime = UI.Text("TC  00:00.000", 10, Brushes.White, FontWeights.SemiBold); viewerTime.FontFamily = new FontFamily("Consolas");
+        viewport.Children.Add(Hud(viewerInfo, HorizontalAlignment.Left, VerticalAlignment.Top)); viewport.Children.Add(Hud(viewerTime, HorizontalAlignment.Left, VerticalAlignment.Bottom)); viewport.Children.Add(Hud(UI.Text("Fit", 10, Brushes.White), HorizontalAlignment.Right, VerticalAlignment.Top)); viewer.Children.Add(viewport); root.Children.Add(viewer); Content = root;
         player.MediaOpened += (_, _) => { ready = true; play.IsEnabled = document?.Clips.Count > 0; player.Pause(); Seek(editPosition); status.Text = "Ready. The original stays intact. Split, delete or trim clips, then export."; };
-        player.MediaEnded += (_, _) => { Pause(); if (document != null) UpdatePosition(document.Duration); };
+        player.MediaEnded += (_, _) => { if (loop && document?.Clips.Count > 0) { Seek(0); player.Play(); } else { Pause(); if (document != null) UpdatePosition(document.Duration); } };
         player.MediaFailed += (_, _) => { ready = false; Pause(); play.IsEnabled = false; status.Text = "Windows couldn't play the preview. You can still cut by time and export the video."; };
         timer.Tick += (_, _) => PlaybackTick();
         PreviewKeyDown += (_, e) =>
@@ -92,6 +103,20 @@ internal sealed class VideoEditorWindow : Window
         Loaded += async (_, _) => await LoadAsync();
         Closed += (_, _) => { closed = true; lifetime.Cancel(); timer.Stop(); player.Close(); CleanupPreview(); };
     }
+
+    private Button Command(string label, string glyph, Action action, bool primary = false, bool iconOnly = false)
+    {
+        var button = UI.Button(label, action, primary, dark); button.FontSize = 11; button.Height = 28; button.Padding = new Thickness(8, 3, 8, 3); button.Margin = new Thickness(0, 0, 5, 0); button.VerticalAlignment = VerticalAlignment.Center;
+        if (glyph.Length > 0) UI.Icon(button, glyph, iconOnly);
+        if (iconOnly) { button.Width = 29; if (!primary) UI.Quiet(button, dark); }
+        WindowChrome.SetIsHitTestVisibleInChrome(button, true); return button;
+    }
+    private TextBox TrimField()
+    { var field = UI.TextBox(dark); field.Width = 85; field.Height = 28; field.FontSize = 11; field.FontFamily = new FontFamily("Consolas"); field.Padding = new Thickness(6, 4, 6, 4); field.Margin = new Thickness(5, 0, 8, 0); field.ToolTip = "Source time as mm:ss.mmm, hh:mm:ss.mmm, or seconds"; return field; }
+    private Border Strip(UIElement content, Brush background)
+        => new() { Child = content, Background = background, BorderBrush = UI.Line(dark), BorderThickness = new Thickness(0, 0, 0, .5) };
+    private static Border Hud(UIElement content, HorizontalAlignment horizontal, VerticalAlignment vertical)
+        => new() { Child = content, Background = UI.Brush("#C01A1C1D"), BorderBrush = UI.Brush("#30FFFFFF"), BorderThickness = new Thickness(.5), CornerRadius = new CornerRadius(4), Padding = new Thickness(8, 4, 8, 4), Margin = new Thickness(12), HorizontalAlignment = horizontal, VerticalAlignment = vertical, IsHitTestVisible = false };
 
     internal static void OpenExisting(App app)
     {
@@ -104,7 +129,7 @@ internal sealed class VideoEditorWindow : Window
         if (document == null || !IsEnabled) return false;
         if (modifiers == ModifierKeys.Control && key == Key.Z) Edit(() => document.Undo());
         else if ((modifiers == ModifierKeys.Control && key == Key.Y) || (modifiers == (ModifierKeys.Control | ModifierKeys.Shift) && key == Key.Z)) Edit(() => document.Redo());
-        else if ((modifiers == ModifierKeys.Control && key == Key.K) || (key == Key.C && modifiers == ModifierKeys.None)) SplitAtPlayhead();
+        else if ((modifiers == ModifierKeys.Control && key == Key.K) || (key is Key.C or Key.S && modifiers == ModifierKeys.None)) SplitAtPlayhead();
         else if (modifiers == ModifierKeys.Control && key == Key.M) Export();
         else if (key is Key.Delete or Key.Back && modifiers is ModifierKeys.None or ModifierKeys.Shift) DeleteSelected();
         else if (key == Key.Space && modifiers == ModifierKeys.None) TogglePlay();
@@ -130,6 +155,8 @@ internal sealed class VideoEditorWindow : Window
             info = await VideoCutService.ProbeAsync(sourcePath, lifetime.Token);
             document = new VideoCutDocument(info.Duration); exportSettings = recordingSettings ?? info.Defaults(sourcePath);
             details.Text = $"{Path.GetFileName(sourcePath)}  ·  {info.Width} × {info.Height}  ·  {VideoCutService.Number(info.Fps)} FPS";
+            string codec = info.Codec switch { "h264" => "H.264", "hevc" => "H.265", _ => info.Codec.ToUpperInvariant() };
+            viewerInfo.Text = $"●  {info.Width} × {info.Height}  ·  {info.Fps:0.##} fps  ·  {codec}";
             mute.IsEnabled = info.HasAudio; mute.ToolTip = info.HasAudio ? "Mute or restore the video's original audio in preview and export" : "This video contains no audio. Screen recordings currently capture video only.";
             ToolTipService.SetShowOnDisabled(mute, true);
             editControls.IsEnabled = true; timeline.IsEnabled = true; Refresh();
@@ -141,6 +168,9 @@ internal sealed class VideoEditorWindow : Window
             if (closed) return;
             player.Source = new Uri(preview); player.Play(); player.Pause();
             export.IsEnabled = true;
+            try { track.SetThumbnails(await VideoCutService.ThumbnailsAsync(preview, previewFolder, info.Duration, lifetime.Token)); }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception) { if (!closed) status.Text = "Ready · Thumbnail preview unavailable. Editing and export remain available."; }
         }
         catch (OperationCanceledException) { }
         catch (Exception ex) { if (!closed) { status.Text = "Couldn't prepare video: " + ex.Message; export.IsEnabled = document != null; } }
@@ -149,16 +179,22 @@ internal sealed class VideoEditorWindow : Window
     private void CleanupPreview()
     {
         if (previewFolder == null) return;
-        try { string file = Path.Combine(previewFolder, "preview.mp4"); if (File.Exists(file)) File.Delete(file); if (Directory.Exists(previewFolder)) Directory.Delete(previewFolder); }
+        try
+        {
+            string folder = Path.GetFullPath(previewFolder), temporaryRoot = Path.GetFullPath(Path.GetTempPath());
+            if (!folder.StartsWith(temporaryRoot, StringComparison.OrdinalIgnoreCase) || !Path.GetFileName(folder).StartsWith("Better SS-video-preview-", StringComparison.Ordinal)) return;
+            string file = Path.Combine(folder, "preview.mp4"); if (File.Exists(file)) File.Delete(file);
+            if (Directory.Exists(folder)) { foreach (string thumbnail in Directory.GetFiles(folder, "thumbnail-*.jpg")) File.Delete(thumbnail); Directory.Delete(folder); }
+        }
         catch (IOException) { } catch (UnauthorizedAccessException) { }
     }
-    private void Pause() { playing = false; timer.Stop(); player.Pause(); play.Content = "L  ▶"; }
+    private void Pause() { bool wasPlaying = playing; playing = false; timer.Stop(); player.Pause(); if (wasPlaying) { play.Content = "Play"; UI.Icon(play, "\uE768", true); } }
     private void TogglePlay()
     {
         if (!ready || document?.Clips.Count is not > 0) return;
         if (playing) { Pause(); return; }
         if (editPosition >= document.Duration - .015) Seek(0);
-        playing = true; player.Play(); timer.Start(); play.Content = "K  ■";
+        playing = true; player.SpeedRatio = speed; player.Play(); timer.Start(); play.Content = "Pause"; UI.Icon(play, "\uE769", true);
     }
     private void ShuttleForward() { if (!playing) TogglePlay(); }
     private void ShuttleBack() { Pause(); Step(-(int)Math.Max(1, Math.Round(info?.Fps ?? 30))); }
@@ -197,7 +233,7 @@ internal sealed class VideoEditorWindow : Window
     private void ShowShortcuts()
     {
         MessageBox.Show(this,
-            "Space / L    Play\nK             Pause\nJ             Jump back 1 second\n← / →         One frame\nShift + ←/→   Five frames\n↑ / ↓         Previous / next edit\nCtrl+K or C   Add edit\nDelete        Ripple delete clip at playhead\nI / O         Mark In / Out\nHome / End    Timeline start / end\nCtrl+Z / Ctrl+Y   Undo / redo\nCtrl+M        Export",
+            "Space       Play / pause\nL             Play\nK             Pause\nJ             Jump back 1 second\n← / →         One frame\nShift + ←/→   Five frames\n↑ / ↓         Previous / next edit\nS / C / Ctrl+K   Split\nDelete        Ripple delete clip at playhead\nI / O         Mark In / Out\nHome / End    Timeline start / end\nCtrl+Z / Ctrl+Y   Undo / redo\nCtrl+M        Export",
             "Better SS Split keyboard", MessageBoxButton.OK, MessageBoxImage.Information);
     }
     private void ToggleMute() { if (document == null || info?.HasAudio != true) return; document.SetMuted(!document.Muted); Refresh(); }
@@ -215,7 +251,7 @@ internal sealed class VideoEditorWindow : Window
         var clip = document.Clips[playbackIndex]; double position = player.Position.TotalSeconds;
         if (position >= clip.End - .008)
         {
-            if (playbackIndex == document.Clips.Count - 1) { Pause(); UpdatePosition(document.Duration); return; }
+            if (playbackIndex == document.Clips.Count - 1) { if (loop) { Seek(0); player.Play(); } else { Pause(); UpdatePosition(document.Duration); } return; }
             playbackIndex++; selected = playbackIndex; RefreshClipSelection(); player.Position = TimeSpan.FromSeconds(document.Clips[playbackIndex].Start);
             UpdatePosition(document.Offset(playbackIndex));
         }
@@ -224,10 +260,17 @@ internal sealed class VideoEditorWindow : Window
     private void UpdatePosition(double position)
     {
         editPosition = Math.Clamp(position, 0, document?.Duration ?? 0); updating = true; timeline.Value = editPosition; updating = false;
-        time.Text = $"{Clock(editPosition)} / {Clock(document?.Duration ?? 0)}";
-        if (document != null && document.Duration > 0 && track.ActualWidth > 0) playheadLine.RenderTransform = new TranslateTransform(Math.Clamp(editPosition / document.Duration * Math.Max(0, track.ActualWidth - 2), 0, Math.Max(0, track.ActualWidth - 2)), 0);
+        time.Text = $"{Timecode(editPosition)} / {Timecode(document?.Duration ?? 0)}";
+        track.Position(editPosition); viewerTime.Text = "TC  " + Timecode(editPosition); frames.Text = "Frames: " + Math.Round(editPosition * (info?.Fps ?? 30)).ToString(CultureInfo.InvariantCulture);
     }
     private static string Clock(double seconds) => TimeSpan.FromSeconds(seconds).ToString(@"hh\:mm\:ss\.fff");
+    internal static string Timecode(double seconds) => TimeSpan.FromSeconds(seconds).ToString(seconds >= 3600 ? @"hh\:mm\:ss\.fff" : @"mm\:ss\.fff");
+    private static bool ReadTime(string value, out double seconds)
+    {
+        if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out seconds)) return double.IsFinite(seconds);
+        if (TimeSpan.TryParseExact(value.Trim(), new[] { @"mm\:ss\.fff", @"hh\:mm\:ss\.fff", @"mm\:ss", @"hh\:mm\:ss" }, CultureInfo.InvariantCulture, out var timeValue)) { seconds = timeValue.TotalSeconds; return true; }
+        return false;
+    }
     private void Edit(Action action)
     {
         if (document == null) return; Pause();
@@ -236,29 +279,22 @@ internal sealed class VideoEditorWindow : Window
     }
     private void ApplyTrim()
     {
-        if (!double.TryParse(trimStart.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double start) || !double.TryParse(trimEnd.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out double end)) { status.Text = "Enter cut times in seconds, for example 2.5 and 8.75."; return; }
+        if (!ReadTime(trimStart.Text, out double start) || !ReadTime(trimEnd.Text, out double end)) { status.Text = "Enter source times as mm:ss.mmm or seconds, for example 00:02.500 or 2.5."; return; }
         Edit(() => document!.Trim(selected, start, end));
     }
     private void Refresh()
     {
         if (document == null) return;
-        track.Children.Clear(); track.ColumnDefinitions.Clear(); clipButtons.Clear();
-        for (int i = 0; i < document.Clips.Count; i++)
-        {
-            int index = i; var clip = document.Clips[i];
-            track.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(clip.Duration, GridUnitType.Star), MinWidth = 112 });
-            var button = UI.Button($"CLIP {i + 1}\n{clip.Duration:0.00}s", () => SelectClip(index), i == selected, dark);
-            button.ToolTip = $"Source {Clock(clip.Start)} → {Clock(clip.End)} · Click to select"; button.Margin = new Thickness(0, 0, 3, 0); Grid.SetColumn(button, i); track.Children.Add(button); clipButtons.Add(button);
-        }
+        track.Update(document, selected, Path.GetFileName(sourcePath));
         bool any = document.Clips.Count > 0;
-        if (any) { Grid.SetColumnSpan(playheadLine, document.Clips.Count); track.Children.Add(playheadLine); }
-        else track.Children.Add(UI.Text("No clips left. Undo to restore your video.", 13, UI.Muted(dark)));
         trimStart.IsEnabled = trimEnd.IsEnabled = applyTrim.IsEnabled = split.IsEnabled = delete.IsEnabled = any;
-        if (any) { trimStart.Text = VideoCutService.Number(document.Clips[selected].Start); trimEnd.Text = VideoCutService.Number(document.Clips[selected].End); }
+        if (any) { trimStart.Text = Timecode(document.Clips[selected].Start); trimEnd.Text = Timecode(document.Clips[selected].End); trimDuration.Text = "Dur: " + Timecode(document.Clips[selected].Duration); }
         else { trimStart.Text = trimEnd.Text = ""; }
         undo.IsEnabled = document.CanUndo; redo.IsEnabled = document.CanRedo; play.IsEnabled = any && ready;
         export.IsEnabled = any; timeline.IsEnabled = any; updating = true; timeline.Maximum = Math.Max(.001, document.Duration); updating = false;
         player.IsMuted = document.Muted; mute.Content = info?.HasAudio == true ? document.Muted ? "Unmute audio" : "Mute audio" : "No audio";
+        UI.Icon(mute, document.Muted ? "\uE74F" : "\uE767", true); mute.ToolTip = mute.Content;
+        fileStats.Text = $"Est. size: {document.Duration * (exportSettings?.Mbps ?? info?.Mbps ?? 0) / 8:0.0} MB";
         status.Text = $"{document.Clips.Count} clip(s) · {Clock(document.Duration)} after cuts. Original: {Clock(document.SourceDuration)}.";
         RefreshMarks(); UpdatePosition(Math.Min(editPosition, document.Duration));
     }
@@ -267,8 +303,8 @@ internal sealed class VideoEditorWindow : Window
     {
         if (document == null || document.Clips.Count == 0) return;
         selected = Math.Clamp(selected, 0, document.Clips.Count - 1);
-        for (int i = 0; i < clipButtons.Count; i++) UI.Select(clipButtons[i], i == selected, dark);
-        trimStart.Text = VideoCutService.Number(document.Clips[selected].Start); trimEnd.Text = VideoCutService.Number(document.Clips[selected].End);
+        track.Select(selected);
+        trimStart.Text = Timecode(document.Clips[selected].Start); trimEnd.Text = Timecode(document.Clips[selected].End); trimDuration.Text = "Dur: " + Timecode(document.Clips[selected].Duration);
     }
     private void Export()
     {
@@ -303,8 +339,7 @@ internal sealed class VideoExportWindow : Window
         save = UI.Button("Export video", StartExport, true, dark); actions.Children.Add(cancel); actions.Children.Add(save); DockPanel.SetDock(actions, Dock.Bottom); root.Children.Add(actions);
         status = UI.Text("The original video is kept. Changes here affect only this export.", 12, UI.Muted(dark)); status.Margin = new Thickness(0, 16, 0, 0); DockPanel.SetDock(status, Dock.Bottom); root.Children.Add(status);
         fields = new StackPanel(); root.Children.Add(new ScrollViewer { Content = fields, VerticalScrollBarVisibility = ScrollBarVisibility.Auto });
-        fields.Children.Add(UI.Text("Export video", 25, UI.Ink(dark), FontWeights.SemiBold));
-        var note = UI.Text($"{clips.Length} clip(s) · {clips.Sum(c => c.Duration):0.00}s · {(info.HasAudio ? muted ? "Audio muted" : "Original audio included" : "No source audio")}", 12, UI.Muted(dark)); note.Margin = new Thickness(0, 8, 0, 14); fields.Children.Add(note);
+        fields.Children.Add(UI.PageHeader("Export video", $"{clips.Length} clip(s) · {clips.Sum(c => c.Duration):0.00}s · {(info.HasAudio ? muted ? "Audio muted" : "Original audio included" : "No source audio")}", dark));
         TextBox Field(string label, string value, Panel? parent = null)
         {
             parent ??= fields; parent.Children.Add(UI.Text(label, 11, UI.Muted(dark))); var text = UI.TextBox(dark); text.Text = value; text.Margin = new Thickness(0, 5, 0, 12); parent.Children.Add(text); return text;

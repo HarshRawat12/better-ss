@@ -22,6 +22,7 @@ public sealed class Settings
     public bool AutoSave { get; set; } = true;
     public string SaveFolder { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Better SS");
     public string Hotkey { get; set; } = "Ctrl + Shift + S";
+    public bool UseWindowsCaptureShortcut { get; set; }
     public int Delay { get; set; }
     public string ExportFormat { get; set; } = "PNG";
     public string ExportColorSpace { get; set; } = "RGB";
