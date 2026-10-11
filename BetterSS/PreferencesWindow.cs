@@ -58,6 +58,13 @@ internal sealed class PreferencesWindow : Window
         var custom = UI.Button("Record custom shortcut…", () => { new HotkeyWindow(app) { Owner = this }.ShowDialog(); ShowPage(page); }, false, dark);
         custom.HorizontalAlignment = HorizontalAlignment.Left; custom.Margin = new Thickness(0, 0, 0, 14); options.Children.Add(custom);
         var status = UI.Text(app.HotkeyStatus, 11, UI.Muted(dark)); status.Margin = new Thickness(0, 0, 0, 16); options.Children.Add(status);
+        var direct = new StackPanel { Margin = new Thickness(0, 4, 0, 0) };
+        Heading(direct, "Direct tool shortcuts", "Optional shortcuts open a region selection for Live OCR or the screen color picker immediately. They are not part of the walkthrough.");
+        Choice(direct, "Live OCR shortcut", new[] { "Disabled", "Ctrl + Alt + O", "Ctrl + Shift + O" }, app.Settings.LiveOcrHotkey, "Disabled", v => app.TrySetDirectToolHotkey(ShortcutAction.LiveOcr, v, out _));
+        var recordOcr = UI.Button("Record Live OCR shortcut…", () => { new HotkeyWindow(app, ShortcutAction.LiveOcr) { Owner = this }.ShowDialog(); ShowPage(page); }, false, dark); recordOcr.Margin = new Thickness(0, -8, 0, 12); direct.Children.Add(recordOcr);
+        Choice(direct, "Color picker shortcut", new[] { "Disabled", "Ctrl + Alt + C", "Ctrl + Shift + C" }, app.Settings.ColorPickerHotkey, "Disabled", v => app.TrySetDirectToolHotkey(ShortcutAction.ColorPicker, v, out _));
+        var recordColor = UI.Button("Record color picker shortcut…", () => { new HotkeyWindow(app, ShortcutAction.ColorPicker) { Owner = this }.ShowDialog(); ShowPage(page); }, false, dark); recordColor.Margin = new Thickness(0, -8, 0, 0); direct.Children.Add(recordColor);
+        options.Children.Add(UI.Card(direct, dark));
         Choice(options, "Capture delay", new[] { "Off", "3 seconds", "5 seconds", "10 seconds" }, app.Settings.Delay == 0 ? "Off" : app.Settings.Delay + " seconds", "Off", v => app.Settings.Delay = v == "Off" ? 0 : int.Parse(v.Split(' ')[0])); body.Children.Add(UI.Card(options, dark));
         body.Children.Add(UI.Text("In the editor: Copy image, Extract text, highlighter, blur brush, mosaic, and six export formats.", 12, UI.Muted(dark)));
     }
@@ -78,19 +85,30 @@ internal sealed class PreferencesWindow : Window
     private void AppearancePage()
     {
         var panel = new StackPanel(); Heading(panel, "Interface", "Soft neutral surfaces, rounded controls, and blue accents for actions and selections. Choose a theme and adjust your floating preview.");
-        var themes = new WrapPanel(); foreach (string mode in new[] { "System", "Light", "Dark" }) { string selected = mode; var button = UI.Button(mode, () => { app.Settings.Theme = selected; app.Persist(); Build(); }, false, dark); UI.Segment(button, dark); UI.Select(button, app.Settings.Theme == mode, dark); themes.Children.Add(button); } var themeRow = UI.Segmented(themes, dark); themeRow.Margin = new Thickness(0, 0, 0, 14); panel.Children.Add(themeRow);
+        var themes = new WrapPanel(); foreach (string mode in new[] { "System", "Light", "Dark" }) { string selected = mode; var button = UI.Button(mode, () => { app.Settings.Theme = selected; app.Persist(); Build(); }, false, dark); UI.Segment(button, dark); UI.Select(button, app.Settings.Theme == mode, dark); themes.Children.Add(button); } var themeRow = new DockPanel { Margin = new Thickness(0, 0, 0, 14) }; var resetTheme = ResetButton("Theme", () => app.Settings.Theme = defaults.Theme); DockPanel.SetDock(resetTheme, Dock.Right); themeRow.Children.Add(resetTheme); themeRow.Children.Add(UI.Segmented(themes, dark)); panel.Children.Add(themeRow);
         var glass = UI.Text("Liquid glass adapts to the background. Turn off transparency in Windows settings for solid surfaces.", 12, UI.Muted(dark)); glass.Margin = new Thickness(0, 0, 0, 12); panel.Children.Add(glass);
+        var materialStatus = UI.Text(GlassSurface.MaterialStatus, 12, UI.Muted(dark)); materialStatus.Margin = new Thickness(0, 0, 0, 12); panel.Children.Add(materialStatus);
         Slider(panel, "Preview shadow", 0, 48, app.Settings.Shadow, defaults.Shadow, "px", v => app.Settings.Shadow = v);
         Slider(panel, "Preview border", 0, 3, app.Settings.Stroke, defaults.Stroke, "px", v => app.Settings.Stroke = v);
         body.Children.Add(UI.Card(panel, dark)); body.Children.Add(UI.Button("Preview appearance", app.DemoPreview, true, dark));
     }
     private void SoundPage()
     {
-        var panel = new StackPanel(); Heading(panel, "Capture sound", "A Windows system sound plays by default. Choose an audio file to customize it.");
+        var panel = new StackPanel(); Heading(panel, "Screenshot sound", "Choose the sound used after a screenshot is captured. Tool sounds have separate controls below.");
         Toggle(panel, "Play sound after capture", app.Settings.SoundEnabled, defaults.SoundEnabled, v => app.Settings.SoundEnabled = v);
-        Slider(panel, "Volume", 0, 100, app.Settings.Volume * 100, defaults.Volume * 100, "%", v => app.Settings.Volume = v / 100);
+        Slider(panel, "Sound volume", 0, 100, app.Settings.Volume * 100, defaults.Volume * 100, "%", v => app.Settings.Volume = v / 100);
         SoundChoice(panel);
         var actions = new WrapPanel(); actions.Children.Add(UI.Button("Play sound", app.PlaySound, true, dark)); actions.Children.Add(UI.Button("Choose file…", () => { var dialog = new OpenFileDialog { Filter = "Audio files|*.mp3;*.wav;*.wma;*.m4a" }; if (dialog.ShowDialog(this) == true) { app.Settings.SoundPath = dialog.FileName; app.Persist(); ShowPage(page); } }, false, dark)); panel.Children.Add(actions); body.Children.Add(UI.Card(panel, dark));
+
+        var ocr = new StackPanel(); Heading(ocr, "Live OCR sound", "Play a cue after recognized text is copied. This sound can be disabled or customized independently.");
+        Toggle(ocr, "Play sound when OCR text is copied", app.Settings.LiveOcrSoundEnabled, defaults.LiveOcrSoundEnabled, v => app.Settings.LiveOcrSoundEnabled = v);
+        ToolSoundChoice(ocr, "OCR sound", app.Settings.LiveOcrSoundPath, value => app.Settings.LiveOcrSoundPath = value, app.PreviewLiveOcrSound);
+        body.Children.Add(UI.Card(ocr, dark));
+
+        var picker = new StackPanel(); Heading(picker, "Color Picker sound", "Play a cue when a color is selected. This sound can be disabled or customized independently.");
+        Toggle(picker, "Play sound when a color is picked", app.Settings.ColorPickerSoundEnabled, defaults.ColorPickerSoundEnabled, v => app.Settings.ColorPickerSoundEnabled = v);
+        ToolSoundChoice(picker, "Color Picker sound", app.Settings.ColorPickerSoundPath, value => app.Settings.ColorPickerSoundPath = value, app.PreviewColorPickerSound);
+        body.Children.Add(UI.Card(picker, dark));
     }
     private void SoundChoice(StackPanel panel)
     {
@@ -101,18 +119,33 @@ internal sealed class PreferencesWindow : Window
         row.Children.Add(UI.Text("Sound file", 13, UI.Ink(dark)));
         var current = SoundCatalog.SelectedFileName(app.Settings.SoundPath);
         var menu = UI.Menu(dark);
-        var button = UI.Button(current + "    ▾", () => menu.IsOpen = true, false, dark); button.Margin = new Thickness(0); menu.PlacementTarget = button; menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        var button = UI.Button(SoundCatalog.DisplayName(current) + "    ▾", () => menu.IsOpen = true, false, dark); button.Margin = new Thickness(0); menu.PlacementTarget = button; menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
         foreach (var fileName in new[] { SoundCatalog.SystemSoundName }.Concat(SoundCatalog.AvailableBuiltInFileNames))
         {
             var selected = fileName;
-            var item = new MenuItem { Header = selected, IsCheckable = true, IsChecked = selected.Equals(current, StringComparison.OrdinalIgnoreCase), Padding = new Thickness(10, 8, 10, 8) };
+            var item = new MenuItem { Header = SoundCatalog.DisplayName(selected), IsCheckable = true, IsChecked = selected.Equals(current, StringComparison.OrdinalIgnoreCase), Padding = new Thickness(10, 8, 10, 8) };
             item.Click += (_, _) => { menu.IsOpen = false; app.Settings.SoundPath = SoundCatalog.SettingValue(selected); app.Persist(); ShowPage(page); };
             menu.Items.Add(item);
         }
         Grid.SetColumn(button, 1); row.Children.Add(button);
         var reset = ResetButton("Sound file", () => app.Settings.SoundPath = defaults.SoundPath); Grid.SetColumn(reset, 2); row.Children.Add(reset);
         panel.Children.Add(row);
-        var selectedName = UI.Text(current, 12, UI.Muted(dark)); selectedName.Margin = new Thickness(0, -8, 0, 14); panel.Children.Add(selectedName);
+        var selectedName = UI.Text(SoundCatalog.DisplayName(current), 12, UI.Muted(dark)); selectedName.Margin = new Thickness(0, -8, 0, 14); panel.Children.Add(selectedName);
+    }
+    private void ToolSoundChoice(StackPanel panel, string label, string currentPath, Action<string> savePath, Action preview)
+    {
+        panel.Children.Add(UI.Text(label, 13, UI.Ink(dark)));
+        string fileName = string.IsNullOrWhiteSpace(currentPath) ? SoundCatalog.ToolCueFileName + " · bundled" : Path.GetFileName(currentPath);
+        var selectedName = UI.Text(fileName, 12, UI.Muted(dark)); selectedName.Margin = new Thickness(0, 5, 0, 10); panel.Children.Add(selectedName);
+        var actions = new WrapPanel { Margin = new Thickness(0, 0, 0, 12) };
+        actions.Children.Add(UI.Button("Choose file…", () =>
+        {
+            var dialog = new OpenFileDialog { Filter = "Audio files|*.mp3;*.wav;*.wma;*.m4a" };
+            if (dialog.ShowDialog(this) == true) { savePath(dialog.FileName); app.Persist(); ShowPage(page); }
+        }, false, dark));
+        actions.Children.Add(UI.Button("Preview", preview, false, dark));
+        actions.Children.Add(UI.Button("Use bundled cue", () => { savePath(""); app.Persist(); ShowPage(page); }, false, dark));
+        panel.Children.Add(actions);
     }
     private void StoragePage()
     {

@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
@@ -11,20 +12,28 @@ namespace BetterSS;
 // Material layers stay independent of foreground controls and captured image pixels.
 internal sealed class GlassSurface : Border
 {
-    internal const byte BackdropTintAlpha = 230, FixedTintAlpha = 247, CaptureTintAlpha = 180;
+    internal const byte BackdropTintAlpha = 230, FixedTintAlpha = 247, CaptureTintAlpha = 200;
     internal const double BlurRadius = 12, ShadowRadius = 24;
     internal static bool? TransparencyOverride { get; set; }
-    internal static bool Transparency => TransparencyOverride ?? (!UI.HighContrast && (RenderCapability.Tier >> 16) >= 2 && Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "EnableTransparency", 1) is int enabled && enabled != 0);
+    internal static bool? WindowsTransparencyOverride { get; set; }
+    internal static int? RenderingTierOverride { get; set; }
+    internal static int RenderingTier => RenderingTierOverride ?? (RenderCapability.Tier >> 16);
+    // Rendering capability selects quality, not whether transparency is allowed.
+    internal static bool WindowsTransparency => WindowsTransparencyOverride ?? (Registry.GetValue(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize", "EnableTransparency", 1) is int enabled && enabled != 0);
+    internal static bool Transparency => !UI.HighContrast && (TransparencyOverride ?? WindowsTransparency);
+    internal static bool Lightweight => RenderingTier < 2 || RenderOptions.ProcessRenderMode == RenderMode.SoftwareOnly;
+    internal static string MaterialStatus => UI.HighContrast ? "Solid: Windows High Contrast is enabled" : !Transparency ? "Solid: Windows transparency is disabled" : Lightweight ? "Glass: compatibility rendering" : "Glass: full rendering";
     private readonly Border backgroundLayer, tintLayer, edgeLayer, ornaments, shadowLayer;
     private readonly RadialGradientBrush light;
-    private readonly bool dark, liquid;
+    private readonly bool dark, liquid, lightweight;
     private readonly double radius;
     internal bool UsesBackdrop { get; private set; }
     internal bool UsesEdgeRefraction { get; private set; }
     internal bool UsesFullRefraction { get; private set; }
+    internal bool UsesLightweightRendering => lightweight;
     internal GlassSurface(UIElement content, bool dark, Thickness padding, double radius = 14, BitmapSource? backdrop = null, bool captureMaterial = false, bool liquidGlass = false)
     {
-        this.dark = dark; this.radius = radius; liquid = captureMaterial || liquidGlass;
+        this.dark = dark; this.radius = radius; liquid = captureMaterial || liquidGlass; lightweight = Lightweight;
         CornerRadius = new CornerRadius(radius); BorderThickness = new Thickness(.75);
         var layers = new Grid(); var shell = new Grid();
         shadowLayer = new Border { CornerRadius = new CornerRadius(radius), IsHitTestVisible = false }; shell.Children.Add(shadowLayer); shell.Children.Add(layers);
@@ -42,7 +51,7 @@ internal sealed class GlassSurface : Border
         SizeChanged += (_, _) => layers.Clip = new RectangleGeometry(new Rect(0, 0, layers.ActualWidth, layers.ActualHeight), Math.Max(0, radius - 1), Math.Max(0, radius - 1));
         MouseMove += (_, e) =>
         {
-            if (!liquid || !Transparency || Motion.Reduced || ActualWidth <= 0 || ActualHeight <= 0) return;
+            if (!liquid || lightweight || !Transparency || Motion.Reduced || ActualWidth <= 0 || ActualHeight <= 0) return;
             var point = e.GetPosition(this); light.Center = light.GradientOrigin = new Point(point.X / ActualWidth, point.Y / ActualHeight);
         };
         ApplyMaterial(false);
@@ -58,11 +67,11 @@ internal sealed class GlassSurface : Border
         ornaments.Visibility = glass ? Visibility.Visible : Visibility.Collapsed;
         // Shadow only the backing shape. Never send foreground text/image through an effect.
         shadowLayer.Background = glass ? UI.Brush(dark ? "#29292E" : "#FFFFFF") : null;
-        shadowLayer.Effect = glass ? new DropShadowEffect { BlurRadius = ShadowRadius, ShadowDepth = 5, Opacity = dark ? .24 : .15, RenderingBias = RenderingBias.Performance } : null;
+        shadowLayer.Effect = glass && !lightweight ? new DropShadowEffect { BlurRadius = ShadowRadius, ShadowDepth = 5, Opacity = dark ? .24 : .15, RenderingBias = RenderingBias.Performance } : null;
     }
     // This method only reads immutable fields; live sampling can prepare frames off-thread.
     internal LiquidLens.Frame PrepareBackdrop(BitmapSource source, int width, int height)
-        => liquid ? LiquidLens.Render(source, width, height, radius) : new(source, null);
+        => liquid ? LiquidLens.Render(source, width, height, radius, lightweight) : new(source, null);
     internal void SetBackdrop(BitmapSource source)
     {
         if (!Transparency) { UseSolidFallback(); return; }
@@ -74,7 +83,7 @@ internal sealed class GlassSurface : Border
     {
         if (!Transparency) { UseSolidFallback(); return; }
         backgroundLayer.Background = new ImageBrush(frame.Body) { Stretch = Stretch.Fill };
-        backgroundLayer.Effect = new BlurEffect { Radius = liquid ? 7 : BlurRadius, RenderingBias = RenderingBias.Performance };
+        backgroundLayer.Effect = lightweight ? null : new BlurEffect { Radius = liquid ? 7 : BlurRadius, RenderingBias = RenderingBias.Performance };
         edgeLayer.Background = frame.Rim == null ? null : new ImageBrush(frame.Rim) { Stretch = Stretch.Fill };
         UsesBackdrop = true; UsesEdgeRefraction = UsesFullRefraction = frame.Rim != null;
         ApplyMaterial(true);

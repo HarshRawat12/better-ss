@@ -23,6 +23,102 @@ internal static class InteractionTests
     [DllImport("user32.dll")] private static extern IntPtr GetAncestor(IntPtr window, uint flags);
     [DllImport("user32.dll", SetLastError = true)] private static extern uint SendInput(uint count, Input[] input, int size);
 
+    // Exercise the full shortcut -> App -> capture overlay -> clipboard path.
+    // Callback-only checks miss an intent being dropped when the session is created.
+    internal static void RunShortcutTests(App app)
+    {
+        app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+        System.Threading.SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(app.Dispatcher));
+        string folder = System.IO.Path.GetFullPath(".validation/direct-shortcut-tests");
+        System.IO.Directory.CreateDirectory(folder);
+        var log = new System.Collections.Generic.List<string>();
+        var pointer = Native.CursorPosition; var foreground = WindowCatalog.GetForegroundWindow();
+        var clipboard = Clipboard.GetDataObject();
+        var picture = new Image { Source = SelfTest.TextImage(), Stretch = Stretch.None, HorizontalAlignment = HorizontalAlignment.Left, VerticalAlignment = VerticalAlignment.Top };
+        var anchor = new Window { Title = "Better SS direct shortcut test", Width = 980, Height = 380, Topmost = true, Background = Brushes.White, Content = picture };
+        void Check(bool condition, string label) { if (!condition) throw new InvalidOperationException(label); log.Add("PASS " + label); }
+        try
+        {
+            app.Settings = new Settings { IntroductionSeen = true, Hotkey = "Ctrl + Alt + Shift + F11", SoundEnabled = false, LiveOcrSoundEnabled = false, ColorPickerSoundEnabled = false, CaptureAnimation = false, SaveFolder = folder, RecentColors = new() { "#3478F6", "#F04452" } };
+            app.SettingsPathOverride = System.IO.Path.Combine(folder, "settings.json");
+            using var service = new HotkeyService(app.CaptureFromShortcut, app.StartLiveOcrFromShortcut, app.StartColorPickerFromShortcut);
+            app.Hotkeys = service; app.RegisterHotkey();
+            Check(app.TrySetDirectToolHotkey(ShortcutAction.LiveOcr, "Ctrl + Alt + Shift + T", out _), "OCR shortcut registers");
+            Check(app.TrySetDirectToolHotkey(ShortcutAction.ColorPicker, "Ctrl + Alt + Shift + C", out _), "color shortcut registers");
+            anchor.Show(); Pump(300); FocusTestWindow(anchor);
+            Clipboard.SetText("Before direct OCR test");
+            var from = picture.PointToScreen(new Point(5, 5)); var to = picture.PointToScreen(new Point(895, 235));
+            Chord(app.Settings.LiveOcrHotkey, anchor); Pump(450);
+            Check(!app.Windows.OfType<CaptureToolbar>().Any(w => w.IsVisible), "OCR hotkey opens without the capture-options strip");
+            var overlay = app.Windows.OfType<CaptureOverlay>().Single(w => { Native.GetWindowRect(new WindowInteropHelper(w).Handle, out var bounds); return bounds.Bounds.Contains((int)from.X, (int)from.Y); });
+            Move(from, new WindowInteropHelper(overlay).Handle); SendMouse(2); Pump(80);
+            SetCursorPos((int)to.X, (int)to.Y); Pump(80); SendMouse(4);
+            for (int attempt = 0; attempt < 100 && !Clipboard.GetText().Contains("BETTER SS", StringComparison.OrdinalIgnoreCase); attempt++) Pump(100);
+            Check(!app.Windows.OfType<LiveOcrOverlay>().Any() && app.Windows.OfType<ToastWindow>().Any() && Clipboard.GetText().Contains("BETTER SS", StringComparison.OrdinalIgnoreCase), "OCR shortcut copies recognized text and shows a confirmation toast");
+            Check(!app.Windows.OfType<PreviewWindow>().Any() && !System.IO.Directory.GetFiles(folder, "Screenshot*.png").Any(), "direct OCR creates no screenshot preview or screenshot file");
+            // Replacing an active direct binding must keep the new Windows registration alive.
+            Check(app.TrySetDirectToolHotkey(ShortcutAction.ColorPicker, "Ctrl + Alt + Shift + F9", out _) && app.TrySetDirectToolHotkey(ShortcutAction.ColorPicker, "Ctrl + Alt + Shift + C", out _), "active color shortcut can be replaced and restored");
+            service.Suspend(); app.ResumeHotkey();
+            FocusTestWindow(anchor); SetCursorPos((int)from.X, (int)from.Y);
+            Clipboard.SetText("Before direct color test"); Chord(app.Settings.ColorPickerHotkey, anchor); Pump(450);
+            Check(!app.Windows.OfType<CaptureToolbar>().Any(w => w.IsVisible), "color hotkey opens without the capture-options strip");
+            overlay = app.Windows.OfType<CaptureOverlay>().Single(w => { Native.GetWindowRect(new WindowInteropHelper(w).Handle, out var bounds); return bounds.Bounds.Contains((int)from.X, (int)from.Y); });
+            Move(from, new WindowInteropHelper(overlay).Handle); SendMouse(2); Pump(80); SendMouse(4); Pump(250);
+            Check(Clipboard.GetText() == "#FFFFFF", "color shortcut copies the clicked fixture pixel as hex");
+            Check(!app.Windows.OfType<PreviewWindow>().Any() && !app.Windows.OfType<CaptureOverlay>().Any(), "color picking completes without screenshot preview");
+            var colorWindow = app.Windows.OfType<ScreenColorWindow>().Single();
+            Check(colorWindow.SelectedColor == Colors.White && colorWindow.IsVisible, "color pick opens the inspector with the sampled color");
+            Check(Settings.Load(app.SettingsPathOverride).RecentColors.SequenceEqual(new[] { "#FFFFFF", "#3478F6", "#F04452" }), "color history persists newest first across settings reloads");
+            Click(Find<Button>(colorWindow).Single(b => b.Content as string == "Recent color #3478F6"), colorWindow);
+            Check(colorWindow.SelectedColor == Color.FromRgb(52, 120, 246) && Clipboard.GetText() == "#3478F6", "history swatches recall color values and copy their hex");
+            Click(Find<Button>(colorWindow).Single(b => b.Content as string == "Copy CMYK"), colorWindow);
+            Check(Clipboard.GetText() == ScreenColorValues.FromColor(colorWindow.SelectedColor).Cmyk, "CMYK copy button writes the displayed conversion");
+            foreach (string format in new[] { "HEX", "RGB", "HSL" })
+            {
+                Click(Find<Button>(colorWindow).Single(b => b.Content as string == "Copy " + format), colorWindow);
+                var value = Find<TextBox>(colorWindow).Single(t => System.Windows.Automation.AutomationProperties.GetName(t) == format + " value").Text;
+                Check(Clipboard.GetText() == value, format + " copy button writes the displayed value");
+            }
+            Render(colorWindow, "screen-color-inspector.png");
+            var black = ScreenColorValues.FromColor(Colors.Black); var white = ScreenColorValues.FromColor(Colors.White); var redValues = ScreenColorValues.FromColor(Colors.Red);
+            Check(black.Cmyk == "cmyk(0%, 0%, 0%, 100%)" && white.Cmyk == "cmyk(0%, 0%, 0%, 0%)" && redValues.Cmyk == "cmyk(0%, 100%, 100%, 0%)" && redValues.Hsl == "hsl(0, 100%, 50%)", "CMYK handles black and primary colors and HSL has the expected red hue");
+            var normalized = new Settings { RecentColors = new() { "#abcdef", "ABCDEF", "bad hex", "#123456" } }; normalized.Normalize();
+            Check(normalized.RecentColors.SequenceEqual(new[] { "#ABCDEF", "#123456" }), "history normalization removes invalid and duplicate colors");
+            Click(Find<Button>(colorWindow).Single(b => b.Content as string == "Pick new"), colorWindow); Pump(450);
+            Check(!colorWindow.IsVisible && app.Windows.OfType<CaptureOverlay>().Any(), "Pick new hides the inspector before sampling the desktop");
+            var pickerOverlay = app.Windows.OfType<CaptureOverlay>().First(); pickerOverlay.Activate(); SendKey(0x1B, false); Pump(80); SendKey(0x1B, true); Pump(250);
+            Check(colorWindow.IsVisible && colorWindow.SelectedColor == Color.FromRgb(52, 120, 246), "cancelling a new pick restores the inspector and selected history color");
+            colorWindow.Close();
+
+            // The toolbar route must show the same OCR copy confirmation as the direct shortcut.
+            FocusTestWindow(anchor); SetCursorPos((int)from.X, (int)from.Y);
+            Check(app.TrySetWindowsCaptureShortcut(true, out _), "Windows Shift S takeover registers for toolbar OCR test");
+            Clipboard.SetText("Before toolbar OCR test"); WindowsCaptureChord(anchor, false); Pump(450);
+            var toolbar = app.Windows.OfType<CaptureToolbar>().Single();
+            Click(Find<Button>(toolbar).Single(b => b.Content as string == "Live OCR"), toolbar);
+            Check(!toolbar.IsVisible, "capture-options strip disappears after choosing Live OCR");
+            overlay = app.Windows.OfType<CaptureOverlay>().Single(w => { Native.GetWindowRect(new WindowInteropHelper(w).Handle, out var bounds); return bounds.Bounds.Contains((int)from.X, (int)from.Y); });
+            Move(from, new WindowInteropHelper(overlay).Handle); SendMouse(2); Pump(80); SetCursorPos((int)to.X, (int)to.Y); Pump(80); SendMouse(4);
+            for (int attempt = 0; attempt < 100 && !Clipboard.GetText().Contains("BETTER SS", StringComparison.OrdinalIgnoreCase); attempt++) Pump(100);
+            Check(Clipboard.GetText().Contains("BETTER SS", StringComparison.OrdinalIgnoreCase) && !app.Windows.OfType<LiveOcrOverlay>().Any() && app.Windows.OfType<ToastWindow>().Any(), "Windows Shift S then OCR copies and shows a confirmation toast");
+            Check(app.TrySetWindowsCaptureShortcut(false, out _), "Windows takeover is released after the toolbar test");
+            FocusTestWindow(anchor); Chord(app.Settings.Hotkey, anchor); Pump(450);
+            toolbar = app.Windows.OfType<CaptureToolbar>().Single();
+            Check(Find<Button>(toolbar).Any(b => b.Content as string == "Capture"), "regular capture shortcut still opens screenshot mode");
+            Click(Find<Button>(toolbar).Single(b => b.Content as string == "Cancel"), toolbar);
+            log.Add("SUCCESS: direct shortcut integration checks passed."); Environment.ExitCode = 0;
+        }
+        catch (Exception ex) { log.Add("FAIL " + ex); Environment.ExitCode = 1; }
+        finally
+        {
+            System.IO.File.WriteAllLines(System.IO.Path.Combine(folder, "results.txt"), log);
+            foreach (Window window in app.Windows.Cast<Window>().ToArray()) window.Close();
+            app.Hotkeys = null;
+            try { if (clipboard != null) Clipboard.SetDataObject(clipboard, true); } catch { }
+            SetCursorPos(pointer.X, pointer.Y); if (WindowCatalog.IsWindow(foreground)) WindowCatalog.SetForegroundWindow(foreground);
+        }
+    }
+
     internal static void Run(App app, BitmapSource sample, string path, Action<bool, string> check)
     {
         var originalPointer = Native.CursorPosition;
@@ -93,6 +189,7 @@ internal static class InteractionTests
     }
     private static void TestResets(App app, Action<bool, string> check)
     {
+        static bool SameSetting(object? a, object? b) => a is System.Collections.Generic.IEnumerable<string> left && b is System.Collections.Generic.IEnumerable<string> right ? left.SequenceEqual(right) : Equals(a, b);
         var original = app.Settings; var originalPath = app.SettingsPathOverride; var originalStartup = app.ConfigureStartup;
         PreferencesWindow? preferences = null;
         try
@@ -110,7 +207,7 @@ internal static class InteractionTests
                 ("Capture", "Use Windows + Shift + S for Better SS", "UseWindowsCaptureShortcut"), ("Capture", "Launch shortcut", "Hotkey"), ("Capture", "Capture delay", "Delay"),
                 ("Floating preview", "Time on screen", "Duration"), ("Floating preview", "Preview width", "PreviewWidth"),
                 ("Appearance", "Theme", "Theme"), ("Appearance", "Preview shadow", "Shadow"), ("Appearance", "Preview border", "Stroke"),
-                ("Sound", "Play sound after capture", "SoundEnabled"), ("Sound", "Volume", "Volume"), ("Sound", "Sound file", "SoundPath"),
+                ("Sound", "Play sound after capture", "SoundEnabled"), ("Sound", "Sound volume", "Volume"), ("Sound", "Sound file", "SoundPath"),
                 ("Storage", "Automatically save screenshots", "AutoSave"), ("Storage", "Save folder", "SaveFolder"),
                 ("Storage", "Preferred format", "ExportFormat"), ("Storage", "JPEG quality", "JpegQuality"), ("Startup & guide", "Start when I sign in", "StartOnLogin")
             };
@@ -125,12 +222,12 @@ internal static class InteractionTests
                 var before = properties.ToDictionary(p => p.Name, p => p.GetValue(app.Settings));
                 Click(button, preferences);
                 var setting = properties.Single(p => p.Name == property);
-                check(Equals(setting.GetValue(app.Settings), setting.GetValue(defaults)), title + " reset responds to mouse and restores default");
-                check(properties.Where(p => p.Name != property).All(p => Equals(p.GetValue(app.Settings), before[p.Name])), title + " reset leaves other settings unchanged");
+                check(SameSetting(setting.GetValue(app.Settings), setting.GetValue(defaults)), title + " reset responds to mouse and restores default");
+                check(properties.Where(p => p.Name != property).All(p => SameSetting(p.GetValue(app.Settings), before[p.Name])), title + " reset leaves other settings unchanged");
                 var saved = Settings.Load(app.SettingsPathOverride);
-                check(properties.All(p => Equals(p.GetValue(saved), p.GetValue(app.Settings))), title + " reset persists to disk");
+                check(properties.All(p => SameSetting(p.GetValue(saved), p.GetValue(app.Settings))), title + " reset persists to disk");
             }
-            check(properties.All(p => Equals(p.GetValue(app.Settings), p.GetValue(defaults))), "every configurable preference has a working default reset");
+            check(properties.All(p => SameSetting(p.GetValue(app.Settings), p.GetValue(defaults))), "every configurable preference has a working default reset");
         }
         finally { preferences?.Close(); app.Settings = original; app.SettingsPathOverride = originalPath; app.ConfigureStartup = originalStartup; }
     }
@@ -140,7 +237,8 @@ internal static class InteractionTests
         var original = app.Settings; var originalPath = app.SettingsPathOverride; var originalStartup = app.ConfigureStartup; var originalHotkeys = app.Hotkeys;
         WelcomeWindow? guide = null; HotkeyWindow? recorder = null; PreviewWindow? tutorialPreview = null;
         using var competitor = new HotkeyService(() => { });
-        int fires = 0; using var service = new HotkeyService(() => fires++);
+        int fires = 0, ocrFires = 0, colorFires = 0;
+        using var service = new HotkeyService(() => fires++, () => ocrFires++, () => colorFires++);
         try
         {
             app.Settings = new Settings { Hotkey = "Disabled" }; app.SettingsPathOverride = System.IO.Path.GetFullPath("test-results/setup-settings.json");
@@ -189,6 +287,12 @@ internal static class InteractionTests
                 check(!app.TrySetWindowsCaptureShortcut(false, out _) && service.WindowsCaptureEnabled && app.Settings.UseWindowsCaptureShortcut, "a restoration conflict leaves takeover and the saved setting intact");
                 competitor.TrySet(occupied!, out _);
                 check(app.TrySetWindowsCaptureShortcut(false, out _), "takeover can be switched off after the competing chord is released");
+                const string ocrShortcut = "Ctrl + Alt + Shift + F4", colorShortcut = "Ctrl + Alt + Shift + F5";
+                check(app.TrySetDirectToolHotkey(ShortcutAction.LiveOcr, ocrShortcut, out _) && Settings.Load(app.SettingsPathOverride).LiveOcrHotkey == ocrShortcut, "Live OCR shortcut is opt-in and persists separately from capture");
+                Chord(ocrShortcut, anchor); check(ocrFires == 1, "Live OCR shortcut triggers its direct callback");
+                check(!app.TrySetDirectToolHotkey(ShortcutAction.ColorPicker, ocrShortcut, out _), "direct tool shortcuts cannot share the same key combination");
+                check(app.TrySetDirectToolHotkey(ShortcutAction.ColorPicker, colorShortcut, out _) && Settings.Load(app.SettingsPathOverride).ColorPickerHotkey == colorShortcut, "color picker shortcut is opt-in and persists separately from capture");
+                Chord(colorShortcut, anchor); check(colorFires == 1, "color picker shortcut triggers its direct callback");
             }
             finally { anchor.Close(); }
             recorder = new HotkeyWindow(app) { Topmost = true }; recorder.Show(); recorder.Activate(); Pump(180);
@@ -263,6 +367,10 @@ internal static class InteractionTests
             capture.Start(); Pump(120);
             var overlay = Application.Current.Windows.OfType<CaptureOverlay>().Single(w => { Native.GetWindowRect(new WindowInteropHelper(w).Handle, out var r); return r.Bounds == screen.Bounds; });
             var toolbar = Application.Current.Windows.OfType<CaptureToolbar>().Single();
+            var activeScreen = System.Windows.Forms.Screen.FromPoint(Native.CursorPosition);
+            Native.GetWindowRect(new WindowInteropHelper(toolbar).Handle, out var toolbarBounds);
+            check(toolbar.ActualWidth < 520 && toolbar.ActualHeight < 80 && toolbarBounds.Top == activeScreen.WorkingArea.Top + 12, "compact screenshot toolbar stays at the top of the display");
+            check(Find<Button>(toolbar).All(b => b.Width >= 40 && b.Height >= 40 && b.ToolTip != null && !string.IsNullOrWhiteSpace(System.Windows.Automation.AutomationProperties.GetName(b))), "capture action icons retain usable targets and accessible names");
             var point = new Point(screen.Bounds.Left + 120, screen.Bounds.Top + 120);
             Move(point, new WindowInteropHelper(overlay).Handle); SendMouse(2); Pump(80);
             check(!toolbar.IsVisible, "capture mode toolbar disappears on actual selection mouse-down");

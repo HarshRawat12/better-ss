@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Better SS — Preferences</title>
+<!-- Inter Google Font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration Verbatim -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#f3f3f5",
+            "on-primary": "#ffffff",
+            "secondary": "#5e5e64",
+            "on-tertiary-fixed": "#351000",
+            "on-tertiary": "#ffffff",
+            "outline": "#717786",
+            "inverse-on-surface": "#f0f0f2",
+            "tertiary-fixed": "#ffdbcc",
+            "surface-variant": "#e2e2e4",
+            "secondary-container": "#e0dfe6",
+            "primary-fixed-dim": "#adc6ff",
+            "inverse-surface": "#2f3132",
+            "surface-container": "#eeeef0",
+            "surface-container-highest": "#e2e2e4",
+            "on-background": "#1a1c1d",
+            "on-error": "#ffffff",
+            "surface-dim": "#d9dadc",
+            "surface-container-lowest": "#ffffff",
+            "primary": "#0058bc",
+            "error-container": "#ffdad6",
+            "surface-bright": "#f9f9fb",
+            "on-tertiary-container": "#fffbff",
+            "error": "#ba1a1a",
+            "on-secondary-container": "#626268",
+            "on-surface": "#1a1c1d",
+            "on-secondary-fixed": "#1a1b20",
+            "on-primary-fixed-variant": "#004493",
+            "on-error-container": "#93000a",
+            "surface-container-high": "#e8e8ea",
+            "tertiary-fixed-dim": "#ffb595",
+            "tertiary-container": "#c64f00",
+            "inverse-primary": "#adc6ff",
+            "on-tertiary-fixed-variant": "#7c2e00",
+            "surface": "#f9f9fb",
+            "primary-fixed": "#d8e2ff",
+            "primary-container": "#0070eb",
+            "on-secondary": "#ffffff",
+            "surface-tint": "#005bc1",
+            "secondary-fixed": "#e3e2e8",
+            "on-primary-fixed": "#001a41",
+            "on-secondary-fixed-variant": "#46464c",
+            "tertiary": "#9e3d00",
+            "outline-variant": "#c1c6d7",
+            "on-primary-container": "#fefcff",
+            "secondary-fixed-dim": "#c7c6cc",
+            "on-surface-variant": "#414755",
+            "background": "#f9f9fb"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-md": "0.5rem",
+            "margin": "1rem",
+            "space-lg": "0.75rem",
+            "gutter": "0.75rem",
+            "space-xl": "1rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.375rem"
+          },
+          "fontFamily": {
+            "headline-md": [
+              "Inter"
+            ],
+            "window-title": [
+              "Inter"
+            ],
+            "control-label": [
+              "Inter"
+            ],
+            "micro-label": [
+              "Inter"
+            ],
+            "mono-counter": [
+              "Inter"
+            ],
+            "body-md": [
+              "Inter"
+            ],
+            "body-sm": [
+              "Inter"
+            ]
+          },
+          "fontSize": {
+            "headline-md": [
+              "16px",
+              {
+                "lineHeight": "22px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "600"
+              }
+            ],
+            "window-title": [
+              "22px",
+              {
+                "lineHeight": "28px",
+                "letterSpacing": "-0.015em",
+                "fontWeight": "600"
+              }
+            ],
+            "control-label": [
+              "13px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "500"
+              }
+            ],
+            "micro-label": [
+              "11px",
+              {
+                "lineHeight": "14px",
+                "letterSpacing": "0.02em",
+                "fontWeight": "500"
+              }
+            ],
+            "mono-counter": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0.04em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-md": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "400"
+              }
+            ],
+            "body-sm": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0em",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    /* Material Symbols base config */
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+    }
+
+    /* Custom toggle checkbox simulation */
+    .switch-checkbox:checked + .switch-track {
+      background-color: #0070eb;
+    }
+    .switch-checkbox:checked + .switch-track .switch-thumb {
+      transform: translateX(18px);
+    }
+  </style>
+</head>
+<body class="bg-surface-dim text-on-surface font-body-md text-body-md antialiased h-screen w-screen flex items-center justify-center p-space-xl overflow-hidden select-none">
+<!-- Desktop Backdrop / Window Host Frame -->
+<div class="w-[940px] h-[740px] bg-surface-container-lowest rounded-xl shadow-2xl border border-outline-variant flex flex-col overflow-hidden relative">
+<!-- Top Native Window Caption Bar (Windows Fluent & macOS hybrid) -->
+<header class="h-10 bg-surface-container-lowest border-b border-outline-variant flex items-center justify-between px-space-md select-none shrink-0 z-20">
+<div class="flex items-center gap-space-sm pl-space-xs">
+<div class="w-3.5 h-3.5 rounded bg-primary-container flex items-center justify-center text-on-primary font-mono-counter text-[9px] font-bold">
+          B
+        </div>
+<span class="font-control-label text-control-label font-medium text-on-surface">Better SS — Preferences</span>
+</div>
+<!-- Native Windows Caption Controls (Minimize, Maximize, Close) -->
+<div class="flex items-center h-full">
+<button aria-label="Minimize" class="w-11 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">minimize</span>
+</button>
+<button aria-label="Maximize" class="w-11 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[14px]">crop_square</span>
+</button>
+<button aria-label="Close" class="w-11 h-10 flex items-center justify-center text-on-surface-variant hover:bg-error hover:text-on-error transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+</header>
+<!-- App Body: Sidebar + Main Content Area -->
+<div class="flex flex-1 overflow-hidden">
+<!-- Left Sidebar (~240px width, Fluent Mica/Pearlescent appearance) -->
+<aside class="w-[240px] bg-surface-container-low border-r border-outline-variant flex flex-col justify-between shrink-0 p-space-md select-none">
+<!-- Sidebar Navigation List -->
+<div class="space-y-space-xs">
+<!-- App Identity Header -->
+<div class="flex items-center gap-space-sm px-space-sm py-space-xs mb-space-sm">
+<div class="w-7 h-7 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-md shadow-sm">
+              B
+            </div>
+<div class="leading-none">
+<h1 class="font-control-label text-control-label font-semibold text-on-surface">Better SS</h1>
+<p class="font-micro-label text-micro-label text-on-surface-variant">Preferences</p>
+</div>
+</div>
+<!-- Nav Items -->
+<nav class="space-y-0.5">
+<!-- Capture (Active / Selected) -->
+<button class="w-full flex items-center gap-space-sm px-space-sm py-2 rounded-lg bg-surface-container-lowest text-primary shadow-sm border border-outline-variant/60 font-control-label text-control-label font-medium transition-colors text-left group">
+<span class="material-symbols-outlined text-primary text-[18px]">photo_camera</span>
+<span>Capture</span>
+<span class="ml-auto w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+</button>
+<!-- Floating preview -->
+<button class="w-full flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-control-label text-control-label transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-on-surface">picture_in_picture</span>
+<span>Floating preview</span>
+</button>
+<!-- Appearance -->
+<button class="w-full flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-control-label text-control-label transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-on-surface">palette</span>
+<span>Appearance</span>
+</button>
+<!-- Sound -->
+<button class="w-full flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-control-label text-control-label transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-on-surface">volume_up</span>
+<span>Sound</span>
+</button>
+<!-- Storage -->
+<button class="w-full flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-control-label text-control-label transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-on-surface">folder</span>
+<span>Storage</span>
+</button>
+<!-- Startup & guide -->
+<button class="w-full flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-control-label text-control-label transition-colors text-left group">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant group-hover:text-on-surface">rocket_launch</span>
+<span>Startup &amp; guide</span>
+</button>
+</nav>
+</div>
+<!-- Sidebar Bottom Footer -->
+<div class="pt-space-md border-t border-outline-variant px-space-sm space-y-1.5">
+<div class="flex items-center gap-1.5 font-micro-label text-micro-label text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span>Ready in your tray</span>
+</div>
+<p class="font-micro-label text-micro-label text-outline">Better SS v0.5.0</p>
+</div>
+</aside>
+<!-- Main Content Area (Right Side, bg-surface) -->
+<main class="flex-1 bg-surface overflow-y-auto px-8 py-6">
+<div class="max-w-[620px] space-y-6">
+<!-- Page Header -->
+<header class="space-y-1">
+<h2 class="font-window-title text-window-title font-semibold text-on-surface tracking-tight">Capture</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+              Configure default screenshot selection zones, recording pipelines, and system trigger shortcuts.
+            </p>
+</header>
+<!-- Group 1: Capture Modes & Scope -->
+<section class="space-y-2">
+<h3 class="font-micro-label text-micro-label uppercase tracking-wider text-outline px-1 font-semibold">Modes &amp; Targeting</h3>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm divide-y divide-outline-variant overflow-hidden">
+<!-- Row 1: Default capture mode -->
+<div class="p-space-lg flex items-center justify-between gap-space-lg">
+<div class="space-y-0.5 max-w-[280px]">
+<p class="font-control-label text-control-label font-medium text-on-surface">Default capture mode</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Choose the initial zone targeting when invoking capture.</p>
+</div>
+<!-- Compact Segmented Control -->
+<div class="bg-surface-container-low p-0.5 rounded-lg border border-outline-variant flex items-center space-x-0.5">
+<button class="px-2.5 py-1 text-xs font-medium rounded-md bg-surface-container-lowest text-primary shadow-sm border border-outline-variant/50" type="button">
+                    Select area
+                  </button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+                    Window
+                  </button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+                    Display
+                  </button>
+<button class="px-2.5 py-1 text-xs font-medium rounded-md text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+                    All displays
+                  </button>
+</div>
+</div>
+<!-- Row 2: Video recording -->
+<div class="p-space-lg flex items-center justify-between gap-space-lg">
+<div class="space-y-0.5 max-w-[280px]">
+<p class="font-control-label text-control-label font-medium text-on-surface">Video recording</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Capture animated sequences or screen recordings directly.</p>
+</div>
+<!-- Dual Action Buttons -->
+<div class="flex items-center gap-space-sm">
+<button class="h-8 px-3 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-control-label text-control-label flex items-center gap-1.5 border border-outline-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">videocam</span>
+<span>Record video</span>
+</button>
+<button class="h-8 px-3 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface-variant hover:text-on-surface font-control-label text-control-label border border-outline-variant transition-colors" type="button">
+                    Cut video
+                  </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Group 2: Hotkeys & System Launch Controls -->
+<section class="space-y-2">
+<h3 class="font-micro-label text-micro-label uppercase tracking-wider text-outline px-1 font-semibold">Hotkeys &amp; System</h3>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm divide-y divide-outline-variant overflow-hidden">
+<!-- Row 1: System shortcut takeover -->
+<div class="p-space-lg flex items-center justify-between gap-space-lg">
+<div class="space-y-0.5 max-w-[340px]">
+<p class="font-control-label text-control-label font-medium text-on-surface">System shortcut takeover</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Intercept Windows + Shift + S to launch Better SS instead of the legacy Snipping Tool.</p>
+</div>
+<!-- Fluent / iOS Smooth Toggle Switch -->
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only switch-checkbox" type="checkbox"/>
+<div class="switch-track w-11 h-6 bg-surface-container-highest rounded-full transition-colors duration-200 ease-in-out p-0.5">
+<div class="switch-thumb w-5 h-5 bg-on-primary rounded-full shadow-md transition-transform duration-200 ease-in-out"></div>
+</div>
+</label>
+</div>
+<!-- Row 2: Capture hotkey -->
+<div class="p-space-lg flex items-center justify-between gap-space-lg">
+<div class="space-y-0.5 max-w-[280px]">
+<p class="font-control-label text-control-label font-medium text-on-surface">Capture hotkey</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Global keyboard shortcut to open interactive annotation toolrail.</p>
+</div>
+<!-- Keystroke Badge & Custom Button -->
+<div class="flex items-center gap-space-sm">
+<div class="h-8 px-2.5 rounded-lg bg-surface-container-low border border-outline-variant flex items-center shadow-xs">
+<kbd class="font-mono-counter text-mono-counter font-semibold text-on-surface tracking-wide">Ctrl + Shift + S</kbd>
+</div>
+<button class="h-8 px-3 rounded-lg bg-surface-container-lowest hover:bg-surface-container-high text-on-surface font-control-label text-control-label border border-outline-variant transition-colors" type="button">
+                    Custom
+                  </button>
+</div>
+</div>
+<!-- Row 3: Capture delay -->
+<div class="p-space-lg flex items-center justify-between gap-space-lg">
+<div class="space-y-0.5 max-w-[300px]">
+<p class="font-control-label text-control-label font-medium text-on-surface">Capture delay</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Wait before freezing screen buffer for tooltips and contextual menus.</p>
+</div>
+<!-- Native Styled Select Dropdown (32px height) -->
+<div class="relative">
+<select class="h-8 appearance-none pl-3 pr-8 rounded-lg bg-surface-container-lowest text-on-surface border border-outline-variant font-control-label text-control-label focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary shadow-xs cursor-pointer">
+<option selected="">Off</option>
+<option>2 seconds</option>
+<option>5 seconds</option>
+<option>10 seconds</option>
+</select>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant pointer-events-none absolute right-2 top-1/2 -translate-y-1/2">
+                    expand_more
+                  </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Group 3: High Precision Capture Hardware Tuning -->
+<section class="space-y-2">
+<h3 class="font-micro-label text-micro-label uppercase tracking-wider text-outline px-1 font-semibold">Engine &amp; Display Pipeline</h3>
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm divide-y divide-outline-variant overflow-hidden">
+<div class="p-space-lg flex items-center justify-between gap-space-lg">
+<div class="space-y-0.5 max-w-[340px]">
+<p class="font-control-label text-control-label font-medium text-on-surface">HDR tone-mapping &amp; NVENC</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Hardware-accelerated color gamut clamping for multi-monitor HDR displays.</p>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="px-2 py-0.5 bg-surface-container-high rounded font-micro-label text-micro-label text-on-surface-variant border border-outline-variant/60">
+                    Active (DCI-P3)
+                  </span>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only switch-checkbox" type="checkbox"/>
+<div class="switch-track w-11 h-6 bg-surface-container-highest rounded-full transition-colors duration-200 ease-in-out p-0.5">
+<div class="switch-thumb w-5 h-5 bg-on-primary rounded-full shadow-md transition-transform duration-200 ease-in-out"></div>
+</div>
+</label>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Docked Micro Status Footer (Aligned with Shared Components Footer Spec) -->
+<footer class="h-6 bg-surface-container-lowest border-t border-outline-variant flex justify-between items-center w-full px-space-md select-none text-micro-label font-micro-label text-on-surface-variant">
+<div>
+<span>Better SS v2.4 • 3840×2160 HDR • 100% Zoom</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="hover:text-on-surface transition-colors cursor-default">Win+Shift+S (Capture)</span>
+<span class="hover:text-on-surface transition-colors cursor-default">Ctrl+C (Copy)</span>
+<span class="hover:text-on-surface transition-colors cursor-default">Ctrl+E (Export)</span>
+</div>
+</footer>
+</div>
+</body></html>

@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace BetterSS;
@@ -19,10 +21,18 @@ public sealed class Settings
     public bool SoundEnabled { get; set; } = true;
     public double Volume { get; set; } = 0.65;
     public string SoundPath { get; set; } = "";
+    public bool LiveOcrSoundEnabled { get; set; } = true;
+    public string LiveOcrSoundPath { get; set; } = "";
+    public bool ColorPickerSoundEnabled { get; set; } = true;
+    public string ColorPickerSoundPath { get; set; } = "";
     public bool AutoSave { get; set; } = true;
     public string SaveFolder { get; set; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "Better SS");
     public string Hotkey { get; set; } = "Ctrl + Shift + S";
     public bool UseWindowsCaptureShortcut { get; set; }
+    // Direct tools remain opt-in. The regular capture shortcut keeps its existing default.
+    public string LiveOcrHotkey { get; set; } = "Disabled";
+    public string ColorPickerHotkey { get; set; } = "Disabled";
+    public List<string> RecentColors { get; set; } = new();
     public int Delay { get; set; }
     public string ExportFormat { get; set; } = "PNG";
     public string ExportColorSpace { get; set; } = "RGB";
@@ -55,6 +65,12 @@ public sealed class Settings
         Stroke = Clamp(Stroke, 0, 3, 1); Volume = Clamp(Volume, 0, 1, .65);
         Delay = Delay is 0 or 3 or 5 or 10 ? Delay : 0;
         if (!HotkeyBinding.TryParse(Hotkey, out _, out _)) Hotkey = new Settings().Hotkey;
+        if (!HotkeyBinding.TryParse(LiveOcrHotkey, out _, out _)) LiveOcrHotkey = "Disabled";
+        if (!HotkeyBinding.TryParse(ColorPickerHotkey, out _, out _)) ColorPickerHotkey = "Disabled";
+        if (string.IsNullOrWhiteSpace(LiveOcrSoundPath)) LiveOcrSoundPath = "";
+        if (string.IsNullOrWhiteSpace(ColorPickerSoundPath)) ColorPickerSoundPath = "";
+        RecentColors = (RecentColors ?? new()).Where(hex => hex != null && ColorPickerWindow.TryParseHex(hex, out _))
+            .Select(hex => "#" + hex.Trim().TrimStart('#').ToUpperInvariant()).Distinct(StringComparer.OrdinalIgnoreCase).Take(24).ToList();
         if (string.IsNullOrWhiteSpace(SaveFolder)) SaveFolder = new Settings().SaveFolder;
     }
     private static double Clamp(double n, double min, double max, double fallback) => double.IsFinite(n) ? Math.Clamp(n, min, max) : fallback;

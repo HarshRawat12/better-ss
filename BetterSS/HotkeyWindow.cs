@@ -7,6 +7,7 @@ namespace BetterSS;
 internal sealed class HotkeyWindow : Window
 {
     private readonly App app;
+    private readonly ShortcutAction action;
     private readonly TextBlock keys, message;
     private readonly Button record, confirm;
     private string? candidate;
@@ -15,12 +16,14 @@ internal sealed class HotkeyWindow : Window
     internal bool Saved { get; private set; }
     internal string? Candidate => candidate;
 
-    internal HotkeyWindow(App app)
+    internal HotkeyWindow(App app, ShortcutAction action = ShortcutAction.Capture)
     {
-        this.app = app; bool dark = UI.Dark(app.Settings);
+        this.app = app; this.action = action; bool dark = UI.Dark(app.Settings);
         UI.SetupWindow(this, "Record a shortcut", 580, 480, dark); ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.Height;
         var root = new StackPanel { Margin = new Thickness(24) };
-        root.Children.Add(UI.PageHeader("Your capture shortcut", "Press Ctrl or Alt with a key. Add Shift if you like, release the keys, then confirm. Capture is also available from the tray.", dark, "\uE765"));
+        string tool = action switch { ShortcutAction.LiveOcr => "Live OCR", ShortcutAction.ColorPicker => "Color picker", _ => "capture" };
+        string description = action == ShortcutAction.Capture ? "Press Ctrl or Alt with a key. Add Shift if you like, release the keys, then confirm. Capture is also available from the tray." : $"Press Ctrl or Alt with a key. Add Shift if you like, release the keys, then confirm. This shortcut opens {tool} directly.";
+        root.Children.Add(UI.PageHeader("Your " + tool + " shortcut", description, dark, "\uE765"));
         keys = UI.Text("", 22, UI.Ink(dark), FontWeights.SemiBold); keys.HorizontalAlignment = HorizontalAlignment.Center;
         root.Children.Add(UI.Card(keys, dark, new Thickness(20)));
         message = UI.Text("", 12, UI.Muted(dark)); message.MinHeight = 44; root.Children.Add(message);
@@ -62,7 +65,7 @@ internal sealed class HotkeyWindow : Window
     private void Confirm()
     {
         if (candidate == null) return;
-        if (!app.TrySetHotkey(candidate, out var error)) { message.Text = error; return; }
+        if (!app.TrySetDirectToolHotkey(action, candidate, out var error)) { message.Text = error; return; }
         Saved = true; Close();
     }
 }

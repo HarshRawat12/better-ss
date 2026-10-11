@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Forms = System.Windows.Forms;
@@ -19,17 +20,48 @@ internal static class DesignPreview
         int option = Array.IndexOf(args, "--output");
         string output = Path.GetFullPath(option >= 0 && option + 1 < args.Length ? args[option + 1] : "native-design-preview");
         Directory.CreateDirectory(output);
+        if (args.Contains("--software-glass")) RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
         app.Settings = new Settings { IntroductionSeen = true, Duration = 30, PreviewWidth = 320, CaptureAnimation = false };
         app.SettingsPathOverride = Path.Combine(output, "preview-settings.json");
         app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         app.DispatcherUnhandledException += (_, e) => { File.AppendAllText(Path.Combine(output, "dispatcher-error.txt"), e.Exception + Environment.NewLine); e.Handled = true; };
         app.Startup += async (_, _) =>
         {
-            try { if (args.Contains("--video-only")) await ExportVideo(app, output); else await Export(app, output); File.WriteAllText(Path.Combine(output, "complete.txt"), "Native WPF design previews exported. No interaction regression suite was run."); }
+            try
+            {
+                if (args.Contains("--glass-only"))
+                {
+                    foreach (string theme in new[] { "Light", "Dark" }) { app.Settings.Theme = theme; await Glass(app, Sample(), output, theme.ToLowerInvariant()); }
+                }
+                else if (args.Contains("--screen-tools-only")) await ExportScreenTools(app, output);
+                else if (args.Contains("--video-only")) await ExportVideo(app, output);
+                else await Export(app, output);
+                File.WriteAllText(Path.Combine(output, "complete.txt"), "Native WPF design previews exported. No interaction regression suite was run.");
+            }
             catch (Exception ex) { File.WriteAllText(Path.Combine(output, "error.txt"), ex.ToString()); }
             finally { foreach (Window window in app.Windows.Cast<Window>().ToArray()) window.Close(); app.Shutdown(); }
         };
         app.Run();
+    }
+    private static async Task ExportScreenTools(App app, string output)
+    {
+        var screen = Forms.Screen.PrimaryScreen!;
+        app.Settings.RecentColors = new() { "#3478F6", "#2A2A2A", "#F04452", "#36A866", "#FFD43B", "#FFFFFF", "#7957D5", "#21B8AD", "#F28C28", "#000000" };
+        foreach (string theme in new[] { "Light", "Dark" })
+        {
+            app.Settings.Theme = theme;
+            var inspector = new ScreenColorWindow(app, Color.FromRgb(52, 120, 246), screen, true) { ShowActivated = false };
+            await View(inspector, "screen-color-" + theme.ToLowerInvariant(), output);
+        }
+        var session = new CaptureSession(CaptureMode.Region, screen, (_, _, _) => { }, () => { });
+        var toolbar = new CaptureToolbar(session, screen) { ShowActivated = false }; toolbar.Show();
+        foreach (var intent in Enum.GetValues<CaptureIntent>())
+        {
+            toolbar.Refresh(CaptureMode.Region, intent); await Task.Delay(300);
+            Save(toolbar, Path.Combine(output, "compact-toolbar-" + intent.ToString().ToLowerInvariant() + ".png"));
+        }
+        File.WriteAllText(Path.Combine(output, "toolbar-layout.txt"), $"Toolbar size: {toolbar.ActualWidth} x {toolbar.ActualHeight} DIPs\nTop of working area: {screen.WorkingArea.Top}\n");
+        toolbar.Close();
     }
     private static async Task ExportVideo(App app, string output)
     {
@@ -90,6 +122,7 @@ internal static class DesignPreview
         await Task.Delay(3500);
         Save(preview, Path.Combine(output, "preview-" + suffix + ".png")); Save(toolbar, Path.Combine(output, "capture-toolbar-" + suffix + ".png"));
         File.WriteAllText(Path.Combine(output, "glass-" + suffix + ".txt"), $"Live sample frames: {preview.LiveBackdrop.FrameCount}\nBackdrop active: {preview.PreviewMaterial.UsesBackdrop}\nFull refraction active: {preview.PreviewMaterial.UsesFullRefraction}\nRendering tier: {RenderCapability.Tier >> 16}\nTransparency enabled: {GlassSurface.Transparency}\nSampler: {preview.LiveBackdrop.Status}\nEnabled: {preview.LiveBackdrop.IsSampling}\nWindow loaded: {preview.IsLoaded}; visible: {preview.IsVisible}; opacity: {preview.Opacity}\n");
+        File.AppendAllText(Path.Combine(output, "glass-" + suffix + ".txt"), $"Windows transparency: {GlassSurface.WindowsTransparency}\nHigh Contrast: {UI.HighContrast}\nProcess render mode: {RenderOptions.ProcessRenderMode}\nMaterial: {GlassSurface.MaterialStatus}\nCompatibility rendering: {preview.PreviewMaterial.UsesLightweightRendering}\nSample interval ms: {preview.LiveBackdrop.SampleIntervalMilliseconds}\n");
         preview.Close(); toolbar.Close(); scene.Close();
     }
     private static void LayoutOnly(Window window, string path)

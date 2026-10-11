@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Better SS - Screenshot Editor</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary": "#ffffff",
+            "on-primary-fixed-variant": "#004493",
+            "background": "#f9f9fb",
+            "tertiary-fixed-dim": "#ffb595",
+            "surface-container-low": "#f3f3f5",
+            "surface-bright": "#f9f9fb",
+            "tertiary-fixed": "#ffdbcc",
+            "primary-container": "#0070eb",
+            "secondary-container": "#e0dfe6",
+            "outline-variant": "#c1c6d7",
+            "on-tertiary": "#ffffff",
+            "surface-variant": "#e2e2e4",
+            "on-tertiary-fixed": "#351000",
+            "surface-dim": "#d9dadc",
+            "on-error-container": "#93000a",
+            "outline": "#717786",
+            "on-background": "#1a1c1d",
+            "tertiary": "#9e3d00",
+            "primary-fixed-dim": "#adc6ff",
+            "on-tertiary-fixed-variant": "#7c2e00",
+            "surface-tint": "#005bc1",
+            "on-secondary-fixed-variant": "#46464c",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#e3e2e8",
+            "surface-container-lowest": "#ffffff",
+            "on-surface": "#1a1c1d",
+            "on-secondary": "#ffffff",
+            "on-tertiary-container": "#fffbff",
+            "on-primary-container": "#fefcff",
+            "primary-fixed": "#d8e2ff",
+            "on-secondary-container": "#626268",
+            "surface-container": "#eeeef0",
+            "error-container": "#ffdad6",
+            "surface-container-highest": "#e2e2e4",
+            "surface": "#f9f9fb",
+            "secondary-fixed-dim": "#c7c6cc",
+            "primary": "#0058bc",
+            "inverse-on-surface": "#f0f0f2",
+            "on-secondary-fixed": "#1a1b20",
+            "inverse-surface": "#2f3132",
+            "secondary": "#5e5e64",
+            "tertiary-container": "#c64f00",
+            "error": "#ba1a1a",
+            "on-primary-fixed": "#001a41",
+            "on-surface-variant": "#414755",
+            "inverse-primary": "#adc6ff",
+            "surface-container-high": "#e8e8ea"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-md": "0.5rem",
+            "space-xl": "1rem",
+            "gutter": "0.75rem",
+            "space-sm": "0.375rem",
+            "space-xs": "0.25rem",
+            "space-lg": "0.75rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Inter"],
+            "mono-counter": ["Inter"],
+            "control-label": ["Inter"],
+            "micro-label": ["Inter"],
+            "window-title": ["Inter"],
+            "body-sm": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "headline-md": ["16px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "mono-counter": ["12px", { "lineHeight": "16px", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "control-label": ["13px", { "lineHeight": "16px", "letterSpacing": "-0.005em", "fontWeight": "500" }],
+            "micro-label": ["11px", { "lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+            "window-title": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "body-md": ["13px", { "lineHeight": "18px", "letterSpacing": "-0.005em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+      font-size: 18px;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .custom-canvas-pattern {
+      background-color: #f5f5f7;
+      background-image: radial-gradient(rgba(0, 0, 0, 0.08) 0.75px, transparent 0.75px);
+      background-size: 12px 12px;
+    }
+    .hairline-border {
+      border: 0.5px solid rgba(0, 0, 0, 0.12);
+    }
+    .window-outer-shadow {
+      box-shadow: 0 24px 64px -12px rgba(0, 0, 0, 0.22), 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+    }
+  </style>
+</head>
+<body class="bg-surface-variant flex items-center justify-center min-h-screen p-4 overflow-hidden select-none font-body-md text-on-surface">
+<!-- Desktop App Container Frame (1160px x 760px) -->
+<div class="w-[1160px] h-[760px] bg-surface-container-lowest rounded-xl hairline-border window-outer-shadow flex flex-col overflow-hidden relative">
+<!-- 1. TopNavBar: Window Titlebar & Primary Actions (Docked h-10) -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none flex justify-between items-center w-full px-space-md h-10 select-none z-30">
+<!-- Left: App Identity & Undo / Redo controls -->
+<div class="flex items-center gap-space-md">
+<!-- Logo Icon & Title -->
+<div class="flex items-center gap-space-sm pr-space-sm border-r border-outline-variant dark:border-outline">
+<div class="w-5 h-5 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold text-[11px] shadow-sm">
+            B
+          </div>
+<span class="text-headline-md font-headline-md font-semibold text-on-surface dark:text-inverse-on-surface tracking-tight">Better SS</span>
+<span class="font-micro-label text-micro-label bg-surface-container text-secondary px-1.5 py-0.5 rounded-lg border border-outline-variant">1920×1080</span>
+</div>
+<!-- Navigation Undo / Redo from JSON -->
+<div class="flex items-center gap-1">
+<button class="flex items-center gap-1 px-2 py-1 rounded-lg text-primary dark:text-inverse-primary font-medium hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-100 active:bg-surface-container-highest" title="Undo (Ctrl+Z)">
+<span class="material-symbols-outlined text-[16px]">undo</span>
+<span class="font-control-label text-control-label">Undo</span>
+</button>
+<button class="flex items-center gap-1 px-2 py-1 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-high dark:hover:bg-surface-variant transition-colors duration-100 active:bg-surface-container-highest" title="Redo (Ctrl+Y)">
+<span class="material-symbols-outlined text-[16px]">redo</span>
+<span class="font-control-label text-control-label">Redo</span>
+</button>
+</div>
+</div>
+<!-- Right: Utility Trailing Actions + Windows Window Controls -->
+<div class="flex items-center gap-space-sm">
+<!-- Action Buttons matching JSON trailing items -->
+<div class="flex items-center gap-1.5 pr-2 border-r border-outline-variant dark:border-outline">
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-100" title="Extract Text (OCR)">
+<span class="material-symbols-outlined text-[17px]">document_scanner</span>
+<span class="font-control-label text-control-label">OCR</span>
+</button>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-100" title="Crop Canvas">
+<span class="material-symbols-outlined text-[17px]">crop</span>
+</button>
+<button class="p-1 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-100" title="Share Image">
+<span class="material-symbols-outlined text-[17px]">share</span>
+</button>
+<!-- Copy Image (Secondary Action) -->
+<button class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors duration-100 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+<span class="font-control-label text-control-label">Copy Image</span>
+</button>
+<!-- Export Action (Primary CTA) -->
+<button class="flex items-center gap-1.5 px-3.5 py-1 rounded-lg bg-primary-container text-on-primary font-control-label text-control-label shadow-sm hover:opacity-95 active:scale-[0.98] transition-all duration-75">
+<span class="material-symbols-outlined text-[16px]">download</span>
+<span>Export</span>
+</button>
+</div>
+<!-- Windows Native Window Controls (Minimize, Maximize, Close) -->
+<div class="flex items-center -mr-2">
+<button aria-label="Minimize" class="w-8 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[16px]">minimize</span>
+</button>
+<button aria-label="Maximize" class="w-8 h-10 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[15px]">crop_square</span>
+</button>
+<button aria-label="Close" class="w-9 h-10 flex items-center justify-center text-on-surface-variant hover:bg-error hover:text-on-error transition-colors">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Studio Content Area (Toolrail + Workspace Canvas) -->
+<div class="flex flex-1 overflow-hidden">
+<!-- 2. SideNavBar: Left Annotation Suite (Docked left-0 w-44) -->
+<aside class="bg-surface-container-low dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col justify-between h-[calc(100vh-2.5rem)] w-44 p-space-xs select-none z-20">
+<!-- Top Section: Header & Annotation Tools -->
+<div>
+<!-- Suite Header -->
+<div class="px-space-sm pt-space-xs pb-1 flex items-center justify-between">
+<div>
+<p class="font-micro-label text-micro-label font-semibold tracking-wider text-secondary">ANNOTATE</p>
+<h2 class="font-control-label text-control-label font-semibold text-on-surface dark:text-inverse-on-surface">Tools</h2>
+</div>
+<span class="material-symbols-outlined text-outline text-[16px]" title="Annotation Suite">brush</span>
+</div>
+<!-- Tools List -->
+<nav class="space-y-0.5 mt-1">
+<!-- Active Tool: Pen -->
+<button class="w-full flex items-center gap-space-sm bg-surface-container-lowest dark:bg-surface-container-high text-primary dark:text-inverse-primary rounded-lg px-space-sm py-1.5 shadow-sm transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+<span class="font-micro-label text-micro-label font-semibold">Pen</span>
+<span class="ml-auto w-1.5 h-1.5 rounded-full bg-primary"></span>
+</button>
+<!-- Inactive Tools from JSON -->
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">ink_highlighter</span>
+<span class="font-micro-label text-micro-label">Highlighter</span>
+</button>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">arrow_outward</span>
+<span class="font-micro-label text-micro-label">Arrow</span>
+</button>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">shapes</span>
+<span class="font-micro-label text-micro-label">Shapes</span>
+</button>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">title</span>
+<span class="font-micro-label text-micro-label">Text</span>
+</button>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">blur_on</span>
+<span class="font-micro-label text-micro-label">Blur &amp; Mask</span>
+</button>
+</nav>
+</div>
+<!-- Bottom Section: Canvas Operations, CTA & Settings -->
+<div class="border-t border-outline-variant dark:border-outline pt-2 space-y-0.5">
+<p class="font-micro-label text-micro-label text-secondary px-space-sm pb-1">CANVAS</p>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">crop</span>
+<span class="font-micro-label text-micro-label">Crop Canvas</span>
+</button>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+<span class="font-micro-label text-micro-label">Insert Image</span>
+</button>
+<button class="w-full flex items-center gap-space-sm text-on-surface-variant dark:text-outline-variant rounded-lg px-space-sm py-1.5 hover:bg-surface-container dark:hover:bg-surface-container-highest transition-colors duration-100 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span class="font-micro-label text-micro-label">Settings</span>
+</button>
+<!-- CTA from JSON: Clear Canvas -->
+<div class="pt-2 px-1">
+<button class="w-full py-1 px-2 border border-outline-variant rounded-lg font-micro-label text-micro-label text-error hover:bg-error-container/40 flex items-center justify-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[15px]">delete_sweep</span>
+              Clear Canvas
+            </button>
+</div>
+</div>
+</aside>
+<!-- 3. WORKSPACE CANVAS: Pearl Neutral Canvas + Floating HUD + Mountain Screenshot Preview -->
+<main class="flex-1 flex flex-col items-center justify-start relative overflow-hidden custom-canvas-pattern p-6">
+<!-- Top Floating Sub-Tool HUD (Segmented controls, brush size, color swatches) -->
+<div class="h-10 px-4 bg-surface-container-lowest/95 backdrop-blur-md rounded-xl hairline-border shadow-md flex items-center gap-4 mb-5 z-10 select-none">
+<!-- Palette Swatches (6 colors + custom color picker) -->
+<div class="flex items-center gap-1.5 pr-3 border-r border-outline-variant">
+<!-- Crimson -->
+<button class="w-4 h-4 rounded-full bg-[#FF3B30] ring-1 ring-offset-1 ring-slate-400/30 hover:scale-110 transition-transform" title="Crimson"></button>
+<!-- Amber -->
+<button class="w-4 h-4 rounded-full bg-[#FF9500] hover:scale-110 transition-transform" title="Coral"></button>
+<!-- Emerald -->
+<button class="w-4 h-4 rounded-full bg-[#34C759] hover:scale-110 transition-transform" title="Emerald"></button>
+<!-- Azure (Active) -->
+<button class="w-4 h-4 rounded-full bg-[#007AFF] ring-2 ring-offset-2 ring-primary scale-110 transition-transform" title="Azure"></button>
+<!-- Purple -->
+<button class="w-4 h-4 rounded-full bg-[#AF52DE] hover:scale-110 transition-transform" title="Purple"></button>
+<!-- Obsidian -->
+<button class="w-4 h-4 rounded-full bg-[#1C1C1E] hover:scale-110 transition-transform" title="Obsidian"></button>
+<!-- Custom picker wheel -->
+<button class="w-4 h-4 rounded-full bg-gradient-to-tr from-rose-400 via-amber-300 to-sky-400 border border-black/10 hover:scale-110 transition-transform flex items-center justify-center ml-0.5" title="Custom color">
+</button>
+</div>
+<!-- Nib Selector (Segmented Pill Switch) -->
+<div class="flex items-center bg-surface-container-low p-0.5 rounded-lg border border-outline-variant">
+<button class="px-2 py-0.5 rounded-md bg-surface-container-lowest shadow-xs text-primary font-micro-label text-micro-label flex items-center gap-1" title="Round nib">
+<span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+              Round
+            </button>
+<button class="px-2 py-0.5 rounded-md text-secondary hover:text-on-surface font-micro-label text-micro-label flex items-center gap-1" title="Square nib">
+<span class="w-2 h-2 bg-secondary inline-block"></span>
+              Square
+            </button>
+<button class="px-2 py-0.5 rounded-md text-secondary hover:text-on-surface font-micro-label text-micro-label flex items-center gap-1" title="Dashed">
+<span class="w-2 h-0.5 border-b border-dashed border-secondary inline-block"></span>
+              Dash
+            </button>
+</div>
+<!-- Stroke Size Slider -->
+<div class="flex items-center gap-2 pr-3 border-r border-outline-variant">
+<span class="font-micro-label text-micro-label text-secondary">Width</span>
+<input class="w-20 h-1 bg-surface-container-high rounded-lg appearance-none cursor-pointer accent-primary" max="24" min="1" type="range" value="4"/>
+<span class="font-mono-counter text-mono-counter text-on-surface bg-surface-container px-1 py-0.2 rounded">4 px</span>
+</div>
+<!-- Quick Filters / Adjustments -->
+<div class="flex items-center gap-1">
+<button class="px-2 py-0.5 rounded text-micro-label font-micro-label border border-outline-variant bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-surface-container transition-colors">Contrast</button>
+<button class="px-2 py-0.5 rounded text-micro-label font-micro-label border border-outline-variant bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-surface-container transition-colors">B&amp;W</button>
+<button class="px-2 py-0.5 rounded text-micro-label font-micro-label border border-outline-variant bg-surface-container-lowest text-secondary hover:text-on-surface hover:bg-surface-container transition-colors">Sharpen</button>
+<button class="px-2 py-0.5 rounded text-micro-label font-micro-label border border-primary/40 bg-primary/10 text-primary font-semibold">Vibrant</button>
+</div>
+</div>
+<!-- Central Image Viewport Container with Crop & Anchor Handles -->
+<div class="relative flex items-center justify-center max-w-full max-h-[580px] p-2">
+<!-- Screenshot Frame (Strictly Uncropped Rectangle, 0.5px hairline border, natural drop shadow) -->
+<div class="relative group shadow-2xl bg-black inline-block">
+<!-- Mountain lake image as screenshot context -->
+<img alt="Clean high resolution screenshot of alpine mountain lake" class="w-[790px] h-[460px] object-cover block select-none pointer-events-none border border-black/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR7IAYV2oOXdsgRCpOqDvL0ozA3zMfHkphJPPnnBSqaWMEd5WmQHAlSmvKGGeKwQRujUQl1JJeAguWjFaokKutLrYbrjZ7QwUK_kUIQIVwRBskuJcL7dISPkZt8zSv9wFq1XE_-xONgoul9SfAAgVMwI86KsWOvmYFxnlUYx9t0tVXHpE8OrPXSTwODvNftpvSAYW3B40c_vXSaHr2piwqKLhnY9pvYkNnQBJZQdTH8_4jX5dbzLLWlm8p9dIqXzHBj1M1N0evmTn4"/>
+<!-- Active Annotation Overlay Layer (Simulating pen & callout drawn by user) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none" fill="none" viewbox="0 0 790 460" xmlns="http://www.w3.org/2000/svg">
+<!-- Freehand highlight callout on mountain summit -->
+<path d="M 390 145 Q 410 135 445 140 T 470 160" fill="none" stroke="#0070eb" stroke-linecap="round" stroke-width="3"></path>
+<!-- Precision Arrow Callout -->
+<path d="M 505 180 L 460 155" marker-end="url(#arrowhead)" stroke="#0070eb" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Bounding Box Annotation on Glacier Reflection -->
+<rect fill="rgba(255, 149, 0, 0.08)" height="95" rx="3" stroke="#FF9500" stroke-dasharray="4 3" stroke-width="2" width="170" x="330" y="240"></rect>
+<text fill="#FF9500" font-family="Inter" font-size="11" font-weight="600" x="336" y="255">Reflection Matrix</text>
+<defs>
+<marker id="arrowhead" markerheight="6" markerwidth="8" orient="auto" refx="7" refy="3">
+<polygon fill="#0070eb" points="0 0, 8 3, 0 6"></polygon>
+</marker>
+</defs>
+</svg>
+<!-- Coordinate Loupe HUD attached to cursor position near lake center -->
+<div class="absolute left-[340px] top-[140px] bg-slate-900/90 backdrop-blur-sm text-white px-2 py-1 rounded-lg border border-white/20 shadow-lg pointer-events-none flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-[#007AFF] border border-white"></div>
+<span class="font-mono-counter text-mono-counter tracking-tight">X: 960  Y: 480</span>
+<span class="font-mono-counter text-mono-counter text-slate-400">#4A7C92</span>
+</div>
+<!-- Precision Hairline Crop/Bounding Box Framing -->
+<div class="absolute -inset-[2px] border border-primary pointer-events-none">
+<!-- Corner Resize Handles (Square precision grips) -->
+<span class="absolute -top-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-primary rounded-none shadow-xs pointer-events-auto cursor-nwse-resize"></span>
+<span class="absolute -top-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-primary rounded-none shadow-xs pointer-events-auto cursor-nesw-resize"></span>
+<span class="absolute -bottom-1.5 -left-1.5 w-3 h-3 bg-white border-2 border-primary rounded-none shadow-xs pointer-events-auto cursor-nesw-resize"></span>
+<span class="absolute -bottom-1.5 -right-1.5 w-3 h-3 bg-white border-2 border-primary rounded-none shadow-xs pointer-events-auto cursor-nwse-resize"></span>
+<!-- Midpoint Edge Handles -->
+<span class="absolute top-1/2 -left-1.5 -translate-y-1/2 w-2 h-3 bg-white border border-primary rounded-none shadow-xs pointer-events-auto cursor-ew-resize"></span>
+<span class="absolute top-1/2 -right-1.5 -translate-y-1/2 w-2 h-3 bg-white border border-primary rounded-none shadow-xs pointer-events-auto cursor-ew-resize"></span>
+<span class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-2 bg-white border border-primary rounded-none shadow-xs pointer-events-auto cursor-ns-resize"></span>
+<span class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-2 bg-white border border-primary rounded-none shadow-xs pointer-events-auto cursor-ns-resize"></span>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- 4. Footer: Docked Bottom Status Bar (h-6 format matching JSON) -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline flex justify-between items-center w-full px-space-md h-6 select-none z-30">
+<!-- Left: Status indicator & Copyright text from JSON -->
+<div class="flex items-center gap-2 font-micro-label text-micro-label text-on-surface-variant dark:text-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+<span>Better SS v2.4 • 3840×2160 HDR • 100% Zoom</span>
+</div>
+<!-- Center: Zoom Controls -->
+<div class="flex items-center gap-1.5 text-secondary">
+<button class="p-0.5 hover:text-on-surface transition-colors" title="Zoom Out">
+<span class="material-symbols-outlined text-[14px]">remove</span>
+</button>
+<span class="font-micro-label text-micro-label text-on-surface font-semibold px-1">100%</span>
+<button class="p-0.5 hover:text-on-surface transition-colors" title="Zoom In">
+<span class="material-symbols-outlined text-[14px]">add</span>
+</button>
+<button class="p-0.5 hover:text-on-surface transition-colors ml-1" title="Fit to screen">
+<span class="material-symbols-outlined text-[14px]">fit_screen</span>
+</button>
+</div>
+<!-- Right: Keyboard shortcut badges from JSON -->
+<div class="flex items-center gap-3 font-micro-label text-micro-label">
+<span class="text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-100 cursor-pointer">
+<kbd class="px-1 py-0.5 bg-surface-container rounded border border-outline-variant text-[10px] mr-0.5">Win+Shift+S</kbd> (Capture)
+        </span>
+<span class="text-on-surface-variant dark:text-outline-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-100 cursor-pointer">
+<kbd class="px-1 py-0.5 bg-surface-container rounded border border-outline-variant text-[10px] mr-0.5">Ctrl+C</kbd> (Copy)
+        </span>
+<span class="text-on-surface dark:text-inverse-on-surface transition-colors duration-100 cursor-pointer font-medium">
+<kbd class="px-1 py-0.5 bg-surface-container rounded border border-outline-variant text-[10px] mr-0.5">Ctrl+E</kbd> (Export)
+        </span>
+</div>
+</footer>
+</div>
+</body></html>

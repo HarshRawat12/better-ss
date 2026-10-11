@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Better SS Split</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Inter font family -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-tint": "#005bc1",
+            "surface-container-highest": "#e2e2e4",
+            "outline-variant": "#c1c6d7",
+            "surface-variant": "#e2e2e4",
+            "on-tertiary": "#ffffff",
+            "tertiary-container": "#c64f00",
+            "primary": "#0058bc",
+            "on-primary-fixed-variant": "#004493",
+            "error": "#ba1a1a",
+            "on-secondary-fixed": "#1a1b20",
+            "on-secondary-container": "#626268",
+            "on-surface-variant": "#414755",
+            "on-tertiary-container": "#fffbff",
+            "on-tertiary-fixed-variant": "#7c2e00",
+            "surface-container-lowest": "#ffffff",
+            "secondary-fixed-dim": "#c7c6cc",
+            "surface-container-high": "#e8e8ea",
+            "surface": "#f9f9fb",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#ffdbcc",
+            "background": "#f9f9fb",
+            "surface-container": "#eeeef0",
+            "on-primary-fixed": "#001a41",
+            "on-secondary-fixed-variant": "#46464c",
+            "inverse-primary": "#adc6ff",
+            "tertiary-fixed-dim": "#ffb595",
+            "surface-bright": "#f9f9fb",
+            "tertiary": "#9e3d00",
+            "on-tertiary-fixed": "#351000",
+            "on-primary": "#ffffff",
+            "on-error": "#ffffff",
+            "secondary-fixed": "#e3e2e8",
+            "primary-fixed": "#d8e2ff",
+            "primary-container": "#0070eb",
+            "inverse-on-surface": "#f0f0f2",
+            "on-secondary": "#ffffff",
+            "surface-container-low": "#f3f3f5",
+            "secondary-container": "#e0dfe6",
+            "secondary": "#5e5e64",
+            "on-surface": "#1a1c1d",
+            "error-container": "#ffdad6",
+            "inverse-surface": "#2f3132",
+            "on-primary-container": "#fefcff",
+            "outline": "#717786",
+            "surface-dim": "#d9dadc",
+            "primary-fixed-dim": "#adc6ff",
+            "on-background": "#1a1c1d"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-xl": "1rem",
+            "space-lg": "0.75rem",
+            "space-md": "0.5rem",
+            "gutter": "0.75rem",
+            "space-xs": "0.25rem",
+            "space-sm": "0.375rem",
+            "margin": "1rem"
+          },
+          "fontFamily": {
+            "control-label": ["Inter"],
+            "headline-md": ["Inter"],
+            "body-sm": ["Inter"],
+            "mono-counter": ["Inter"],
+            "micro-label": ["Inter"],
+            "window-title": ["Inter"],
+            "body-md": ["Inter"]
+          },
+          "fontSize": {
+            "control-label": [
+              "13px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "500"
+              }
+            ],
+            "headline-md": [
+              "16px",
+              {
+                "lineHeight": "22px",
+                "letterSpacing": "-0.01em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-sm": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0em",
+                "fontWeight": "400"
+              }
+            ],
+            "mono-counter": [
+              "12px",
+              {
+                "lineHeight": "16px",
+                "letterSpacing": "0.04em",
+                "fontWeight": "600"
+              }
+            ],
+            "micro-label": [
+              "11px",
+              {
+                "lineHeight": "14px",
+                "letterSpacing": "0.02em",
+                "fontWeight": "500"
+              }
+            ],
+            "window-title": [
+              "22px",
+              {
+                "lineHeight": "28px",
+                "letterSpacing": "-0.015em",
+                "fontWeight": "600"
+              }
+            ],
+            "body-md": [
+              "13px",
+              {
+                "lineHeight": "18px",
+                "letterSpacing": "-0.005em",
+                "fontWeight": "400"
+              }
+            ]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-size: 17px;
+      line-height: 1;
+      display: inline-block;
+      user-select: none;
+    }
+    /* Filmstrip thumbnail aspect */
+    .filmstrip-frame {
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="bg-surface-container-high text-on-surface h-full flex items-center justify-center p-4 antialiased select-none font-body-md text-body-md overflow-hidden">
+<!-- Desktop App Window Container (1100x800 Native Utility Canvas) -->
+<div class="w-[1100px] h-[800px] max-w-full max-h-[96vh] bg-surface rounded-xl shadow-2xl flex flex-col border border-outline-variant overflow-hidden relative">
+<!-- TopNavBar (Shared Component Injected & Stylized) -->
+<header class="flex justify-between items-center w-full px-space-md h-10 border-b border-outline-variant bg-surface shrink-0 z-20">
+<!-- Brand & File Navigation -->
+<div class="flex items-center gap-space-md">
+<!-- Logo Glyph -->
+<div class="w-6 h-6 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-headline-md text-headline-md font-bold shadow-xs">
+          B
+        </div>
+<span class="text-headline-md font-headline-md font-semibold text-on-surface tracking-tight">Better SS Split</span>
+<span class="text-outline-variant font-body-sm text-body-sm">/</span>
+<!-- Active File Token -->
+<div class="flex items-center gap-space-xs px-2 py-0.5 rounded-lg bg-surface-container border border-outline-variant">
+<span class="material-symbols-outlined text-secondary" style="font-size: 15px;">movie</span>
+<span class="text-on-surface font-control-label text-control-label font-medium">Recording 2026-10-08.mp4</span>
+<span class="ml-1 px-1 rounded bg-surface-container-highest text-on-surface-variant font-micro-label text-micro-label uppercase">H.264 • 60 FPS</span>
+</div>
+</div>
+<!-- Center History & Utility Shortcuts -->
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container-high active:scale-[0.98] transition-colors duration-100" title="Undo (⌘Z)">
+<span class="material-symbols-outlined">undo</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container-high active:scale-[0.98] transition-colors duration-100" title="Redo (⇧⌘Z)">
+<span class="material-symbols-outlined">redo</span>
+</button>
+<div class="h-4 w-px bg-outline-variant mx-1"></div>
+<button class="flex items-center gap-1 px-2 h-7 rounded-lg text-on-surface-variant hover:bg-surface-container-high active:scale-[0.98] transition-colors duration-100 font-control-label text-control-label">
+<span class="material-symbols-outlined">keyboard</span>
+<span>Shortcuts</span>
+</button>
+<button class="w-7 h-7 flex items-center justify-center rounded-lg text-secondary hover:bg-surface-container-high active:scale-[0.98] transition-colors duration-100" title="Video Engine Calibration">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<!-- Trailing Action Cluster & Native Window Controls -->
+<div class="flex items-center gap-space-md">
+<!-- Export Button -->
+<button class="flex items-center gap-1.5 px-3 h-7 rounded-lg bg-primary-container text-on-primary-container font-control-label text-control-label font-medium hover:bg-primary active:scale-[0.98] shadow-sm transition-all duration-100">
+<span class="material-symbols-outlined" style="font-size: 16px;">file_download</span>
+<span>Export Video</span>
+</button>
+<!-- Divider to Windows Caption Buttons -->
+<div class="h-4 w-px bg-outline-variant"></div>
+<!-- Windows 11 Chrome Controls -->
+<div class="flex items-center -mr-1">
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" title="Minimize">
+<span class="material-symbols-outlined" style="font-size: 15px;">minimize</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" title="Maximize">
+<span class="material-symbols-outlined" style="font-size: 13px;">crop_square</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:bg-error hover:text-on-error transition-colors" title="Close">
+<span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Workspace Area -->
+<main class="flex-1 flex flex-col min-h-0 bg-surface">
+<!-- 2. Video Viewer Area (Generous prominence with letterbox) -->
+<div class="flex-1 bg-inverse-surface relative flex items-center justify-center overflow-hidden border-b border-outline-variant">
+<!-- Video Viewport Frame (16:9 ratio fit) -->
+<div class="relative w-full h-full max-h-full flex items-center justify-center p-3">
+<div class="relative rounded-lg overflow-hidden shadow-2xl border border-secondary/40 max-h-full aspect-video flex items-center justify-center bg-black">
+<!-- Embedded Active Media Asset -->
+<img alt="Video Screen Recording Preview" class="w-full h-full object-contain pointer-events-none" src="https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso"/>
+<!-- Subtle Translucent Overlay HUD Info: Top Left (Resolution & Color Space) -->
+<div class="absolute top-3 left-3 flex items-center gap-2 pointer-events-none">
+<div class="px-2 py-1 rounded bg-black/75 backdrop-blur-md text-white font-micro-label text-micro-label tracking-wide border border-white/10 flex items-center gap-1.5 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+<span>3840 × 2160 • 60.00 fps</span>
+<span class="text-white/40">|</span>
+<span class="text-white/80 font-mono-counter text-mono-counter">HDR (Rec.2020)</span>
+</div>
+</div>
+<!-- Subtle Translucent Overlay HUD Info: Bottom Left (Current Timecode Badge) -->
+<div class="absolute bottom-3 left-3 pointer-events-none">
+<div class="px-2.5 py-1 rounded bg-black/80 backdrop-blur-md text-white font-mono-counter text-mono-counter tracking-wider border border-white/10 shadow-sm flex items-center gap-2">
+<span class="text-white/50 text-[10px] tracking-normal uppercase">TC</span>
+<span class="text-white font-semibold">00:04.120</span>
+</div>
+</div>
+<!-- Overlay Safe-Guides Indicator: Top Right -->
+<div class="absolute top-3 right-3 flex items-center gap-1 pointer-events-none">
+<div class="px-2 py-0.5 rounded bg-black/60 backdrop-blur-md text-white/70 font-micro-label text-micro-label border border-white/10">
+                100% Fit
+              </div>
+</div>
+</div>
+</div>
+</div>
+<!-- 3. Precision Transport Bar (Native Apple/Final Cut Pro refined styling) -->
+<section class="h-10 bg-surface-container-lowest border-b border-outline-variant px-space-md flex items-center justify-between shrink-0">
+<!-- Left: Frame Accurate Monospace Counter Readout -->
+<div class="flex items-center gap-2">
+<div class="flex items-center bg-surface-container px-2.5 py-1 rounded border border-outline-variant font-mono-counter text-mono-counter text-on-surface">
+<span class="text-primary font-semibold">00:04.120</span>
+<span class="text-outline mx-1.5">/</span>
+<span class="text-secondary">00:18.600</span>
+</div>
+<span class="text-outline-variant text-body-sm font-body-sm hidden sm:inline">Frames: 247</span>
+</div>
+<!-- Center: Apple-grade Hardware Transport Control Cluster -->
+<div class="flex items-center gap-1">
+<!-- Jump to Start -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors active:scale-[0.96]" title="Go to Beginning (Home / ↖)">
+<span class="material-symbols-outlined">first_page</span>
+</button>
+<!-- Step Frame Back -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors active:scale-[0.96]" title="Previous Frame (Left Arrow)">
+<span class="material-symbols-outlined">cloud_upload</span>
+</button>
+<!-- Large Play/Pause Primary Action -->
+<button class="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shadow-sm hover:bg-primary active:scale-[0.95] transition-all mx-1" title="Play / Pause (Space)">
+<span class="material-symbols-outlined" style="font-size: 20px;">pause</span>
+</button>
+<!-- Step Frame Forward -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors active:scale-[0.96]" title="Next Frame (Right Arrow)">
+<span class="material-symbols-outlined">request_quote</span>
+</button>
+<!-- Jump to End -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors active:scale-[0.96]" title="Go to End (End / ↘)">
+<span class="material-symbols-outlined">last_page</span>
+</button>
+</div>
+<!-- Right: Audio, Speed & Loop toggles -->
+<div class="flex items-center gap-1.5">
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors" title="Mute Audio (M)">
+<span class="material-symbols-outlined">volume_up</span>
+</button>
+<!-- Speed Selector Segment -->
+<div class="flex items-center bg-surface-container rounded-lg border border-outline-variant px-1.5 py-0.5 text-on-surface-variant font-micro-label text-micro-label cursor-pointer hover:bg-surface-container-high transition-colors">
+<span>1.0×</span>
+<span class="material-symbols-outlined" style="font-size: 14px;">arrow_drop_down</span>
+</div>
+<!-- Loop Segment -->
+<button class="w-8 h-8 rounded-lg flex items-center justify-center text-primary bg-primary-fixed hover:bg-primary-fixed-dim transition-colors" title="Loop Playback (⌘L)">
+<span class="material-symbols-outlined">repeat</span>
+</button>
+</div>
+</section>
+<!-- 4. Quick Action Editing Toolbar & Trim Controls -->
+<section class="h-11 bg-surface-container-low border-b border-outline-variant px-space-md flex items-center justify-between shrink-0 gap-3">
+<!-- Editing Tool Group -->
+<div class="flex items-center gap-1">
+<!-- Split Razor -->
+<button class="flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface hover:border-primary text-control-label font-control-label font-medium shadow-xs transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-primary">content_cut</span>
+<span>Split</span>
+<kbd class="ml-1 px-1 py-0.2 rounded bg-surface-container font-mono-counter text-[10px] text-secondary border border-outline-variant">S</kbd>
+</button>
+<!-- Ripple Delete -->
+<button class="flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-surface-container-lowest border border-outline-variant text-on-surface hover:text-error hover:border-error/40 text-control-label font-control-label font-medium shadow-xs transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-secondary">delete_sweep</span>
+<span>Ripple Delete</span>
+<kbd class="ml-1 px-1 py-0.2 rounded bg-surface-container font-mono-counter text-[10px] text-secondary border border-outline-variant">⌫</kbd>
+</button>
+<div class="h-4 w-px bg-outline-variant mx-1"></div>
+<!-- Mark In & Out Controls -->
+<div class="flex items-center bg-surface-container rounded-lg border border-outline-variant p-0.5">
+<button class="px-2 h-7 rounded text-on-surface hover:bg-surface-container-lowest text-control-label font-control-label flex items-center gap-1" title="Set In-Point (I)">
+<span>Mark In</span>
+<kbd class="font-mono-counter text-[10px] text-secondary">I</kbd>
+</button>
+<button class="px-2 h-7 rounded text-on-surface hover:bg-surface-container-lowest text-control-label font-control-label flex items-center gap-1" title="Set Out-Point (O)">
+<span>Mark Out</span>
+<kbd class="font-mono-counter text-[10px] text-secondary">O</kbd>
+</button>
+</div>
+</div>
+<!-- Precision Trim Range Form Inputs -->
+<div class="flex items-center gap-2">
+<!-- In Point Input -->
+<div class="flex items-center gap-1.5">
+<label class="text-on-surface-variant font-micro-label text-micro-label">In:</label>
+<input class="w-20 h-7 text-center rounded bg-surface-container-lowest border border-outline-variant font-mono-counter text-mono-counter text-on-surface focus:outline-none focus:border-primary p-0" type="text" value="00:01.500"/>
+</div>
+<!-- Out Point Input -->
+<div class="flex items-center gap-1.5">
+<label class="text-on-surface-variant font-micro-label text-micro-label">Out:</label>
+<input class="w-20 h-7 text-center rounded bg-surface-container-lowest border border-outline-variant font-mono-counter text-mono-counter text-on-surface focus:outline-none focus:border-primary p-0" type="text" value="00:14.250"/>
+</div>
+<!-- Calculated Active Duration Badge -->
+<div class="flex items-center gap-1 px-2 h-7 rounded bg-surface-container border border-outline-variant text-on-surface-variant font-micro-label text-micro-label">
+<span>Dur:</span>
+<span class="font-mono-counter text-mono-counter text-on-surface font-semibold">00:12.750</span>
+</div>
+<!-- Apply Trim Action -->
+<button class="h-7 px-3 rounded-lg bg-surface-container-lowest border border-outline text-primary font-control-label text-control-label font-medium hover:bg-primary hover:text-on-primary transition-all active:scale-[0.98]">
+            Apply Trim
+          </button>
+</div>
+</section>
+<!-- 5. Single-Track Timeline (STRICT V1 Only - No multi-track, No audio waveform) -->
+<section class="h-44 bg-surface flex flex-col select-none relative">
+<!-- Timeline Top Time Ruler -->
+<div class="h-6 bg-surface-container-low border-b border-outline-variant flex items-center relative pl-24">
+<!-- Track Header Blank Space Corner -->
+<div class="absolute left-0 top-0 bottom-0 w-24 bg-surface-container border-r border-outline-variant flex items-center justify-between px-2 text-micro-label font-micro-label text-secondary">
+<span>TRACK</span>
+<span class="material-symbols-outlined" style="font-size: 13px;">tune</span>
+</div>
+<!-- Ticks & Timecode Numbers -->
+<div class="flex-1 flex justify-between px-3 text-secondary font-mono-counter text-[10px]">
+<div class="flex flex-col items-center">
+<span>00:00</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+<div class="flex flex-col items-center">
+<span>00:03</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+<div class="flex flex-col items-center">
+<span>00:06</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+<div class="flex flex-col items-center">
+<span>00:09</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+<div class="flex flex-col items-center">
+<span>00:12</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+<div class="flex flex-col items-center">
+<span>00:15</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+<div class="flex flex-col items-center">
+<span>00:18.60</span>
+<div class="h-1.5 w-px bg-outline mt-0.5"></div>
+</div>
+</div>
+</div>
+<!-- Timeline Single Track Body -->
+<div class="flex-1 flex relative overflow-hidden bg-surface-container-low/40">
+<!-- Strict V1 Header on Left (Visibility & Lock Controls) -->
+<div class="w-24 bg-surface-container border-r border-outline-variant flex flex-col justify-center px-2 z-10 shrink-0">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-headline-md text-headline-md font-semibold text-on-surface">V1</span>
+</div>
+<div class="flex items-center gap-0.5 text-secondary">
+<button class="p-0.5 hover:text-on-surface" title="Toggle Track Visibility">
+<span class="material-symbols-outlined" style="font-size: 15px;">visibility</span>
+</button>
+<button class="p-0.5 hover:text-on-surface" title="Lock Video Track">
+<span class="material-symbols-outlined" style="font-size: 15px;">lock_open</span>
+</button>
+</div>
+</div>
+<span class="text-micro-label font-micro-label text-on-surface-variant truncate mt-1">Alpine_4K_Rec</span>
+</div>
+<!-- Track Canvas Area with Filmstrip Strip -->
+<div class="flex-1 relative p-2 flex items-center overflow-x-hidden">
+<!-- Active Video Clip Container with Blue Selection State & Range Boundaries -->
+<div class="w-full h-24 rounded-lg bg-surface-container-lowest border-2 border-primary-container shadow-sm relative overflow-hidden flex flex-col group">
+<!-- Clip Header Bar with Title and Status -->
+<div class="h-5 bg-primary-container text-on-primary-container px-2 flex items-center justify-between text-micro-label font-micro-label shrink-0 z-10">
+<span class="font-medium truncate">Recording 2026-10-08.mp4 [00:00.000 — 00:18.600]</span>
+<span class="font-mono-counter text-[10px] bg-black/20 px-1 rounded">2160p 60fps</span>
+</div>
+<!-- Repeated Filmstrip Preview Thumbnails -->
+<div class="flex-1 flex overflow-hidden w-full relative">
+<!-- Filmstrip Thumbnails using Image 6 Placeholder -->
+<div class="flex-1 h-full filmstrip-frame border-r border-white/20 opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<div class="flex-1 h-full filmstrip-frame border-r border-white/20 opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<div class="flex-1 h-full filmstrip-frame border-r border-white/20 opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<div class="flex-1 h-full filmstrip-frame border-r border-white/20 opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<div class="flex-1 h-full filmstrip-frame border-r border-white/20 opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<div class="flex-1 h-full filmstrip-frame border-r border-white/20 opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<div class="flex-1 h-full filmstrip-frame opacity-90" style="background-image: url('https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso');"></div>
+<!-- Trim Range Inactive / Active Shading Overlay -->
+<!-- Trim In boundary bracket (at ~8%) -->
+<div class="absolute left-0 top-0 bottom-0 w-[8%] bg-black/60 backdrop-blur-[1px] border-r-2 border-amber-400 flex items-center justify-end pr-0.5">
+<div class="w-1.5 h-6 bg-amber-400 rounded-sm"></div>
+</div>
+<!-- Trim Out boundary bracket (at ~76%) -->
+<div class="absolute right-0 top-0 bottom-0 w-[24%] bg-black/60 backdrop-blur-[1px] border-l-2 border-amber-400 flex items-center justify-start pl-0.5">
+<div class="w-1.5 h-6 bg-amber-400 rounded-sm"></div>
+</div>
+</div>
+<!-- Clip Bottom Handle Line -->
+<div class="h-1 bg-primary-container/30 w-full shrink-0"></div>
+</div>
+<!-- Precision Playhead Indicator (Red needle spanning ruler and track) -->
+<!-- Positioned accurately at ~22% corresponding to 00:04.120 of 00:18.600 -->
+<div class="absolute top-0 bottom-0 left-[24%] pointer-events-none z-30 flex flex-col items-center -ml-2">
+<!-- Playhead Top Pill / Handle -->
+<div class="w-4 h-3 bg-error rounded-b-sm shadow-md flex items-center justify-center">
+<div class="w-1 h-1 bg-white rounded-full"></div>
+</div>
+<!-- Vertical Hairline Needle -->
+<div class="w-0.5 flex-1 bg-error shadow-sm"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- 6. Muted Bottom Status Bar -->
+<footer class="h-7 bg-surface-container border-t border-outline-variant px-space-md flex items-center justify-between text-micro-label font-micro-label text-on-surface-variant shrink-0">
+<!-- Status Indicator Left -->
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-medium text-on-surface">Ready</span>
+</div>
+<span class="text-outline-variant">•</span>
+<span>Non-destructive • Original stays intact</span>
+</div>
+<!-- Specs & Hotkey Reference Right -->
+<div class="flex items-center gap-3">
+<span class="font-mono-counter text-mono-counter">Est. size: 48.2 MB</span>
+<span class="text-outline-variant">•</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-counter text-[10px]">Hardware Accelerated (NVENC)</span>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1 text-secondary">
+<span>Space: Play</span>
+<span>•</span>
+<span>S: Split</span>
+<span>•</span>
+<span>I/O: In/Out</span>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

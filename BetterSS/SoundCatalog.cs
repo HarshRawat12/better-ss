@@ -11,6 +11,7 @@ internal static class SoundCatalog
     internal const string SystemSoundSetting = "system:windows";
     internal const string SystemSoundName = "Windows system sound";
     internal const string DefaultFileName = "capture.mp3";
+    internal const string ToolCueFileName = "Live Tool Cue.mp3";
     internal static readonly string[] BuiltInFileNames =
     {
         DefaultFileName,
@@ -23,6 +24,8 @@ internal static class SoundCatalog
     };
 
     internal static string[] AvailableBuiltInFileNames => BuiltInFileNames.Where(fileName => File.Exists(BuiltInPath(fileName))).ToArray();
+    internal static string ToolCuePath => Path.Combine(AppContext.BaseDirectory, "Assets", "Custom Sounds", ToolCueFileName);
+    internal static string ResolveToolCuePath(string? customPath) => !string.IsNullOrWhiteSpace(customPath) && File.Exists(customPath) ? customPath : ToolCuePath;
 
     internal static string SettingValue(string fileName) => fileName.Equals(SystemSoundName, StringComparison.OrdinalIgnoreCase)
         ? SystemSoundSetting
@@ -53,6 +56,10 @@ internal static class SoundCatalog
         }
         return Path.GetFileName(setting);
     }
+
+    internal static string DisplayName(string fileName) => fileName.Equals("Whaad.mp3", StringComparison.OrdinalIgnoreCase)
+        ? "Whaaf (dog sound)"
+        : fileName;
 
     internal static string ResolvePath(string setting)
     {
