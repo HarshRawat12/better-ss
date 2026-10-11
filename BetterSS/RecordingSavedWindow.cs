@@ -22,7 +22,7 @@ internal sealed class RecordingSavedWindow : Window
         note.Margin = new Thickness(0, 16, 0, 20); body.Children.Add(note);
         var actions = new WrapPanel { HorizontalAlignment = HorizontalAlignment.Right };
         var done = UI.Button("Done", Close, false, dark); done.IsCancel = true; actions.Children.Add(done);
-        actions.Children.Add(UI.Button("Edit in Better SS Split", () => { new VideoEditorWindow(app, path, settings).Show(); Close(); }, true, dark));
+        actions.Children.Add(UI.Button("Edit in Better SS Split", async () => { if (await app.OpenVideoEditorAsync(path, settings, this)) Close(); }, true, dark));
         body.Children.Add(actions); Content = body;
     }
 }

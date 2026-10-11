@@ -38,6 +38,8 @@ public sealed class Settings
     public string ExportColorSpace { get; set; } = "RGB";
     public int JpegQuality { get; set; } = 95;
     public bool StartOnLogin { get; set; }
+    public bool VideoRecordingEnabled { get; set; } = true;
+    public bool VideoEditingEnabled { get; set; } = true;
     public bool IntroductionSeen { get; set; }
     public static string DataFolder => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Better SS");
     public static string SettingsFile => Path.Combine(DataFolder, "settings.json");

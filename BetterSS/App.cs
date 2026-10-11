@@ -31,6 +31,7 @@ public sealed class App : Application
     private ScreenColorWindow? screenColor;
     private Mutex? mutex;
     private ToastWindow? toast;
+    private VideoToolsWindow? videoToolsWindow;
     internal string HotkeyStatus = "";
     // The watcher keeps development preferences separate across rebuilds.
     internal bool DevelopmentMode;
@@ -55,6 +56,10 @@ public sealed class App : Application
             app.ConfigureStartup = StartupService.SetDevelopmentEnabled;
         }
         app.forceWalkthrough = args.Contains("--walkthrough");
+        if (args.Contains("--video-tools-test")) { VideoToolsTests.Run(app, false); return; }
+        if (args.Contains("--video-tools-network-test")) { VideoToolsTests.Run(app, true); return; }
+        if (args.Contains("--recording-test") || args.Contains("--video-cutter-test"))
+            VideoToolsManager.Default = new VideoToolsManager(Path.GetFullPath(".validation/video-tools-network/component"), Path.GetFullPath("BetterSS/Tools"));
         if (args.Contains("--glass-test")) { GlassCompatibilityTests.Run(app); return; }
         if (args.Contains("--design-preview")) { DesignPreview.Run(app, args); return; }
         if (args.Contains("--shortcut-test")) { InteractionTests.RunShortcutTests(app); return; }
@@ -168,9 +173,44 @@ public sealed class App : Application
     }
     internal void ShowPreferences()
     { if (Preferences == null) { Preferences = new PreferencesWindow(this); Preferences.Closed += (_, _) => Preferences = null; } Preferences.Show(); Preferences.Activate(); }
-    internal void ShowVideoRecording()
-    { new VideoRecordingWindow(this) { Owner = Preferences?.IsVisible == true ? Preferences : null }.Show(); }
-    internal void ShowVideoEditor() => VideoEditorWindow.OpenExisting(this);
+    internal async void ShowVideoRecording()
+    { if (await EnsureVideoFeatureAsync(VideoFeature.Recording)) new VideoRecordingWindow(this) { Owner = Preferences?.IsVisible == true ? Preferences : null }.Show(); }
+    internal async void ShowVideoEditor()
+    { if (await EnsureVideoFeatureAsync(VideoFeature.Editing)) VideoEditorWindow.OpenExisting(this); }
+    internal async Task<bool> OpenVideoEditorAsync(string path, VideoExportSettings? settings, Window? owner = null)
+    {
+        if (!await EnsureVideoFeatureAsync(VideoFeature.Editing, owner)) return false;
+        new VideoEditorWindow(this, path, settings).Show(); return true;
+    }
+    internal bool VideoFeatureEnabled(VideoFeature feature) => feature == VideoFeature.Recording ? Settings.VideoRecordingEnabled : Settings.VideoEditingEnabled;
+    internal async Task<bool> SetVideoFeatureEnabledAsync(VideoFeature feature, bool enabled, Window? owner = null)
+    {
+        if (enabled) return await EnsureVideoFeatureAsync(feature, owner);
+        SetVideoFeature(feature, false); return true;
+    }
+    private void SetVideoFeature(VideoFeature feature, bool enabled)
+    {
+        if (feature == VideoFeature.Recording) Settings.VideoRecordingEnabled = enabled; else Settings.VideoEditingEnabled = enabled;
+        Persist(); Preferences?.RefreshOptionalFeatures();
+    }
+    internal Task<bool> EnsureVideoFeatureAsync(VideoFeature feature, Window? owner = null)
+    {
+        if (VideoFeatureEnabled(feature) && VideoToolsManager.Default.IsAvailable) return Task.FromResult(true);
+        bool accepted = ShowVideoToolsDialog(feature, owner);
+        if (accepted) SetVideoFeature(feature, true);
+        return Task.FromResult(accepted);
+    }
+    internal void DownloadVideoTools(Window? owner = null) => ShowVideoToolsDialog(null, owner);
+    private bool ShowVideoToolsDialog(VideoFeature? feature, Window? owner)
+    {
+        if (videoToolsWindow != null) { videoToolsWindow.Activate(); return false; }
+        if (feature == null && VideoToolsManager.Default.IsAvailable) return true;
+        var window = new VideoToolsWindow(this, feature); videoToolsWindow = window;
+        var parent = owner ?? (Preferences?.IsVisible == true ? Preferences : null);
+        if (parent?.IsVisible == true) { window.Owner = parent; window.WindowStartupLocation = WindowStartupLocation.CenterOwner; }
+        try { window.ShowDialog(); return window.Accepted; }
+        finally { videoToolsWindow = null; Preferences?.RefreshOptionalFeatures(); }
+    }
     internal async void BeginCapture(CaptureMode mode = CaptureMode.Region, CaptureIntent intent = CaptureIntent.Screenshot)
     {
         if (capturing) return; capturing = true;
