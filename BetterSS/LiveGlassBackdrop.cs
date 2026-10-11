@@ -17,25 +17,33 @@ internal sealed class LiveGlassBackdrop : IDisposable
 {
     private readonly Window owner;
     private readonly GlassSurface[] surfaces;
+    private readonly Func<IntPtr, bool> excludeWindow;
+    private readonly Func<Drawing.Rectangle, BitmapSource> capture;
     private readonly DispatcherTimer timer = new(DispatcherPriority.Background) { Interval = TimeSpan.FromMilliseconds(180) };
     private bool excluded, busy, disposed;
     private int failures;
     internal int FrameCount { get; private set; }
     internal bool IsSampling => timer.IsEnabled && !disposed;
+    internal double SampleIntervalMilliseconds => timer.Interval.TotalMilliseconds;
     internal string Status { get; private set; } = "Waiting for window";
     internal LiveGlassBackdrop(Window owner, params GlassSurface[] surfaces)
+        : this(owner, surfaces, handle => Native.SetWindowDisplayAffinity(handle, 0x11), Native.Capture) { }
+    internal LiveGlassBackdrop(Window owner, GlassSurface[] surfaces, Func<IntPtr, bool> excludeWindow, Func<Drawing.Rectangle, BitmapSource> capture)
     {
         this.owner = owner; this.surfaces = surfaces;
+        this.excludeWindow = excludeWindow; this.capture = capture;
+        timer.Interval = TimeSpan.FromMilliseconds(surfaces.Any(s => s.UsesLightweightRendering) ? 500 : 180);
         owner.SourceInitialized += SourceInitialized; owner.Loaded += Loaded; owner.Closed += Closed; owner.IsVisibleChanged += VisibilityChanged;
         timer.Tick += Tick;
     }
     private void SourceInitialized(object? sender, EventArgs e)
     {
-        excluded = OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041) && Native.SetWindowDisplayAffinity(new WindowInteropHelper(owner).Handle, 0x11);
+        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 19041)) { Status = "Solid: capture exclusion requires Windows 10 version 2004 or newer"; return; }
+        excluded = excludeWindow(new WindowInteropHelper(owner).Handle);
         Status = excluded ? "Sampling" : "Capture exclusion unavailable: " + System.Runtime.InteropServices.Marshal.GetLastWin32Error();
         if (excluded && !disposed) { timer.Start(); owner.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => Tick(null, EventArgs.Empty))); }
     }
-    private void Loaded(object sender, RoutedEventArgs e) { Status = "Window loaded"; if (excluded) { timer.Start(); Tick(null, EventArgs.Empty); } else foreach (var surface in surfaces) surface.UseSolidFallback(); }
+    private void Loaded(object sender, RoutedEventArgs e) { if (excluded) { timer.Start(); Tick(null, EventArgs.Empty); } else foreach (var surface in surfaces) surface.UseSolidFallback(); }
     private void VisibilityChanged(object sender, DependencyPropertyChangedEventArgs e) { if (!owner.IsVisible) timer.Stop(); else if (excluded && !disposed) timer.Start(); }
     private void Closed(object? sender, EventArgs e) => Dispose();
     private static bool Visible(FrameworkElement element)
@@ -48,7 +56,7 @@ internal sealed class LiveGlassBackdrop : IDisposable
     private async void Tick(object? sender, EventArgs e)
     {
         if (disposed || busy || !excluded || !owner.IsVisible) return;
-        if (!GlassSurface.Transparency) { foreach (var surface in surfaces) surface.UseSolidFallback(); return; }
+        if (!GlassSurface.Transparency) { Status = GlassSurface.MaterialStatus; foreach (var surface in surfaces) surface.UseSolidFallback(); return; }
         var targets = new List<(GlassSurface Surface, Drawing.Rectangle Bounds, int Width, int Height)>();
         var desktop = Forms.SystemInformation.VirtualScreen;
         foreach (var surface in surfaces.Where(Visible))
@@ -61,14 +69,14 @@ internal sealed class LiveGlassBackdrop : IDisposable
         }
         if (targets.Count == 0) { Status = "No visible material within desktop bounds"; return; }
         var union = targets.Select(t => t.Bounds).Aggregate(Drawing.Rectangle.Union);
-        if ((long)union.Width * union.Height > 1800000) return;
+        if ((long)union.Width * union.Height > 1800000) { Status = "Background sample exceeds pixel budget"; return; }
         busy = true;
         Status = "Preparing background";
         try
         {
             var frames = await Task.Run(() =>
             {
-                var sample = Native.Capture(union);
+                var sample = capture(union);
                 return targets.Select(t =>
                 {
                     var crop = new CroppedBitmap(sample, new Int32Rect(t.Bounds.X - union.X, t.Bounds.Y - union.Y, t.Bounds.Width, t.Bounds.Height)); crop.Freeze();
@@ -76,12 +84,22 @@ internal sealed class LiveGlassBackdrop : IDisposable
                 }).ToArray();
             });
             if (disposed || !owner.IsVisible) return;
+            if (!GlassSurface.Transparency) { Status = GlassSurface.MaterialStatus; foreach (var surface in surfaces) surface.UseSolidFallback(); return; }
             for (int i = 0; i < targets.Count; i++) targets[i].Surface.SetPreparedBackdrop(frames[i]);
             FrameCount++;
             Status = "Sampling";
             failures = 0;
         }
-        catch (Exception ex) { Status = ex.Message; if (++failures >= 3) { timer.Stop(); foreach (var surface in surfaces) surface.UseSolidFallback(); } }
+        catch (Exception ex)
+        {
+            Status = "Background sampling failed: " + ex.Message;
+            if (++failures >= 3)
+            {
+                timer.Stop();
+                if (FrameCount == 0) { foreach (var surface in surfaces) surface.UseSolidFallback(); Status = "Solid: " + Status; }
+                else Status = "Frozen glass: " + Status; // Retain the last good frame without sampling our own window.
+            }
+        }
         finally { busy = false; }
     }
     public void Dispose()

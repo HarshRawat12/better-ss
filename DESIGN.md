@@ -30,7 +30,11 @@ Selected states combine weight, color and a structural marker. Icon-only control
 
 ## Direct screen tools
 
-The capture toolbar keeps Screenshot as the default action and adds one-shot Live OCR and Pick color actions. OCR reuses the frozen screen selection for a dragged region, selected display, all displays or a chosen window. It runs through Windows OCR on this PC, copies recognized text directly to the clipboard, and anchors a small non-modal text overlay beside the selected area for review and recopy. It does not save a screenshot, open the screenshot preview or play the capture animation. Pick color previews the sampled pixel and hex value under the pointer, then copies `#RRGGBB` when the user clicks. The existing annotation color dialog remains a separate tool for choosing drawing colors.
+The capture toolbar is a compact icon-only strip centered at the top of the active display's working area. Its 40 DIP controls use vector symbols for area, window, one display, all displays, screenshot, OCR, eyedropper, video, cancel and confirm. Tooltips, automation names, keyboard focus and selected indicators keep the actions discoverable. It hides during a region drag.
+
+Screenshot remains the default action. Live OCR reuses the frozen screen selection for a dragged region, selected display, all displays or a chosen window. Windows OCR runs on this PC and copies recognized text silently, whether launched by a direct shortcut or through the capture toolbar. Successful reads produce no text popup, screenshot preview, file or capture animation. Only failure or empty recognition shows a brief message, preserving the previous clipboard when there is no text.
+
+Pick color previews the sampled pixel and hex value under the pointer. Clicking copies `#RRGGBB` and opens a compact Color picker inspector with selectable HEX, RGB, HSL and CMYK values, individual copy actions and up to 24 unique recent picks persisted in the current settings profile. Picking an existing color moves it to the front; clicking a history swatch shows its values and copies its HEX. Pick new hides the inspector while sampling; cancellation restores it. CMYK is a generic RGB conversion estimate, not an ICC-profiled print conversion (explained on its tooltip). The annotation color dialog remains a separate tool for choosing drawing colors.
 
 ## Video editor reference revision
 
@@ -50,7 +54,7 @@ The capture toolbar samples the existing frozen capture image once at the toolba
 
 The preview samples one small desktop rectangle shared by its two materials at a 180 ms interval, only while visible. Sampling starts after capture exclusion is established so it cannot recursively sample its own pixels. Preparation runs on a worker using frozen bitmaps; WPF brushes are updated on the dispatcher. Invisible action strips are skipped. Hidden/closed windows stop sampling; closing removes event subscriptions. Samples are transient and are not written to disk or uploaded. The sampler bounds its physical rectangle to 1.8 million pixels, lens buffers to 700 × 450, and its geometry cache to 24 entries. This is not a claim of 60 fps or GPU profiling.
 
-Disabled Windows transparency, high contrast, low WPF rendering tier, unavailable capture exclusion or repeated sampling failures use a solid fallback. No blur, shine or material shadow is applied to solid fallback surfaces. Main settings, editing controls and dense timelines remain solid for readability.
+Windows transparency and High Contrast select glass or solid surfaces. WPF tier 0/1 and software-only rendering keep glass using a compatibility path: lens buffers preserve their aspect ratio within 350 × 225 pixels, CPU box blur supplies the frost, and WPF blur/shadow effects and pointer-following highlights are omitted. Compatibility previews sample every 500 ms; tier 2 keeps the full material at 180 ms. Unavailable capture exclusion uses a solid fallback, with its original error preserved in diagnostics. Three sampling failures stop sampling and retain the last good glass frame when available; without a good frame they use solid surfaces. Main settings, editing controls and dense timelines remain solid for readability.
 
 Apple's Liquid Glass APIs are part of SwiftUI and AppKit. This original Windows implementation reproduces refraction and lighting behavior; it is not Apple's native renderer. No dependency or copied reference implementation was added.
 
@@ -61,6 +65,8 @@ Immediate hover/press feedback, button compression to .98, restrained release sp
 ## Native design previews
 
 Build with `dotnet build BetterSS/BetterSS.csproj -c Release`. Run the built executable with `--design-preview --output <folder>` to export actual WPF views using generated sample content. This mode does not register hotkeys, create a tray icon or save user preferences. It produces light/dark screens and glass sampler diagnostics. It is a visual review mode, not an interaction regression suite.
+
+Run `--glass-test` for focused compatibility checks, including simulated tier 0/1, software-rendered materials, accessibility settings, capture-exclusion failure and frozen-frame recovery. Run `--design-preview --glass-only --software-glass --output <folder>` to exercise the real desktop sampler with software-rendered WPF; omit `--software-glass` to diagnose the machine's normal configuration. The glass text reports include Windows transparency, High Contrast, material quality, sampling interval and sampler status. Software-mode testing on one PC does not replace testing inside Sandbox or on another device.
 
 `Run-BetterSS-Dev.ps1 -Background` starts the existing installation-free development workflow with separate `dev-settings.json`. The redesign does not publish a release.
 

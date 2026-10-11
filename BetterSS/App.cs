@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Velopack;
+using Velopack.Sources;
 using Forms = System.Windows.Forms;
 
 namespace BetterSS;
@@ -24,8 +26,9 @@ public sealed class App : Application
     private CaptureSession? session;
     private bool capturing;
     private readonly MediaPlayer player = new();
+    private readonly MediaPlayer toolCuePlayer = new();
     private readonly List<PreviewWindow> previews = new();
-    private readonly List<LiveOcrOverlay> liveOcrOverlays = new();
+    private ScreenColorWindow? screenColor;
     private Mutex? mutex;
     private ToastWindow? toast;
     internal string HotkeyStatus = "";
@@ -41,6 +44,8 @@ public sealed class App : Application
     }
     [STAThread] public static void Main(string[] args)
     {
+        // Must run before normal startup so installs and pending updates can finish cleanly.
+        VelopackApp.Build().Run();
         var app = new App();
         if (args.Contains("--dev"))
         {
@@ -50,7 +55,9 @@ public sealed class App : Application
             app.ConfigureStartup = StartupService.SetDevelopmentEnabled;
         }
         app.forceWalkthrough = args.Contains("--walkthrough");
+        if (args.Contains("--glass-test")) { GlassCompatibilityTests.Run(app); return; }
         if (args.Contains("--design-preview")) { DesignPreview.Run(app, args); return; }
+        if (args.Contains("--shortcut-test")) { InteractionTests.RunShortcutTests(app); return; }
         if (args.Contains("--live-capture-test")) { LiveCaptureTests.Run(app); return; }
         if (args.Contains("--editor-test")) { EditorRegressionTests.Run(app); return; }
         if (args.Contains("--recording-test")) { VideoRegressionTests.Run(app); return; }
@@ -76,9 +83,28 @@ public sealed class App : Application
         menu.Items.Add("Open screenshot folder", null, (_, _) => Native.OpenFolder(Settings.SaveFolder));
         menu.Items.Add("Quit Better SS", null, (_, _) => Dispatcher.Invoke(Shutdown));
         tray.ContextMenuStrip = menu; tray.DoubleClick += (_, _) => Dispatcher.InvokeAsync(() => BeginCapture());
-        Hotkeys = new HotkeyService(CaptureFromShortcut); RegisterHotkey();
+        Hotkeys = new HotkeyService(CaptureFromShortcut, StartLiveOcrFromShortcut, StartColorPickerFromShortcut); RegisterHotkey();
+        _ = DownloadAvailableUpdateAsync();
         if (!Settings.IntroductionSeen || forceWalkthrough) ShowGuide();
         else if (!background) ShowPreferences();
+    }
+    private async Task DownloadAvailableUpdateAsync()
+    {
+        if (DevelopmentMode) return;
+        try
+        {
+            var updates = new UpdateManager(new GithubSource("https://github.com/HarshRawat12/better-ss", null, false));
+            var update = await updates.CheckForUpdatesAsync();
+            if (update == null) return;
+            await updates.DownloadUpdatesAsync(update);
+            Notify("Update ready", "A newer Better SS version was downloaded and will install the next time you open the app.");
+        }
+        catch (Exception ex)
+        {
+            // A portable/development launch, no connection, or a temporarily unavailable release feed
+            // should never prevent the capture tool from starting.
+            System.Diagnostics.Debug.WriteLine("Better SS update check failed: " + ex);
+        }
     }
     internal void RegisterHotkey()
     {
@@ -87,13 +113,23 @@ public sealed class App : Application
         {
             Hotkeys.TrySet(Settings.Hotkey, out _); HotkeyStatus = takeoverError; return;
         }
-        HotkeyStatus = Hotkeys.TrySet(Settings.Hotkey, out var error) ? ShortcutStatus() : error;
+        if (!Hotkeys.TrySet(Settings.Hotkey, out var error)) { HotkeyStatus = error; return; }
+        if (!Hotkeys.TrySet(ShortcutAction.LiveOcr, Settings.LiveOcrHotkey, out error) || !Hotkeys.TrySet(ShortcutAction.ColorPicker, Settings.ColorPickerHotkey, out error)) { HotkeyStatus = error; return; }
+        HotkeyStatus = ShortcutStatus();
     }
     private string ShortcutStatus() => EffectiveCaptureShortcut == "Disabled" ? "Hotkey off · capture from the tray" : "Ready · " + EffectiveCaptureShortcut;
     internal void CaptureFromShortcut()
     {
         if (capturing) return;
         welcome?.CaptureShortcutPressed(); BeginCapture();
+    }
+    internal void StartLiveOcrFromShortcut()
+    {
+        if (!capturing) BeginCapture(CaptureMode.Region, CaptureIntent.LiveOcr);
+    }
+    internal void StartColorPickerFromShortcut()
+    {
+        if (!capturing) BeginCapture(CaptureMode.Region, CaptureIntent.ColorPicker);
     }
     internal bool TrySetWindowsCaptureShortcut(bool enabled, out string error)
     {
@@ -106,6 +142,15 @@ public sealed class App : Application
         if (!HotkeyBinding.TryParse(value, out var binding, out error)) return false;
         if (Hotkeys != null && !Hotkeys.TrySet(value, out error)) return false;
         Settings.Hotkey = binding?.Label ?? "Disabled"; HotkeyStatus = ShortcutStatus(); Persist(); return true;
+    }
+    internal bool TrySetDirectToolHotkey(ShortcutAction action, string value, out string error)
+    {
+        if (action == ShortcutAction.Capture) return TrySetHotkey(value, out error);
+        if (!HotkeyBinding.TryParse(value, out var binding, out error)) return false;
+        if (Hotkeys != null && !Hotkeys.TrySet(action, value, out error)) return false;
+        if (action == ShortcutAction.LiveOcr) Settings.LiveOcrHotkey = binding?.Label ?? "Disabled";
+        else Settings.ColorPickerHotkey = binding?.Label ?? "Disabled";
+        Persist(); return true;
     }
     internal void ResumeHotkey()
     {
@@ -131,7 +176,7 @@ public sealed class App : Application
         if (capturing) return; capturing = true;
         try
         {
-            CaptureAnimationWindow.CancelAll(); toast?.Close(); Preferences?.Hide(); foreach (var p in previews.ToArray()) p.Hide();
+            CaptureAnimationWindow.CancelAll(); toast?.Close(); Preferences?.Hide(); screenColor?.Hide(); foreach (var p in previews.ToArray()) p.Hide();
             if (mode == CaptureMode.Window)
             {
                 bool windowCaptured = false;
@@ -150,7 +195,7 @@ public sealed class App : Application
             if (Settings.Delay > 0) { var countdown = new CountdownWindow(Settings.Delay); countdown.Show(); if (!await countdown.Completion) { capturing = false; foreach (var p in previews.ToArray()) p.Show(); welcome?.CaptureCancelled(); return; } }
             await Task.Delay(180);
             var activeScreen = Forms.Screen.FromPoint(Native.CursorPosition);
-            session = new CaptureSession(mode, activeScreen, CompleteCapture, () => { bool completed = session?.Completed == true, transfer = session?.TransferringMode == true; session = null; capturing = false; foreach (var p in previews.ToArray()) p.Show(); if (!completed && !transfer) welcome?.CaptureCancelled(); }, chosenIntent => BeginCapture(CaptureMode.Window, chosenIntent), ShowVideoRecording, StartLiveOcr, CopyScreenColor);
+            session = new CaptureSession(mode, activeScreen, CompleteCapture, () => { bool completed = session?.Completed == true, transfer = session?.TransferringMode == true; session = null; capturing = false; foreach (var p in previews.ToArray()) p.Show(); if (!completed && !transfer) { welcome?.CaptureCancelled(); if (intent == CaptureIntent.ColorPicker) screenColor?.Show(); } }, chosenIntent => BeginCapture(CaptureMode.Window, chosenIntent), ShowVideoRecording, StartLiveOcr, CopyScreenColor, intent);
             session.Start();
         }
         catch (Exception ex) { capturing = false; session?.Cancel(); session = null; foreach (var p in previews.ToArray()) p.Show(); welcome?.CaptureCancelled(); Notify("Capture failed", ex.Message); }
@@ -160,17 +205,30 @@ public sealed class App : Application
         if (intent == CaptureIntent.LiveOcr) StartLiveOcr(image, screen, bounds);
         else CompleteCapture(image, screen, bounds);
     }
-    private void StartLiveOcr(BitmapSource image, Forms.Screen screen, System.Drawing.Rectangle bounds)
+    private async void StartLiveOcr(BitmapSource image, Forms.Screen screen, System.Drawing.Rectangle bounds)
     {
-        var overlay = new LiveOcrOverlay(this, screen, bounds, UI.Dark(Settings));
-        liveOcrOverlays.Add(overlay); overlay.Closed += (_, _) => liveOcrOverlays.Remove(overlay);
-        overlay.Show(); overlay.ReadAsync(image);
+        try
+        {
+            string text = await OcrService.RecognizeAsync(image);
+            if (string.IsNullOrWhiteSpace(text)) { Toast("No readable text found · try a larger area", screen); return; }
+            if (await ClipboardService.TextAsync(text)) { PlayLiveOcrSound(); Toast("Text copied to clipboard", screen); }
+            else Toast("Clipboard busy · try reading the text again", screen);
+        }
+        catch (Exception ex) { Toast("Couldn't read text · " + ex.Message, screen); }
     }
     private async void CopyScreenColor(Color color, Forms.Screen screen)
     {
-        string hex = $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        string hex = ScreenColorValues.FromColor(color).Hex;
+        Settings.RecentColors.RemoveAll(value => string.Equals(value, hex, StringComparison.OrdinalIgnoreCase));
+        Settings.RecentColors.Insert(0, hex); Persist();
+        PlayColorPickerSound();
         bool copied = await ClipboardService.TextAsync(hex);
-        Toast(copied ? $"Color {hex} copied" : $"Color {hex} · clipboard busy", screen);
+        // Allow the picking click to finish before making the result window interactive.
+        await Task.Delay(100);
+        if (capturing) return;
+        if (screenColor == null) { screenColor = new ScreenColorWindow(this, color, screen, copied); screenColor.Closed += (_, _) => screenColor = null; }
+        else screenColor.ShowColor(color, screen, copied);
+        screenColor.Show(); screenColor.Activate();
     }
     internal async void CompleteCapture(BitmapSource bitmap, Forms.Screen screen, System.Drawing.Rectangle sourceBounds)
     {
@@ -231,9 +289,26 @@ public sealed class App : Application
         if (!File.Exists(path)) { Notify("Sound file unavailable", "Choose another sound in Preferences."); return; }
         player.Stop(); player.Open(new Uri(path)); player.Volume = Settings.Volume; player.Play();
     }
+    internal void PlayLiveOcrSound()
+    {
+        if (Settings.LiveOcrSoundEnabled) PlayToolSound(Settings.LiveOcrSoundPath);
+    }
+    internal void PlayColorPickerSound()
+    {
+        if (Settings.ColorPickerSoundEnabled) PlayToolSound(Settings.ColorPickerSoundPath);
+    }
+    internal void PreviewLiveOcrSound() => PlayToolSound(Settings.LiveOcrSoundPath);
+    internal void PreviewColorPickerSound() => PlayToolSound(Settings.ColorPickerSoundPath);
+    private void PlayToolSound(string? customPath)
+    {
+        if (Settings.Volume <= 0) return;
+        string path = SoundCatalog.ResolveToolCuePath(customPath);
+        if (!File.Exists(path)) return;
+        toolCuePlayer.Stop(); toolCuePlayer.Open(new Uri(path)); toolCuePlayer.Volume = Settings.Volume; toolCuePlayer.Play();
+    }
     internal void Notify(string title, string message)
     { if (tray != null) tray.ShowBalloonTip(4000, title, message, Forms.ToolTipIcon.Info); else MessageBox.Show(message, title); }
     internal void Persist() { try { Settings.Save(SettingsPathOverride); } catch (Exception e) { Notify("Couldn't save preferences", e.Message); } }
     private void Cleanup()
-    { foreach (var overlay in liveOcrOverlays.ToArray()) overlay.Close(); liveOcrOverlays.Clear(); Hotkeys?.Dispose(); tray?.Dispose(); player.Close(); mutex?.Dispose(); }
+    { screenColor?.Close(); Hotkeys?.Dispose(); tray?.Dispose(); player.Close(); toolCuePlayer.Close(); mutex?.Dispose(); }
 }

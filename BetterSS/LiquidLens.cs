@@ -11,9 +11,11 @@ internal static class LiquidLens
     internal sealed record Frame(BitmapSource Body, BitmapSource? Rim);
     private sealed record Map(float[] X, float[] Y, float[] NormalX, float[] NormalY, byte[] Rim);
     private static readonly ConcurrentDictionary<(int Width, int Height, int Radius), Map> maps = new();
-    internal static Frame Render(BitmapSource source, int width, int height, double radius)
+    internal static Frame Render(BitmapSource source, int width, int height, double radius, bool lightweight = false)
     {
-        width = Math.Clamp(width, 1, 700); height = Math.Clamp(height, 1, 450);
+        // Keep the lens proportions at lower resolution, including its bevel radius.
+        double scale = Math.Min(1, Math.Min((lightweight ? 350.0 : 700) / Math.Max(1, width), (lightweight ? 225.0 : 450) / Math.Max(1, height)));
+        width = Math.Max(1, (int)Math.Round(width * scale)); height = Math.Max(1, (int)Math.Round(height * scale)); radius *= scale;
         int rounded = (int)Math.Round(Math.Min(radius, Math.Min(width, height) / 2.0));
         if (maps.Count > 24) maps.Clear();
         var map = maps.GetOrAdd((width, height, rounded), key => MakeMap(key.Width, key.Height, key.Radius));
@@ -34,9 +36,40 @@ internal static class LiquidLens
                 rim[destination + channel] = (byte)(value * map.Rim[i] / 255);
             }
         }
+        // The software path bakes its frost into the bitmap instead of using WPF effects.
+        if (lightweight) body = Blur(body, width, height, 3);
         var bodyImage = BitmapSource.Create(width, height, 96, 96, PixelFormats.Pbgra32, null, body, stride); bodyImage.Freeze();
         var rimImage = BitmapSource.Create(width, height, 96, 96, PixelFormats.Pbgra32, null, rim, stride); rimImage.Freeze();
         return new(bodyImage, rimImage);
+    }
+    private static byte[] Blur(byte[] pixels, int width, int height, int radius)
+    {
+        var horizontal = new byte[pixels.Length]; var result = new byte[pixels.Length];
+        int diameter = radius * 2 + 1;
+        // Sliding box sums keep both passes linear in pixel count. Clamp at edges.
+        for (int y = 0; y < height; y++) for (int channel = 0; channel < 4; channel++)
+        {
+            int sum = 0;
+            for (int offset = -radius; offset <= radius; offset++) sum += pixels[(y * width + Math.Clamp(offset, 0, width - 1)) * 4 + channel];
+            for (int x = 0; x < width; x++)
+            {
+                horizontal[(y * width + x) * 4 + channel] = (byte)(sum / diameter);
+                sum -= pixels[(y * width + Math.Clamp(x - radius, 0, width - 1)) * 4 + channel];
+                sum += pixels[(y * width + Math.Clamp(x + radius + 1, 0, width - 1)) * 4 + channel];
+            }
+        }
+        for (int x = 0; x < width; x++) for (int channel = 0; channel < 4; channel++)
+        {
+            int sum = 0;
+            for (int offset = -radius; offset <= radius; offset++) sum += horizontal[(Math.Clamp(offset, 0, height - 1) * width + x) * 4 + channel];
+            for (int y = 0; y < height; y++)
+            {
+                result[(y * width + x) * 4 + channel] = (byte)(sum / diameter);
+                sum -= horizontal[(Math.Clamp(y - radius, 0, height - 1) * width + x) * 4 + channel];
+                sum += horizontal[(Math.Clamp(y + radius + 1, 0, height - 1) * width + x) * 4 + channel];
+            }
+        }
+        return result;
     }
     private static Map MakeMap(int width, int height, int radius)
     {

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Better SS — Liquid Glass Floating Overlays</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", sans-serif;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Authentic Apple-grade Liquid Glass Optical Material Simulation */
+    .liquid-glass-lens {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.18) 40%, rgba(240, 246, 255, 0.26) 100%);
+      backdrop-filter: blur(28px) saturate(190%) contrast(108%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(108%);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 
+        0 1px 0 0 rgba(255, 255, 255, 0.75) inset,
+        0 -1px 0 0 rgba(255, 255, 255, 0.2) inset,
+        0 20px 48px -10px rgba(12, 28, 48, 0.38),
+        0 8px 16px -4px rgba(0, 0, 0, 0.18),
+        0 0 0 1px rgba(0, 0, 0, 0.08),
+        0 0 16px -2px rgba(255, 255, 255, 0.25) inset;
+      position: relative;
+    }
+
+    /* Refractive Chromatic Edge Fringe (Simulating optical dispersion) */
+    .liquid-glass-lens::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1.2px;
+      background: linear-gradient(135deg, rgba(160, 220, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 35%, rgba(255, 185, 215, 0.35) 75%, rgba(180, 240, 255, 0.5) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    /* Specular Light Curve Highlight */
+    .liquid-glass-lens::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.95) 50%, transparent 100%);
+      pointer-events: none;
+      filter: blur(0.2px);
+    }
+
+    /* Dark Mode Glass Pill preview detail */
+    .liquid-glass-dark {
+      background: linear-gradient(135deg, rgba(20, 24, 32, 0.65) 0%, rgba(10, 14, 20, 0.5) 100%);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      box-shadow: 
+        0 1px 0 0 rgba(255, 255, 255, 0.22) inset,
+        0 16px 36px -8px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(0, 0, 0, 0.4);
+    }
+
+    .glass-btn-active {
+      background: rgba(255, 255, 255, 0.65);
+      color: #0b1526;
+      box-shadow: 
+        0 2px 6px -1px rgba(0, 0, 0, 0.15),
+        0 0.5px 0 0.5px rgba(255, 255, 255, 0.9) inset;
+    }
+
+    .glass-btn-hover:hover {
+      background: rgba(255, 255, 255, 0.32);
+      color: #050b14;
+    }
+
+    .glass-btn-dark-hover:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="w-[1280px] h-[800px] overflow-hidden relative m-0 p-0 select-none bg-slate-900 text-slate-800">
+
+  <!-- Desktop Wallpaper: Realistic Crisp Alpine Lake Sunrise with Mist & Reflection -->
+  <div class="absolute inset-0 z-0 overflow-hidden">
+    <img 
+      src="https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso" 
+      alt="Alpine Landscape Desktop" 
+      class="w-full h-full object-cover object-center scale-[1.01] transform"
+    />
+    <!-- Subtle natural ambient desktop gradient lighting -->
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/30 via-transparent to-black/15 pointer-events-none"></div>
+  </div>
+
+  <!-- Top System Bar / Subtle Native Context -->
+  <header class="absolute top-0 inset-x-0 h-10 px-6 flex items-center justify-between text-white/90 z-10 pointer-events-none">
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md border border-white/15 text-[11px] font-medium tracking-wide text-white/90 shadow-sm">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        Better SS <span class="text-white/50">v2.4</span>
+      </div>
+    </div>
+    
+    <!-- Top Right Native Notification / System status -->
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-black/25 backdrop-blur-md border border-white/15 text-[11px] text-white/80 font-medium">
+        <span class="material-symbols-rounded text-[14px] text-sky-300">hdr_on</span>
+        <span>3840×2160 P3</span>
+        <span class="text-white/30">•</span>
+        <span>Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Optical Magnifier / Crop Boundary hint on wallpaper (Visual Context) -->
+  <div class="absolute top-28 left-40 w-96 h-56 rounded-xl border border-dashed border-white/70 shadow-[0_0_0_9999px_rgba(0,0,0,0.22)] pointer-events-none z-10">
+    <div class="absolute -top-3 left-4 px-2 py-0.5 rounded-full bg-white/90 text-slate-900 text-[10px] font-bold tracking-tight shadow-md flex items-center gap-1">
+      <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+      1280 × 720 • Target Region
+    </div>
+    <!-- Crop corner ticks -->
+    <div class="absolute -top-1.5 -left-1.5 w-3.5 h-3.5 border-t-2 border-l-2 border-white"></div>
+    <div class="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 border-t-2 border-r-2 border-white"></div>
+    <div class="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 border-b-2 border-l-2 border-white"></div>
+    <div class="absolute -bottom-1.5 -right-1.5 w-3.5 h-3.5 border-b-2 border-r-2 border-white"></div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ITEM 1: BOTTOM CENTER CAPTURE TOOLBAR (Optical Liquid Glass Capsule)      -->
+  <!-- ========================================================================= -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center gap-2">
+    
+    <!-- Main Liquid Glass Capsule Toolbar -->
+    <div class="liquid-glass-lens rounded-[20px] px-2 py-1.5 flex items-center gap-1.5 shadow-2xl transition-all">
+      
+      <!-- Segment 1: Capture Targets Group (Apple precision spacing, 32px height) -->
+      <div class="flex items-center gap-1 p-0.5 rounded-[14px] bg-black/10 backdrop-blur-sm border border-white/20">
+        <!-- Select area (Selected) -->
+        <button class="glass-btn-active h-8 px-3 rounded-[11px] flex items-center gap-1.5 text-[12px] font-semibold transition-all">
+          <span class="material-symbols-rounded text-[17px] text-blue-600">crop_free</span>
+          <span>Select area</span>
+        </button>
+
+        <!-- Window -->
+        <button class="glass-btn-hover h-8 px-2.5 rounded-[11px] flex items-center gap-1.5 text-[12px] font-medium text-slate-800 transition-all">
+          <span class="material-symbols-rounded text-[17px] opacity-80">tab</span>
+          <span>Window</span>
+        </button>
+
+        <!-- Display -->
+        <button class="glass-btn-hover h-8 px-2.5 rounded-[11px] flex items-center gap-1.5 text-[12px] font-medium text-slate-800 transition-all">
+          <span class="material-symbols-rounded text-[17px] opacity-80">desktop_windows</span>
+          <span>Display</span>
+        </button>
+
+        <!-- All displays -->
+        <button class="glass-btn-hover h-8 px-2.5 rounded-[11px] flex items-center gap-1.5 text-[12px] font-medium text-slate-800 transition-all">
+          <span class="material-symbols-rounded text-[17px] opacity-80">grid_view</span>
+          <span>All displays</span>
+        </button>
+      </div>
+
+      <!-- Refractive Optical Glass Divider -->
+      <div class="h-6 w-[1.5px] bg-gradient-to-b from-transparent via-white/60 to-transparent mx-1"></div>
+
+      <!-- Segment 2: Video Recording -->
+      <button class="glass-btn-hover h-8 px-3 rounded-[12px] flex items-center gap-1.5 text-[12px] font-medium text-slate-800 transition-all">
+        <span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-sm flex items-center justify-center"></span>
+        <span class="material-symbols-rounded text-[16px] text-rose-600">videocam</span>
+        <span>Record</span>
+      </button>
+
+      <!-- Refractive Optical Glass Divider -->
+      <div class="h-6 w-[1.5px] bg-gradient-to-b from-transparent via-white/60 to-transparent mx-1"></div>
+
+      <!-- Segment 3: Cancel & Capture Action Buttons -->
+      <div class="flex items-center gap-1.5">
+        <button class="glass-btn-hover h-8 px-3 rounded-[12px] text-[12px] font-medium text-slate-700 hover:text-slate-950 transition-all">
+          Cancel
+        </button>
+        
+        <!-- Primary Capture Action Capsule (Luminous Refractive Highlight) -->
+        <button class="h-8 px-4 rounded-[12px] bg-gradient-to-b from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 active:brightness-95 text-white text-[12px] font-semibold shadow-[0_2px_8px_rgba(37,99,235,0.45),0_1px_0_rgba(255,255,255,0.3)_inset] flex items-center gap-1.5 transition-all">
+          <span class="material-symbols-rounded text-[16px]">photo_camera</span>
+          <span>Capture</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Small Dark/Light Material Detail Capsule Switcher (Option requested in prompt) -->
+    <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-[10px] text-white/80 shadow-md">
+      <span class="font-medium text-white/90">Optical Material:</span>
+      <span class="px-1.5 py-0.2 rounded-md bg-white/60 text-slate-900 font-semibold shadow-xs">Cupertino Light Lens</span>
+      <span class="text-white/50">|</span>
+      <span class="hover:text-white cursor-pointer transition-colors">Obsidian Dark</span>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- ITEM 2: LOWER RIGHT SCREENSHOT PREVIEW POP-UP                             -->
+  <!-- ========================================================================= -->
+  <div class="absolute bottom-8 right-8 z-30 flex items-end gap-3">
+    
+    <!-- Hover Action Strip in a Single Slim Glass Capsule (Left of thumbnail) -->
+    <div class="liquid-glass-lens rounded-[18px] p-1.5 flex flex-col items-center gap-1 shadow-2xl">
+      <!-- Edit / Annotate -->
+      <button title="Edit annotation" class="glass-btn-hover w-8 h-8 rounded-[11px] flex items-center justify-center text-slate-800 transition-all group relative">
+        <span class="material-symbols-rounded text-[18px]">edit</span>
+      </button>
+
+      <!-- OCR / Text Extraction -->
+      <button title="Copy extracted text (OCR)" class="glass-btn-hover w-8 h-8 rounded-[11px] flex items-center justify-center text-slate-800 transition-all group relative">
+        <span class="material-symbols-rounded text-[18px]">document_scanner</span>
+      </button>
+
+      <!-- Export / Share -->
+      <button title="Export screenshot" class="glass-btn-hover w-8 h-8 rounded-[11px] flex items-center justify-center text-slate-800 transition-all group relative">
+        <span class="material-symbols-rounded text-[18px]">share</span>
+      </button>
+
+      <!-- Pin floating on top -->
+      <button title="Pin to desktop" class="glass-btn-hover w-8 h-8 rounded-[11px] flex items-center justify-center text-slate-800 transition-all group relative">
+        <span class="material-symbols-rounded text-[18px]">keep</span>
+      </button>
+
+      <!-- Glass Divider inside vertical strip -->
+      <div class="w-5 h-[1.5px] bg-gradient-to-r from-transparent via-white/60 to-transparent my-0.5"></div>
+
+      <!-- Dismiss / Close -->
+      <button title="Dismiss preview" class="glass-btn-hover w-8 h-8 rounded-[11px] flex items-center justify-center text-slate-700 hover:text-rose-600 transition-all">
+        <span class="material-symbols-rounded text-[18px]">close</span>
+      </button>
+    </div>
+
+    <!-- Main Screenshot Thumbnail Floating Card -->
+    <!-- The glass is purely around and behind the action controls; the screenshot inside is crisp & sharp! -->
+    <div class="liquid-glass-lens rounded-[20px] p-2.5 flex flex-col gap-2 w-[320px] shadow-2xl transition-all">
+      
+      <!-- Inner Sharp Screenshot Frame (Unaffected by blur, crisp alpine capture preview) -->
+      <div class="relative w-[300px] h-[170px] rounded-[14px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.35),0_0_0_1px_rgba(0,0,0,0.15)] bg-slate-950 flex-shrink-0 group">
+        <img 
+          src="https://lh3.googleusercontent.com/aida/AEtjO1VGzCQP5rmEssgOzoiUOg7Pic87f5KJpvZ3d-5Gvmq8lXgEknveuTOWkvlzX70dXFDvrRdDcXzFJ0yxiRWmlo0cy2E4b-iA25-a9GZkLQhAyiuifhEux5WuL2UcSvxE0j0t6OKVVj4lhhskgFSLFuNnX7VO-kztGm94Q4-mxFlWePvS_FQYDKW2Cv82Zi8FCaR2XD7OivL9KoTxvhwwLLQLwILG2-GVCu63h51sw1rNazN2455rpfDhkso" 
+          alt="Captured screenshot thumbnail" 
+          class="w-full h-full object-cover object-center select-none"
+        />
+        
+        <!-- Subtle viewport badge on thumbnail top-left -->
+        <div class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md text-[10px] font-medium text-white/90 border border-white/10 flex items-center gap-1 shadow-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+          1920 × 1080 • HDR
+        </div>
+
+        <!-- Subtle thumbnail hover quick-copy overlay indicator -->
+        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div class="px-2.5 py-1 rounded-full bg-white/90 text-slate-900 text-[11px] font-semibold shadow-lg flex items-center gap-1">
+            <span class="material-symbols-rounded text-[14px]">content_copy</span>
+            Click to open editor
+          </div>
+        </div>
+      </div>
+
+      <!-- Small Footer Status Strip with Checkmark -->
+      <div class="flex items-center justify-between px-1.5 py-0.5">
+        <div class="flex items-center gap-1.5 text-slate-900">
+          <div class="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-xs">
+            <span class="material-symbols-rounded text-[12px] font-bold">check</span>
+          </div>
+          <span class="text-[12px] font-semibold text-slate-900 drop-shadow-xs">Screenshot copied</span>
+        </div>
+
+        <span class="text-[10px] font-medium text-slate-600/90 tracking-tight">
+          Clipboard & History
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>

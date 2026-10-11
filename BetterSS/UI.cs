@@ -66,7 +66,7 @@ internal static class UI
     internal static TextBlock Text(string text, double size = 14, Brush? color = null, FontWeight? weight = null)
         => new() { Text = text, FontFamily = new FontFamily("Segoe UI Variable, Segoe UI"), FontSize = size, Foreground = color ?? Ink(false), FontWeight = weight ?? FontWeights.Normal, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center };
 
-    private static ControlTemplate ButtonTemplate(string glyph = "", bool iconOnly = false, string? swatch = null)
+    private static ControlTemplate ButtonTemplate(string glyph = "", bool iconOnly = false, string? swatch = null, string? symbol = null)
     {
         const string xaml = """
         <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="Button">
@@ -89,7 +89,9 @@ internal static class UI
           </ControlTemplate.Triggers>
         </ControlTemplate>
         """;
-        string icon = swatch != null
+        string icon = symbol != null
+            ? $"<Viewbox Width=\"20\" Height=\"20\" Margin=\"{(iconOnly ? "0" : "0,0,8,0")}\"><Canvas Width=\"24\" Height=\"24\"><Path Data=\"{symbol}\" Stroke=\"{{TemplateBinding Foreground}}\" StrokeThickness=\"1.7\" StrokeStartLineCap=\"Round\" StrokeEndLineCap=\"Round\" StrokeLineJoin=\"Round\"/></Canvas></Viewbox>"
+            : swatch != null
             ? $"<Border Width=\"16\" Height=\"16\" CornerRadius=\"8\" Background=\"{swatch}\" BorderBrush=\"#929299\" BorderThickness=\"0.5\" Margin=\"{(iconOnly ? "0" : "0,0,6,0")}\" VerticalAlignment=\"Center\"/>"
             : $"<TextBlock Text=\"{glyph}\" FontFamily=\"Segoe MDL2 Assets\" FontSize=\"14\" Margin=\"{(iconOnly ? "0" : "0,0,8,0")}\" VerticalAlignment=\"Center\" Visibility=\"{(glyph.Length == 0 ? "Collapsed" : "Visible")}\"/>";
         return (ControlTemplate)XamlReader.Parse(xaml.Replace("ICONCONTENT", icon).Replace("LABELVISIBLE", iconOnly ? "Collapsed" : "Visible"));
@@ -111,6 +113,11 @@ internal static class UI
     }
     internal static void Swatch(Button button, Color color)
         => button.Template = ButtonTemplate(iconOnly: true, swatch: $"#{color.R:X2}{color.G:X2}{color.B:X2}");
+    internal static void Symbol(Button button, string geometry, bool iconOnly = true)
+    {
+        button.Template = ButtonTemplate(iconOnly: iconOnly, symbol: geometry);
+        button.ToolTip ??= button.Content?.ToString();
+    }
     internal static void Select(Button button, bool selected, bool dark)
     {
         var state = selection.GetOrCreateValue(button); state.Selected = selected;

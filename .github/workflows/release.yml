@@ -1,8 +1,9 @@
-name: Publish Windows installer
+name: Publish Better SS with automatic updates
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - 'release/v*'
 
 permissions:
   contents: write
@@ -23,13 +24,31 @@ jobs:
         shell: pwsh
         run: ./scripts/setup-ffmpeg.ps1
 
-      - name: Build the Windows installer
+      - name: Get the release version
+        id: version
         shell: pwsh
-        run: ./build.ps1 -OutputDirectory release
+        run: |
+          if ($env:GITHUB_REF_NAME -notmatch '^release/v\d+\.\d+\.\d+$') { throw "Unexpected release branch: $env:GITHUB_REF_NAME" }
+          $version = $env:GITHUB_REF_NAME -replace '^release/v', ''
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-      - name: Attach the installer to this release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: release/BetterSS.exe
-          fail_on_unmatched_files: true
+      - name: Publish the application files
+        shell: pwsh
+        run: dotnet publish BetterSS/BetterSS.csproj -c Release -r win-x64 --self-contained true -p:DebugType=embedded -o publish
+
+      - name: Package and attach the updater release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dotnet tool install vpk --tool-path .tools/vpk --version 1.2.161
+          New-Item -ItemType Directory -Force -Path velopack | Out-Null
+          & .tools/vpk/vpk.exe download github --repoUrl https://github.com/${{ github.repository }} --token $env:GH_TOKEN --outputDir velopack
+          if ($LASTEXITCODE -ne 0) {
+            Write-Warning 'No earlier Velopack release was available. Creating the first full update package.'
+          }
+          & .tools/vpk/vpk.exe pack --packId BetterSS --packVersion ${{ steps.version.outputs.version }} --packDir publish --mainExe BetterSS.exe --packTitle 'Better SS' --packAuthors 'Harsh Rawat and contributors' --icon BetterSS/Assets/better-ss.ico --runtime win-x64 --outputDir velopack
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .tools/vpk/vpk.exe upload github --repoUrl https://github.com/${{ github.repository }} --token $env:GH_TOKEN --outputDir velopack --merge --publish --releaseName 'Better SS ${{ steps.version.outputs.version }}' --tag v${{ steps.version.outputs.version }} --targetCommitish $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

@@ -65,11 +65,28 @@ The packaged application is written to `dist/BetterSS-release/BetterSS.exe`.
 FFmpeg executables are downloaded directly from the Windows build provider and
 verified against its published SHA-256 checksum; they are not committed to Git.
 
+## Releases and automatic updates
+
+Public releases use [Velopack](https://velopack.io/) and GitHub Releases. For a
+project version such as `0.6.0`, push the release source on a branch named
+`release/v0.6.0`. The release workflow builds and publishes the matching
+`v0.6.0` GitHub release with `BetterSS-Setup.exe`, update packages, and the
+release feed. New users should download and run `BetterSS-Setup.exe`.
+
+Installed copies check GitHub Releases in the background when Better SS starts.
+When a newer release is available, Better SS downloads it and installs it on the
+next launch. The first release using this system must be installed manually;
+standalone copies released before it cannot update themselves.
+
 The supplied capture sounds are packaged with the app as audio assets separate
 from the MIT-licensed source code. Choose a preset or another audio file in
 **Preferences → Sound**.
 
 ## Live development
+
+For a one-click restart into live development, double-click
+`Launch BetterSS Live.bat` in the repository root. It closes a running
+Better SS instance and starts the watcher in the background.
 
 ```powershell
 ./Run-BetterSS-Dev.ps1 -Background

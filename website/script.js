@@ -85,6 +85,19 @@
       status.textContent = 'Text selected. Use your device’s Copy command.';
     }
   });
+  const installCommand = document.getElementById('install-command');
+  const installStatus = document.getElementById('install-status');
+  document.getElementById('copy-install-command').addEventListener('click', async () => {
+    try {
+      if (!navigator.clipboard) throw new Error('Clipboard not available');
+      await navigator.clipboard.writeText(installCommand.textContent.trim());
+      installStatus.textContent = 'Command copied. Paste it into PowerShell to install Better SS.';
+    } catch {
+      const selection = window.getSelection(); const range = document.createRange();
+      range.selectNodeContents(installCommand); selection.removeAllRanges(); selection.addRange(range);
+      installStatus.textContent = 'Command selected. Copy it and paste into PowerShell.';
+    }
+  });
   document.querySelectorAll('.format-options button').forEach(button => button.addEventListener('click', () => {
     document.querySelectorAll('.format-options button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
     document.querySelector('.export-filename').textContent = `Project-notes.${button.textContent.toLowerCase()}`;

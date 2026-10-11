@@ -19,6 +19,7 @@ internal static class PresentationTests
         Window? window = null;
         try
         {
+            GlassCompatibilityTests.Run(check, output);
             Motion.ReducedOverride = false;
             var scale = new ScaleTransform(.98, .98);
             window = new Window { Title = "Better SS motion review", Width = 260, Height = 140, Content = new Border { Background = Brushes.White, RenderTransform = scale } }; window.Show(); Pump(100);
