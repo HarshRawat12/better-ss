@@ -43,7 +43,7 @@ internal sealed class VideoRecordingWindow : Window
         resolution = new ChoiceField<string>(new[] { "Native", "1920 × 1080", "1280 × 720" }, dark); fps = new ChoiceField<string>(new[] { "24 FPS", "30 FPS", "60 FPS" }, dark, 1); bitrate = new ChoiceField<string>(new[] { "Optimized", "4 Mbps", "8 Mbps", "16 Mbps", "32 Mbps" }, dark); format = new ChoiceField<string>(new[] { "MP4 · H.264", "MP4 · H.265", "MOV · H.264", "MOV · H.265" }, dark);
         var quality = new StackPanel(); body.Children.Add(UI.Card(quality, dark, new Thickness(18)));
         Configure("Resolution", resolution.Button, quality); Configure("Frame rate", fps.Button, quality); Configure("Bitrate", bitrate.Button, quality); Configure("Format", format.Button, quality);
-        status = UI.Text(ScreenRecorder.IsAvailable ? "Ready to record. The recording engine is included with Better SS." : "The bundled recording engine is missing. Rebuild Better SS to restore it.", 12, UI.Muted(dark)); status.Margin = new Thickness(0, 10, 0, 20); body.Children.Add(status);
+        status = UI.Text(ScreenRecorder.IsAvailable ? "Ready to record. Video tools are installed for offline use." : "Download video tools in Preferences → Optional features to enable recording.", 12, UI.Muted(dark)); status.Margin = new Thickness(0, 10, 0, 20); body.Children.Add(status);
         var actions = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right }; start = UI.Button("Start recording…", Start, true, dark); start.IsEnabled = ScreenRecorder.IsAvailable; actions.Children.Add(UI.Button("Cancel", Close, false, dark)); actions.Children.Add(start); body.Children.Add(actions); Content = body;
         captureHealth.Tick += async (_, _) =>
         {
@@ -129,10 +129,10 @@ internal sealed class ScreenRecorder
     private Process? process; private Task<string>? errorOutput; private readonly List<string> parts = new(); private string? target, temporaryFolder; private System.Drawing.Rectangle bounds; private int width, height, fps, mbps; private bool h265;
     // AppContext.BaseDirectory is the self-extraction folder for the single-file build,
     // while Environment.ProcessPath points at the user's standalone executable.
-    internal static string ExecutablePath => Path.Combine(AppContext.BaseDirectory, "ffmpeg.exe"); internal static bool IsAvailable => File.Exists(ExecutablePath); internal bool IsRunning => process is { HasExited: false }; internal bool IsPaused { get; private set; }
+    internal static string ExecutablePath => VideoToolsManager.Default.FfmpegPath; internal static bool IsAvailable => VideoToolsManager.Default.IsAvailable; internal bool IsRunning => process is { HasExited: false }; internal bool IsPaused { get; private set; }
     internal async Task StartAsync(System.Drawing.Rectangle sourceBounds, int outputWidth, int outputHeight, int frameRate, int megabits, bool useH265, string output, IntPtr sourceWindow = default)
     {
-        if (!IsAvailable) throw new FileNotFoundException("The bundled recording engine could not be found. Rebuild Better SS.", ExecutablePath);
+        if (!IsAvailable) throw new FileNotFoundException("Download video tools in Preferences → Optional features before recording.", ExecutablePath);
         windowHandle = sourceWindow; bounds = sourceBounds; width = outputWidth; height = outputHeight; fps = frameRate; mbps = megabits; h265 = useH265; target = output; temporaryFolder = Path.Combine(Path.GetDirectoryName(output) ?? AppContext.BaseDirectory, ".better-ss-recording-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(temporaryFolder);
         try { await StartSegmentAsync(); }
         catch { Directory.Delete(temporaryFolder, true); throw; }

@@ -4,6 +4,7 @@
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <BundleVideoTools Condition="'$(BundleVideoTools)' == ''">false</BundleVideoTools>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -14,7 +15,7 @@
     <!-- WPF owns startup; WinForms is used only for Screen and NotifyIcon.
          DPI awareness must be established by the manifest before any HWND exists. -->
     <NoWarn>$(NoWarn);WFAC010</NoWarn>
-    <Version>0.6.0</Version>
+    <Version>0.6.1</Version>
     <Authors>Harsh Rawat and contributors</Authors>
     <Description>A local-first screenshot, annotation, OCR, and screen-recording utility for Windows.</Description>
     <RepositoryType>git</RepositoryType>
@@ -27,8 +28,8 @@
   <ItemGroup>
     <Content Include="Assets\capture.mp3" Condition="Exists('Assets\capture.mp3')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Content Include="Assets\Custom Sounds\*.mp3" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
-    <Content Include="Tools\ffmpeg.exe" Condition="Exists('Tools\ffmpeg.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="ffmpeg.exe" />
-    <Content Include="Tools\ffprobe.exe" Condition="Exists('Tools\ffprobe.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="ffprobe.exe" />
+    <Content Include="Tools\ffmpeg.exe" Condition="'$(BundleVideoTools)' == 'true' And Exists('Tools\ffmpeg.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="ffmpeg.exe" />
+    <Content Include="Tools\ffprobe.exe" Condition="'$(BundleVideoTools)' == 'true' And Exists('Tools\ffprobe.exe')" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="ffprobe.exe" />
     <Content Include="Tools\FFmpeg-LICENSE.txt" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" TargetPath="FFmpeg-LICENSE.txt" />
   </ItemGroup>
 </Project>

@@ -111,7 +111,7 @@ internal static class VideoCutService
     internal static string Number(double value) => value.ToString("0.######", CultureInfo.InvariantCulture);
     internal static async Task<VideoInfo> ProbeAsync(string input, CancellationToken token)
     {
-        string probe = Path.Combine(AppContext.BaseDirectory, "ffprobe.exe");
+        string probe = VideoToolsManager.Default.FfprobePath;
         string json = await RunAsync(probe, new[] { "-v", "error", "-show_streams", "-show_format", "-of", "json", input }, token);
         using var document = JsonDocument.Parse(json); var root = document.RootElement;
         var streams = root.GetProperty("streams").EnumerateArray().ToArray();

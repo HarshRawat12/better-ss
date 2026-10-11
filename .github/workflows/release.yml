@@ -20,10 +20,6 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Set up the recording tools
-        shell: pwsh
-        run: ./scripts/setup-ffmpeg.ps1
-
       - name: Get the release version
         id: version
         shell: pwsh
@@ -34,7 +30,7 @@ jobs:
 
       - name: Publish the application files
         shell: pwsh
-        run: dotnet publish BetterSS/BetterSS.csproj -c Release -r win-x64 --self-contained true -p:DebugType=embedded -o publish
+        run: dotnet publish BetterSS/BetterSS.csproj -c Release -r win-x64 --self-contained false -p:BundleVideoTools=false -p:DebugType=embedded -o publish
 
       - name: Package and attach the updater release
         shell: pwsh
@@ -47,7 +43,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) {
             Write-Warning 'No earlier Velopack release was available. Creating the first full update package.'
           }
-          & .tools/vpk/vpk.exe pack --packId BetterSS --packVersion ${{ steps.version.outputs.version }} --packDir publish --mainExe BetterSS.exe --packTitle 'Better SS' --packAuthors 'Harsh Rawat and contributors' --icon BetterSS/Assets/better-ss.ico --runtime win-x64 --outputDir velopack
+          & .tools/vpk/vpk.exe pack --packId BetterSS --packVersion ${{ steps.version.outputs.version }} --packDir publish --mainExe BetterSS.exe --packTitle 'Better SS' --packAuthors 'Harsh Rawat and contributors' --icon BetterSS/Assets/better-ss.ico --runtime win-x64 --framework net8.0-x64-desktop --releaseNotes docs/releases/v0.6.1.md --outputDir velopack
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           & .tools/vpk/vpk.exe upload github --repoUrl https://github.com/${{ github.repository }} --token $env:GH_TOKEN --outputDir velopack --merge --publish --releaseName 'Better SS ${{ steps.version.outputs.version }}' --tag v${{ steps.version.outputs.version }} --targetCommitish $env:GITHUB_SHA
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

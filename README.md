@@ -17,7 +17,8 @@
 Better SS combines precise screen capture, a floating preview, annotation, local
 OCR, image export, screen recording, and simple video cutting in one native
 Windows application. Captures and OCR stay on the computer: the app has no
-accounts, analytics, cloud upload, or network-backed processing.
+accounts, analytics, cloud upload, or network-backed processing. Updates and optional
+video tools use the internet to download software; captured content is never uploaded.
 
 > Better SS is early-stage software. Builds are currently unsigned, and some
 > capture paths rely on Windows-specific APIs and display behavior.
@@ -44,34 +45,52 @@ selection is released. Cancel capture with Escape or a right-click.
 - A 64-bit PC
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) for development
 - PowerShell 5.1 or newer
-- FFmpeg for recording and video editing (installed by the included setup script)
+- .NET 8 x64 Desktop Runtime for the small app package (setup downloads it if missing)
+- Optional FFmpeg video tools for recording and video editing (download from Preferences or on first use)
 
 ## Build from source
 
 ```powershell
 git clone https://github.com/HarshRawat12/better-ss.git
 cd better-ss
-./scripts/setup-ffmpeg.ps1
 dotnet run --project BetterSS/BetterSS.csproj
 ```
 
-To create a self-contained x64 build:
+To create the small x64 app and local installer:
 
 ```powershell
-./build.ps1
+./build.ps1 -Package
 ```
 
-The packaged application is written to `dist/BetterSS-release/BetterSS.exe`.
-FFmpeg executables are downloaded directly from the Windows build provider and
-verified against its published SHA-256 checksum; they are not committed to Git.
+Output paths are recorded in `dist/BetterSS-local/build-info.json`. The default
+package excludes the .NET runtime and video tools. Setup installs the required
+.NET 8 Desktop Runtime if missing. `-SelfContained` bundles .NET; `-BundleVideoTools`
+also bundles the tools installed by `scripts/setup-ffmpeg.ps1` for offline distribution.
+`build.ps1` only builds local files; it never publishes a release.
+
+### Optional video features
+
+Preferences → Optional features has separate switches for screen recording and
+video editing. Enabling either feature or opening it for the first time offers
+one shared Video tools download, with progress, cancellation and retry. Choosing
+Not now leaves screenshot and image features available. After download the tools
+work offline and stay under `%LOCALAPPDATA%/Better SS/Components/VideoTools`, so
+app updates do not remove them. Switching a feature off retains that shared cache.
+
+The download comes from Gyan's FFmpeg release essentials ZIP (currently about
+109 MB; installed tools about 201 MiB). Its size differs from a ZIP containing
+only the two executables because the upstream archive also contains other files.
+Better SS verifies the provider's SHA-256, extracts only the required executables
+and license, checks they can run, and activates the complete pair atomically.
+Existing full installations can continue using their included tools.
 
 ## Releases and automatic updates
 
 Public releases use [Velopack](https://velopack.io/) and GitHub Releases. For a
-project version such as `0.6.0`, push the release source on a branch named
-`release/v0.6.0`. The release workflow builds and publishes the matching
-`v0.6.0` GitHub release with `BetterSS-Setup.exe`, update packages, and the
-release feed. New users should download and run `BetterSS-Setup.exe`.
+project version such as `0.6.1`, push the release source on a branch named
+`release/v0.6.1`. The release workflow builds and publishes the matching
+`v0.6.1` GitHub release with `BetterSS-win-Setup.exe`, update packages, and the
+release feed. New users should download and run `BetterSS-win-Setup.exe`.
 
 Installed copies check GitHub Releases in the background when Better SS starts.
 When a newer release is available, Better SS downloads it and installs it on the

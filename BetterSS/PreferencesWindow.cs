@@ -32,16 +32,16 @@ internal sealed class PreferencesWindow : Window
         var footer = new StackPanel(); footer.Children.Add(UI.Text(app.DevelopmentMode ? "Live development" : "Ready in your tray", 11, UI.Ink(dark), FontWeights.SemiBold));
         var note = UI.Text("Close preferences to keep capturing. Quit from the tray.", 11, UI.Muted(dark)); note.LineHeight = 17; note.Margin = new Thickness(0, 10, 0, 24); footer.Children.Add(note); footer.Children.Add(UI.Text("Version " + typeof(App).Assembly.GetName().Version?.ToString(3), 10, UI.Muted(dark))); var credit = UI.Text("By Harsh Rawat", 10, UI.Muted(dark)); credit.Margin = new Thickness(0, 4, 0, 0); footer.Children.Add(credit); DockPanel.SetDock(footer, Dock.Bottom); side.Children.Add(footer);
         var nav = new StackPanel(); navigation.Clear();
-        foreach (var name in new[] { "Capture", "Floating preview", "Appearance", "Sound", "Storage", "Startup & guide" }) { string selected = name; var button = UI.Button(name, () => ShowPage(selected), false, dark); UI.Navigation(button, dark); button.Margin = new Thickness(0, 0, 0, 5); UI.Icon(button, name switch { "Capture" => "\uE722", "Floating preview" => "\uE8A7", "Appearance" => "\uE790", "Sound" => "\uE767", "Storage" => "\uE8B7", _ => "\uE946" }); navigation.Add(name, button); nav.Children.Add(button); }
+        foreach (var name in new[] { "Capture", "Floating preview", "Appearance", "Sound", "Storage", "Optional features", "Startup & guide" }) { string selected = name; var button = UI.Button(name, () => ShowPage(selected), false, dark); UI.Navigation(button, dark); button.Margin = new Thickness(0, 0, 0, 5); UI.Icon(button, name switch { "Capture" => "\uE722", "Floating preview" => "\uE8A7", "Appearance" => "\uE790", "Sound" => "\uE767", "Storage" => "\uE8B7", "Optional features" => "\uE896", _ => "\uE946" }); navigation.Add(name, button); nav.Children.Add(button); }
         side.Children.Add(nav); root.Children.Add(new Border { Background = UI.Sidebar(dark), BorderBrush = UI.Line(dark), BorderThickness = new Thickness(0, 0, 1, 0), Child = side });
         body = new StackPanel { Margin = new Thickness(28, 24, 28, 24) }; var scroll = new ScrollViewer { Content = body, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; Grid.SetColumn(scroll, 1); root.Children.Add(scroll); Content = root; ShowPage(page);
     }
     internal void ShowPage(string name)
     {
         page = name; body.Children.Clear(); foreach (var entry in navigation) UI.Select(entry.Value, entry.Key == name, dark);
-        var descriptions = new Dictionary<string, string> { ["Capture"] = "Capture a moment. Keep moving.", ["Floating preview"] = "A temporary home for your screenshot.", ["Appearance"] = "Neutral surfaces, clear controls, and a theme that fits your desktop.", ["Sound"] = "Your capture sound, at the right level.", ["Storage"] = "Local files. Flexible exports.", ["Startup & guide"] = "Ready when you need it. Always your choice." };
+        var descriptions = new Dictionary<string, string> { ["Capture"] = "Capture a moment. Keep moving.", ["Floating preview"] = "A temporary home for your screenshot.", ["Appearance"] = "Neutral surfaces, clear controls, and a theme that fits your desktop.", ["Sound"] = "Your capture sound, at the right level.", ["Storage"] = "Local files. Flexible exports.", ["Optional features"] = "A small app. Add video tools when you need them.", ["Startup & guide"] = "Ready when you need it. Always your choice." };
         body.Children.Add(UI.PageHeader(page, descriptions[name], dark));
-        switch (name) { case "Capture": CapturePage(); break; case "Floating preview": PreviewPage(); break; case "Appearance": AppearancePage(); break; case "Sound": SoundPage(); break; case "Startup & guide": StartupPage(); break; default: StoragePage(); break; }
+        switch (name) { case "Capture": CapturePage(); break; case "Floating preview": PreviewPage(); break; case "Appearance": AppearancePage(); break; case "Sound": SoundPage(); break; case "Optional features": OptionalFeaturesPage(); break; case "Startup & guide": StartupPage(); break; default: StoragePage(); break; }
     }
     private void CapturePage()
     {
@@ -81,6 +81,34 @@ internal sealed class PreferencesWindow : Window
         Slider(animation, "Flash strength", 0, 100, app.Settings.FlashOpacity, defaults.FlashOpacity, "%", v => app.Settings.FlashOpacity = v);
         body.Children.Add(UI.Card(animation, dark));
         var note = UI.Text("Hovering pauses dismissal. Up to three previews stack on their capture display. The image is already copied, so the preview has no copy button.", 12, UI.Muted(dark)); note.Margin = new Thickness(0, 22, 0, 0); body.Children.Add(note);
+    }
+    internal void RefreshOptionalFeatures()
+    { if (page == "Optional features" && IsLoaded) ShowPage(page); }
+    private void OptionalFeaturesPage()
+    {
+        var core = new StackPanel(); Heading(core, "Your everyday tools are ready", "Screenshots, image editing, Live OCR, the color picker and image exports are included. They don't need the optional video download.");
+        body.Children.Add(UI.Card(core, dark));
+        bool installed = VideoToolsManager.Default.IsAvailable;
+        var video = new StackPanel(); Heading(video, "Video tools", "Recording and Better SS Split share one download. Download once, then use both offline.");
+        var state = UI.Text(installed ? $"Downloaded · {VideoToolsManager.Default.InstalledBytes / 1048576d:0} MiB on this PC" : "Not downloaded · about 109 MB download / 201 MiB installed", 12, installed ? UI.Accent(dark) : UI.Muted(dark));
+        state.Margin = new Thickness(0, 0, 0, 18); video.Children.Add(state);
+        FeatureSwitch(video, "Screen recording", "Record a display or application window.", VideoFeature.Recording, installed);
+        FeatureSwitch(video, "Video editing", "Import, trim, split and export in Better SS Split.", VideoFeature.Editing, installed);
+        if (!installed) { var button = UI.Button("Download video tools…", () => app.DownloadVideoTools(this), true, dark); button.Margin = new Thickness(0, 12, 0, 0); video.Children.Add(button); }
+        var note = UI.Text(installed ? "Switching a feature off keeps the shared tools on this PC. Turning it on again won't need another download." : "Opening a video feature will also offer to download its tools. You can choose Not now and keep using the rest of Better SS.", 12, UI.Muted(dark));
+        note.Margin = new Thickness(0, 18, 0, 0); video.Children.Add(note); body.Children.Add(UI.Card(video, dark));
+    }
+    private void FeatureSwitch(StackPanel panel, string title, string description, VideoFeature feature, bool installed)
+    {
+        var toggle = UI.Switch(title, installed && app.VideoFeatureEnabled(feature), dark);
+        toggle.Margin = new Thickness(0, 8, 0, 6);
+        toggle.Click += async (_, _) =>
+        {
+            toggle.IsEnabled = false;
+            try { await app.SetVideoFeatureEnabledAsync(feature, toggle.IsChecked == true, this); }
+            finally { if (IsVisible && page == "Optional features") ShowPage(page); }
+        };
+        panel.Children.Add(toggle); var detail = UI.Text(description, 12, UI.Muted(dark)); detail.Margin = new Thickness(0, 0, 0, 12); panel.Children.Add(detail);
     }
     private void AppearancePage()
     {
